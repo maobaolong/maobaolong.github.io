@@ -1,0 +1,323 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>CENTOS笔记 | maobaolong</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="maobaolong">
+    
+    <meta name="description" content="CENTOS笔记[TOC]
+##连接无线网
+ip addr找到自己的无线网接口 （ps:本人的是wlp5s0）
+ip link set wlp5s0 up打开无线网的驱动
+ip link show wlp5s0查看该网络接口的状态
+连接无线网wpa_supplicant -B -i wlp5s0 -">
+    
+    
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="maobaolong" title="maobaolong"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="maobaolong">maobaolong</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:maobaolong.f3322.net:8000">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/11/技术学习/linux/centos/" title="CENTOS笔记" itemprop="url">CENTOS笔记</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://maobaolong.f3322.net:8000" title="maobaolong">maobaolong</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-11-11T02:21:49.964Z" itemprop="datePublished">2016-11-11</time>
+    Updated:<time datetime="2016-11-10T09:23:46.079Z" itemprop="dateModified">2016-11-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS笔记"><span class="toc-number">1.</span> <span class="toc-text">CENTOS笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-addr"><span class="toc-number">1.0.1.</span> <span class="toc-text">ip addr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-link-set-wlp5s0-up"><span class="toc-number">1.0.2.</span> <span class="toc-text">ip link set wlp5s0 up</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-link-show-wlp5s0"><span class="toc-number">1.0.3.</span> <span class="toc-text">ip link show wlp5s0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#连接无线网"><span class="toc-number">1.0.4.</span> <span class="toc-text">连接无线网</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dhcp分配ip"><span class="toc-number">1.0.5.</span> <span class="toc-text">dhcp分配ip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件源"><span class="toc-number">1.1.</span> <span class="toc-text">软件源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载源"><span class="toc-number">1.1.1.</span> <span class="toc-text">下载源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装源"><span class="toc-number">1.1.2.</span> <span class="toc-text">安装源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh修改端口号"><span class="toc-number">1.2.</span> <span class="toc-text">ssh修改端口号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#step1-修改-etc-ssh-sshd-config"><span class="toc-number">1.2.1.</span> <span class="toc-text">step1 修改/etc/ssh/sshd_config</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2-修改SELinux"><span class="toc-number">1.2.2.</span> <span class="toc-text">step2 修改SELinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step3-重启ssh"><span class="toc-number">1.2.3.</span> <span class="toc-text">step3 重启ssh</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="CENTOS笔记"><a href="#CENTOS笔记" class="headerlink" title="CENTOS笔记"></a>CENTOS笔记</h1><p>[TOC]</p>
+<p>##连接无线网</p>
+<h3 id="ip-addr"><a href="#ip-addr" class="headerlink" title="ip addr"></a>ip addr</h3><p>找到自己的无线网接口 （ps:本人的是wlp5s0）</p>
+<h3 id="ip-link-set-wlp5s0-up"><a href="#ip-link-set-wlp5s0-up" class="headerlink" title="ip link set wlp5s0 up"></a>ip link set wlp5s0 up</h3><p>打开无线网的驱动</p>
+<h3 id="ip-link-show-wlp5s0"><a href="#ip-link-show-wlp5s0" class="headerlink" title="ip link show wlp5s0"></a>ip link show wlp5s0</h3><p>查看该网络接口的状态</p>
+<h3 id="连接无线网"><a href="#连接无线网" class="headerlink" title="连接无线网"></a>连接无线网</h3><p>wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk)</p>
+<h3 id="dhcp分配ip"><a href="#dhcp分配ip" class="headerlink" title="dhcp分配ip"></a>dhcp分配ip</h3><p>dhclient wlp5s0(为wlp5s0分配ip地址)</p>
+<h2 id="软件源"><a href="#软件源" class="headerlink" title="软件源"></a>软件源</h2><h3 id="下载源"><a href="#下载源" class="headerlink" title="下载源"></a>下载源</h3><p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="external">http://mirrors.aliyun.com/repo/Centos-7.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></p>
+<p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.sohu.com/help/CentOS-Base-sohu.repo" target="_blank" rel="external">http://mirrors.sohu.com/help/CentOS-Base-sohu.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://centos.ustc.edu.cn/CentOS-Base.repo" target="_blank" rel="external">http://centos.ustc.edu.cn/CentOS-Base.repo</a></p>
+<h3 id="安装源"><a href="#安装源" class="headerlink" title="安装源"></a>安装源</h3><p>yum clean all<br>yum makecache</p>
+<h2 id="ssh修改端口号"><a href="#ssh修改端口号" class="headerlink" title="ssh修改端口号"></a>ssh修改端口号</h2><h3 id="step1-修改-etc-ssh-sshd-config"><a href="#step1-修改-etc-ssh-sshd-config" class="headerlink" title="step1 修改/etc/ssh/sshd_config"></a>step1 修改/etc/ssh/sshd_config</h3><p>vi /etc/ssh/sshd_config<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#Port 22         //这行去掉#号</div><div class="line">Port 20000      //下面添加这一行</div></pre></td></tr></table></figure></p>
+<h3 id="step2-修改SELinux"><a href="#step2-修改SELinux" class="headerlink" title="step2 修改SELinux"></a>step2 修改SELinux</h3><p>yum -y install policycoreutils-python</p>
+<p>使用以下命令查看当前SElinux 允许的ssh端口：<br>semanage port -l | grep ssh</p>
+<p>添加20000端口到 SELinux<br>semanage port -a -t ssh_port_t -p tcp 20000</p>
+<p>然后确认一下是否添加进去<br>semanage port -l | grep ssh<br>如果成功会输出<br>ssh_port_t                    tcp    20000, 22</p>
+<h3 id="step3-重启ssh"><a href="#step3-重启ssh" class="headerlink" title="step3 重启ssh"></a>step3 重启ssh</h3><p>systemctl restart sshd.service</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://maobaolong.f3322.net:8000/2016/11/11/技术学习/linux/centos/" data-title="CENTOS笔记 | maobaolong" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/11/技术学习/linux/ubuntu/" title="ubuntu">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  ubuntu</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/11/技术学习/java/java/"  title="java 远程调试">
+ <strong>NEXT:</strong><br/> 
+ <span>java 远程调试
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CENTOS笔记"><span class="toc-number">1.</span> <span class="toc-text">CENTOS笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-addr"><span class="toc-number">1.0.1.</span> <span class="toc-text">ip addr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-link-set-wlp5s0-up"><span class="toc-number">1.0.2.</span> <span class="toc-text">ip link set wlp5s0 up</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ip-link-show-wlp5s0"><span class="toc-number">1.0.3.</span> <span class="toc-text">ip link show wlp5s0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#连接无线网"><span class="toc-number">1.0.4.</span> <span class="toc-text">连接无线网</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dhcp分配ip"><span class="toc-number">1.0.5.</span> <span class="toc-text">dhcp分配ip</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软件源"><span class="toc-number">1.1.</span> <span class="toc-text">软件源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#下载源"><span class="toc-number">1.1.1.</span> <span class="toc-text">下载源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装源"><span class="toc-number">1.1.2.</span> <span class="toc-text">安装源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh修改端口号"><span class="toc-number">1.2.</span> <span class="toc-text">ssh修改端口号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#step1-修改-etc-ssh-sshd-config"><span class="toc-number">1.2.1.</span> <span class="toc-text">step1 修改/etc/ssh/sshd_config</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2-修改SELinux"><span class="toc-number">1.2.2.</span> <span class="toc-text">step2 修改SELinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step3-重启ssh"><span class="toc-number">1.2.3.</span> <span class="toc-text">step3 重启ssh</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://maobaolong.f3322.net:8000" target="_blank" title="maobaolong">maobaolong</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"maobaolong"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
