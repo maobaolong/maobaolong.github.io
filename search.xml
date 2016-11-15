@@ -1,558 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   
-  
-    
-    <entry>
-      <title><![CDATA[java 远程调试]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/java/java/</url>
-      <content type="html"><![CDATA[<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=2345 Main</div></pre></td></tr></table></figure>]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Hello world]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/hello-world/</url>
-      <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[scrt]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/scrt/</url>
-      <content type="html"><![CDATA[<h1 id="scrt"><a href="#scrt" class="headerlink" title="scrt"></a>scrt</h1><h2 id="linux破解"><a href="#linux破解" class="headerlink" title="linux破解"></a>linux破解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: xiaobo_l</div><div class="line">Company:www.boll.me</div><div class="line">Serial Number:03-61-166978</div><div class="line">License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHC</div><div class="line">Issue Date:12-22-2013</div></pre></td></tr></table></figure>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[jenkins]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/jenkins/</url>
-      <content type="html"><![CDATA[<h1 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h1><p>[TOC]</p>
-<h2 id="启动jenkins指定端口"><a href="#启动jenkins指定端口" class="headerlink" title="启动jenkins指定端口"></a>启动jenkins指定端口</h2><p>java -jar jenkins.war –httpPort=9010</p>
-<font color="red"><strong>后台启动的方法</strong></font>
-
-<p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kill `ps -ef | grep [j]enkins.war | awk &apos;&#123; print $2 &#125;&apos;`</div></pre></td></tr></table></figure></p>
-<h2 id="jenkins中通过execute-shell启动的进程会被杀死的问题"><a href="#jenkins中通过execute-shell启动的进程会被杀死的问题" class="headerlink" title="jenkins中通过execute shell启动的进程会被杀死的问题"></a>jenkins中通过execute shell启动的进程会被杀死的问题</h2><p>[摘要：正在jenkins中设置装备摆设主动更新安排项目时，若是采用用execute shell启动/封闭tomcat，会发明能够举行封闭tomcat，然则没法启动tomcat，固然构建会表现履行乐成，然则检察过程，tomcat是出有启动的]<br>在jenkins中配置自动更新部署项目时，如果采取用execute shell启动/关闭tomcat，会发现可以进行关闭tomcat，但是无法启动tomcat，虽然构建会显示执行成功，但是查看进程，tomcat是没有启动的。这是因为Jenkins默认会在Build结束后Kill掉所有的衍生进程。需要进行以下配置，才能避免此类情况发生:</p>
-<ol>
-<li>重设环境变量build_id<br>在execute shell输入框中加入BUILD_ID=DONTKILLME,即可防止jenkins杀死启动的tomcat进程</li>
-<li>在启动jenkins 的时候禁止jenkins杀死衍生进程<br> 修改/etc/sysconfig/jenkins配置，在JENKINS_JAVA_OPTIONS中加入-Dhudson.util.ProcessTree.disable=true。需要重启jenkins生效<br> 此方法配置一次后，所有的job都无需设置BUILD_ID，就能够防止jenkins杀死启动的tomcat进程</li>
-</ol>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[seafile]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/seafile/</url>
-      <content type="html"><![CDATA[<h1 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h1><h2 id="启动停止服务"><a href="#启动停止服务" class="headerlink" title="启动停止服务"></a>启动停止服务</h2><p>/opt/seafile/seafile-server-6.0.5/seafile.sh stop<br>/opt/seafile/seafile-server-6.0.5/seahub.sh stop</p>
-<p>/opt/seafile/seafile-server-6.0.5/seafile.sh start<br>/opt/seafile/seafile-server-6.0.5/seahub.sh start 8123</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[vim]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/vim/</url>
-      <content type="html"><![CDATA[<p>vim设置粘贴可以500行</p>
-<pre><code>1. :set viminfo=&apos;1000,&lt;500  
-</code></pre><p>整体下移：ctrl + e<br>整体上移 : ctrl + y</p>
-<p>显示行号：set nu</p>
-<p>vim配置文件：/etc/vim/vimrc</p>
-<p>查找字符串 ?内容    N下一个   n上一个</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[nginx]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/nginx/</url>
-      <content type="html"><![CDATA[<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>nginx </p>
-<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><p>nginx -s reload<br>nginx -s stop</p>
-<h2 id="修改端口"><a href="#修改端口" class="headerlink" title="修改端口"></a>修改端口</h2><p>/usr/nginx*/conf/nginx.conf</p>
-<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><p>lsof -i tcp:80<br>lsof -i tcp:8999</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[etcd]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/etcd/</url>
-      <content type="html"><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>etcd是一个高可用的键值存储系统，主要用于共享配置和服务发现。etcd是由CoreOS开发并维护的，灵感来自于 ZooKeeper 和 Doozer，它使用Go语言编写，并通过Raft一致性算法处理日志复制以保证强一致性。Raft是一个来自Stanford的新的一致性算法，适用于分布式系统的日志复制，Raft通过选举的方式来实现一致性，在Raft中，任何一个节点都可能成为Leader。Google的容器集群管理系统Kubernetes、开源PaaS平台Cloud Foundry和CoreOS的Fleet都广泛使用了etcd。</p>
-<p>etcd 集群的工作原理基于 raft 共识算法 (The Raft Consensus Algorithm)。etcd 在 0.5.0 版本中重新实现了 raft 算法，而非像之前那样依赖于第三方库 go-raft 。raft 共识算法的优点在于可以在高效的解决分布式系统中各个节点日志内容一致性问题的同时，也使得集群具备一定的容错能力。即使集群中出现部分节点故障、网络故障等问题，仍可保证其余大多数节点正确的步进。甚至当更多的节点（一般来说超过集群节点总数的一半）出现故障而导致集群不可用时，依然可以保证节点中的数据不会出现错误的结果。</p>
-<h2 id="设置值，允许目录不存在"><a href="#设置值，允许目录不存在" class="headerlink" title="设置值，允许目录不存在"></a>设置值，允许目录不存在</h2><p>curl -x 172.22.91.78:80 -X PUT <a href="http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb" target="_blank" rel="external">http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb</a> -d value=”sss”|python -m json.tool</p>
-<h2 id="删除空目录"><a href="#删除空目录" class="headerlink" title="删除空目录"></a>删除空目录</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python</a> -m json.tool</p>
-<h2 id="删除目录所有内容"><a href="#删除目录所有内容" class="headerlink" title="删除目录所有内容"></a>删除目录所有内容</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python</a> -m json.tool</p>
-<h2 id="获取成员"><a href="#获取成员" class="headerlink" title="获取成员"></a>获取成员</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.109:2379/v2/members|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/members|python</a> -m json.tool</p>
-<h2 id="查看是否leader"><a href="#查看是否leader" class="headerlink" title="查看是否leader"></a>查看是否leader</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.108:2379/v2/stats/self" target="_blank" rel="external">http://172.22.77.108:2379/v2/stats/self</a> |python -m json.tool<br>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/v2/stats/leader|python" target="_blank" rel="external">http://172.22.77.107:2379/v2/stats/leader|python</a> -m json.tool</p>
-<h2 id="查看是否健康"><a href="#查看是否健康" class="headerlink" title="查看是否健康"></a>查看是否健康</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/health|python" target="_blank" rel="external">http://172.22.77.107:2379/health|python</a> -m json.tool</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[kafka]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/kafka/</url>
-      <content type="html"><![CDATA[<h2 id="启动zookeeper"><a href="#启动zookeeper" class="headerlink" title="启动zookeeper"></a>启动zookeeper</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/zookeeper-server-start.sh config/zookeeper.properties &amp;</div></pre></td></tr></table></figure>
-<h2 id="启动KAFKA"><a href="#启动KAFKA" class="headerlink" title="启动KAFKA"></a>启动KAFKA</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-server-start.sh config/server.properties &amp;</div></pre></td></tr></table></figure>
-<h2 id="模拟consumer"><a href="#模拟consumer" class="headerlink" title="模拟consumer"></a>模拟consumer</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-console-consumer.sh --zookeeper 127.0.0.1:2181 --from-beginning --topic self_healing</div></pre></td></tr></table></figure>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[velocity]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/velocity/</url>
-      <content type="html"><![CDATA[<h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[git]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/git/</url>
-      <content type="html"><![CDATA[<h2 id="git-push-origin-master报错"><a href="#git-push-origin-master报错" class="headerlink" title="git push origin master报错"></a>git push origin master报错</h2><p>fatal: could not read Username for ‘<a href="https://github.com" target="_blank" rel="external">https://github.com</a>‘: No such file or directo<br>原因使用https方式的时候 在git remote add origin 的https url 里面没有用户名和密码<br>修改为如下：<br>git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a><br><a href="https://github.com/kemayo/sublime-text-git/issues/176" target="_blank" rel="external">https://github.com/kemayo/sublime-text-git/issues/176</a><br>或者直接修改 .git/config 隐藏文件 为git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a> 格式</p>
-<h2 id="显示当前分支"><a href="#显示当前分支" class="headerlink" title="显示当前分支"></a>显示当前分支</h2><p>git branch</p>
-<h2 id="显示远程信息"><a href="#显示远程信息" class="headerlink" title="显示远程信息"></a>显示远程信息</h2><p>git remote -v</p>
-<h2 id="强制回退到master分支"><a href="#强制回退到master分支" class="headerlink" title="强制回退到master分支"></a>强制回退到master分支</h2><p>取回远程主机某个分支的更新，再与本地的指定分支合并<br>git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;<br>git pull origin master:master -f</p>
-<h2 id="显示git状态"><a href="#显示git状态" class="headerlink" title="显示git状态"></a>显示git状态</h2><p>git status</p>
-<p>git branch * master</p>
-<h2 id="将master分支合并到当前分支"><a href="#将master分支合并到当前分支" class="headerlink" title="将master分支合并到当前分支"></a>将master分支合并到当前分支</h2><p>git merge master</p>
-<h2 id="将远程master的修改合并到本地mbl分支。"><a href="#将远程master的修改合并到本地mbl分支。" class="headerlink" title="将远程master的修改合并到本地mbl分支。"></a>将远程master的修改合并到本地mbl分支。</h2><p>git pull origin master:master -f<br>git add .<br> git commit -m “test”<br>git pull origin master:master -f<br>git branch * master<br>git checkout mbl<br>git pull<br>git merge master<br> git push</p>
-<h2 id="取消commit-和-pull"><a href="#取消commit-和-pull" class="headerlink" title="取消commit 和 pull"></a>取消commit 和 pull</h2><p>git reset –hard <commit_id><br>git push origin HEAD –force</commit_id></p>
-<p>Edit<br>Edit2</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[zookeeper]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/zookeeper/</url>
-      <content type="html"><![CDATA[<p>zkCli.sh -server IP:port</p>
-<p>ls(查看当前节点数据),<br>ls2(查看当前节点数据并能看到更新次数等数据) ,<br>create(创建一个节点) ,<br>get(得到一个节点，包含数据和更新次数等数据),<br>set(修改节点)<br>delete(删除一个节点)</p>
-<p>四字命令，nc 服务器地址 端口号<br>nc 192.168.193.84 2181</p>
-<table>
-<thead>
-<tr>
-<th>ZooKeeper 四字命令</th>
-<th>功能描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>conf</td>
-<td>输出相关服务配置的详细信息。</td>
-</tr>
-<tr>
-<td>cons</td>
-<td>列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息。包括“接受 / 发送”的包数量、会话 id 、操作延迟、最后的操作执行等等信息。</td>
-</tr>
-<tr>
-<td>dump</td>
-<td>列出未经处理的会话和临时节点。</td>
-</tr>
-<tr>
-<td>envi</td>
-<td>输出关于服务环境的详细信息（区别于 conf 命令）。</td>
-</tr>
-<tr>
-<td>reqs</td>
-<td>列出未经处理的请求</td>
-</tr>
-<tr>
-<td>ruok</td>
-<td>测试服务是否处于正确状态。如果确实如此，那么服务返回“ imok”，否则不做任何相应。</td>
-</tr>
-<tr>
-<td>stat</td>
-<td>输出关于性能和连接的客户端的列表。</td>
-</tr>
-<tr>
-<td>wchs</td>
-<td>列出服务器 watch 的详细信息。</td>
-</tr>
-<tr>
-<td>wchc</td>
-<td>通过 session 列出服务器 watch 的详细信息，它的输出是一个与watch 相关的会话的列表。</td>
-</tr>
-<tr>
-<td>wchp</td>
-<td>通过路径列出服务器 watch 的详细信息。它输出一个与 session 相关的路径。</td>
-</tr>
-<tr>
-<td>mntr</td>
-<td>显示zk信息</td>
-</tr>
-</tbody>
-</table>
-<h2 id="获取当前zk服务器的serverId"><a href="#获取当前zk服务器的serverId" class="headerlink" title="获取当前zk服务器的serverId"></a>获取当前zk服务器的serverId</h2><p>echo conf|nc 192.168.193.83 2181</p>
-<h2 id="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"><a href="#获取当前zk服务器的角色，如果为leader，则可以获得follower个数" class="headerlink" title="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"></a>获取当前zk服务器的角色，如果为leader，则可以获得follower个数</h2><p>echo mntr|nc 192.168.193.85 2181</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[正则表达式]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
-      <content type="html"><![CDATA[<h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h2><p>(?:  pattern)是非捕获型括号  匹配pattern，但不捕获匹配结果。<br>(pattern )是捕获型括号。  匹配pattern，匹配pattern并捕获结果,自动获取组号<br>(?<name> pattern )  匹配pattern，  匹配pattern并捕获结果，设置name为组名<br>    使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。<br>    如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。<br>     为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。问题里的非捕获型括号就是为此使用的。</name></p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[hadoop 命令]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/hadoop/hadoop/</url>
-      <content type="html"><![CDATA[<h2 id="显示log"><a href="#显示log" class="headerlink" title="显示log"></a>显示log</h2><p>hadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086</p>
-<h2 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h2><p>hadoop fs -mkdir /user/admin/aaron/newDir</p>
-<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>hadoop fs –put /home/admin/newFile /user/admin/aaron/</p>
-<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile</p>
-<h2 id="显示所有job"><a href="#显示所有job" class="headerlink" title="显示所有job"></a>显示所有job</h2><p>hadoop job -list</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[hadoop_rest]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/hadoop/hadoop_rest/</url>
-      <content type="html"><![CDATA[<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
-<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[haproxy]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/haproxy/</url>
-      <content type="html"><![CDATA[<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>uname -a 查看linux版本<br>vim -R README   ，查找 ?linux ，N查找下一个，找到linux版本对应target<br>make TARGET=linux2628</p>
-<h2 id="ubuntu-apt-get-install-haproxy安装即可"><a href="#ubuntu-apt-get-install-haproxy安装即可" class="headerlink" title="ubuntu apt-get install haproxy安装即可"></a>ubuntu apt-get install haproxy安装即可</h2><h2 id="centos-用yum安装即可"><a href="#centos-用yum安装即可" class="headerlink" title="centos 用yum安装即可"></a>centos 用yum安装即可</h2><p>yum haproxy -y<br>haproxy x86_64 1.5.14-3.el7 base 833 k</p>
-]]></content>
-    </entry>
     
     <entry>
       <title><![CDATA[CENTOS笔记]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/centos/</url>
-      <content type="html"><![CDATA[<h1 id="CENTOS笔记"><a href="#CENTOS笔记" class="headerlink" title="CENTOS笔记"></a>CENTOS笔记</h1><p>[TOC]</p>
-<p>##连接无线网</p>
-<h3 id="ip-addr"><a href="#ip-addr" class="headerlink" title="ip addr"></a>ip addr</h3><p>找到自己的无线网接口 （ps:本人的是wlp5s0）</p>
-<h3 id="ip-link-set-wlp5s0-up"><a href="#ip-link-set-wlp5s0-up" class="headerlink" title="ip link set wlp5s0 up"></a>ip link set wlp5s0 up</h3><p>打开无线网的驱动</p>
-<h3 id="ip-link-show-wlp5s0"><a href="#ip-link-show-wlp5s0" class="headerlink" title="ip link show wlp5s0"></a>ip link show wlp5s0</h3><p>查看该网络接口的状态</p>
-<h3 id="连接无线网"><a href="#连接无线网" class="headerlink" title="连接无线网"></a>连接无线网</h3><p>wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk)</p>
-<h3 id="dhcp分配ip"><a href="#dhcp分配ip" class="headerlink" title="dhcp分配ip"></a>dhcp分配ip</h3><p>dhclient wlp5s0(为wlp5s0分配ip地址)</p>
-<h2 id="软件源"><a href="#软件源" class="headerlink" title="软件源"></a>软件源</h2><h3 id="下载源"><a href="#下载源" class="headerlink" title="下载源"></a>下载源</h3><p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="external">http://mirrors.aliyun.com/repo/Centos-7.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></p>
-<p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.sohu.com/help/CentOS-Base-sohu.repo" target="_blank" rel="external">http://mirrors.sohu.com/help/CentOS-Base-sohu.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://centos.ustc.edu.cn/CentOS-Base.repo" target="_blank" rel="external">http://centos.ustc.edu.cn/CentOS-Base.repo</a></p>
-<h3 id="安装源"><a href="#安装源" class="headerlink" title="安装源"></a>安装源</h3><p>yum clean all<br>yum makecache</p>
-<h2 id="ssh修改端口号"><a href="#ssh修改端口号" class="headerlink" title="ssh修改端口号"></a>ssh修改端口号</h2><h3 id="step1-修改-etc-ssh-sshd-config"><a href="#step1-修改-etc-ssh-sshd-config" class="headerlink" title="step1 修改/etc/ssh/sshd_config"></a>step1 修改/etc/ssh/sshd_config</h3><p>vi /etc/ssh/sshd_config<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#Port 22         //这行去掉#号</div><div class="line">Port 20000      //下面添加这一行</div></pre></td></tr></table></figure></p>
-<h3 id="step2-修改SELinux"><a href="#step2-修改SELinux" class="headerlink" title="step2 修改SELinux"></a>step2 修改SELinux</h3><p>yum -y install policycoreutils-python</p>
-<p>使用以下命令查看当前SElinux 允许的ssh端口：<br>semanage port -l | grep ssh</p>
-<p>添加20000端口到 SELinux<br>semanage port -a -t ssh_port_t -p tcp 20000</p>
-<p>然后确认一下是否添加进去<br>semanage port -l | grep ssh<br>如果成功会输出<br>ssh_port_t                    tcp    20000, 22</p>
-<h3 id="step3-重启ssh"><a href="#step3-重启ssh" class="headerlink" title="step3 重启ssh"></a>step3 重启ssh</h3><p>systemctl restart sshd.service</p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Flinux%2Fcentos%2F</url>
+      <content type="text"><![CDATA[CENTOS笔记[TOC] ##连接无线网 ip addr找到自己的无线网接口 （ps:本人的是wlp5s0） ip link set wlp5s0 up打开无线网的驱动 ip link show wlp5s0查看该网络接口的状态 连接无线网wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk) dhcp分配ipdhclient wlp5s0(为wlp5s0分配ip地址) 软件源下载源wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repowget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.sohu.com/help/CentOS-Base-sohu.repowget -O /etc/yum.repos.d/CentOS-Base.repo http://centos.ustc.edu.cn/CentOS-Base.repo 安装源yum clean allyum makecache ssh修改端口号step1 修改/etc/ssh/sshd_configvi /etc/ssh/sshd_config12#Port 22 //这行去掉#号Port 20000 //下面添加这一行 step2 修改SELinuxyum -y install policycoreutils-python 使用以下命令查看当前SElinux 允许的ssh端口：semanage port -l | grep ssh 添加20000端口到 SELinuxsemanage port -a -t ssh_port_t -p tcp 20000 然后确认一下是否添加进去semanage port -l | grep ssh如果成功会输出ssh_port_t tcp 20000, 22 step3 重启sshsystemctl restart sshd.service]]></content>
     </entry>
+
+    
+    <entry>
+      <title><![CDATA[Hello world]]></title>
+      <url>%2F2016%2F11%2F09%2Fhello-world%2F</url>
+      <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[velocity]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fvelocity%2F</url>
+      <content type="text"><![CDATA[JAVA中的map传到vm中12345678910One option along the lines of what you already have should be to add the attributes to the model as a map. So in javamap = new HashMap(); map.put(&quot;id&quot;, &quot;solikang&quot;)map.put(&quot;pwd&quot;, &quot;1234&quot;)map.put(&quot;email&quot;, &quot;something@example.com&quot;);model.addAttribute(&quot;data&quot;, map);Then in velocity#foreach ($key in $data.keySet()) &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;#end]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[zookeeper]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fzookeeper%2F</url>
+      <content type="text"><![CDATA[zkCli.sh -server IP:port ls(查看当前节点数据),ls2(查看当前节点数据并能看到更新次数等数据) ,create(创建一个节点) ,get(得到一个节点，包含数据和更新次数等数据),set(修改节点)delete(删除一个节点) 四字命令，nc 服务器地址 端口号nc 192.168.193.84 2181 ZooKeeper 四字命令 功能描述 conf 输出相关服务配置的详细信息。 cons 列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息。包括“接受 / 发送”的包数量、会话 id 、操作延迟、最后的操作执行等等信息。 dump 列出未经处理的会话和临时节点。 envi 输出关于服务环境的详细信息（区别于 conf 命令）。 reqs 列出未经处理的请求 ruok 测试服务是否处于正确状态。如果确实如此，那么服务返回“ imok”，否则不做任何相应。 stat 输出关于性能和连接的客户端的列表。 wchs 列出服务器 watch 的详细信息。 wchc 通过 session 列出服务器 watch 的详细信息，它的输出是一个与watch 相关的会话的列表。 wchp 通过路径列出服务器 watch 的详细信息。它输出一个与 session 相关的路径。 mntr 显示zk信息 获取当前zk服务器的serverIdecho conf|nc 192.168.193.83 2181 获取当前zk服务器的角色，如果为leader，则可以获得follower个数echo mntr|nc 192.168.193.85 2181]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[kafka]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fkafka%2F</url>
+      <content type="text"><![CDATA[启动zookeeper1bin/zookeeper-server-start.sh config/zookeeper.properties &amp; 启动KAFKA1bin/kafka-server-start.sh config/server.properties &amp; 模拟consumer1bin/kafka-console-consumer.sh --zookeeper 127.0.0.1:2181 --from-beginning --topic self_healing]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[正则表达式]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2F%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%2F</url>
+      <content type="text"><![CDATA[常见用法(?: pattern)是非捕获型括号 匹配pattern，但不捕获匹配结果。(pattern )是捕获型括号。 匹配pattern，匹配pattern并捕获结果,自动获取组号(? pattern ) 匹配pattern， 匹配pattern并捕获结果，设置name为组名 使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。 如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。 为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。问题里的非捕获型括号就是为此使用的。]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[haproxy]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fhaproxy%2F</url>
+      <content type="text"><![CDATA[编译uname -a 查看linux版本vim -R README ，查找 ?linux ，N查找下一个，找到linux版本对应targetmake TARGET=linux2628 ubuntu apt-get install haproxy安装即可centos 用yum安装即可yum haproxy -yhaproxy x86_64 1.5.14-3.el7 base 833 k]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[git]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fgit%2F</url>
+      <content type="text"><![CDATA[git push origin master报错fatal: could not read Username for ‘https://github.com‘: No such file or directo原因使用https方式的时候 在git remote add origin 的https url 里面没有用户名和密码修改为如下：git remote add origin https://{username}:{password}@github.com/{username}/project.githttps://github.com/kemayo/sublime-text-git/issues/176或者直接修改 .git/config 隐藏文件 为git remote add origin https://{username}:{password}@github.com/{username}/project.git 格式 显示当前分支git branch 显示远程信息git remote -v 强制回退到master分支取回远程主机某个分支的更新，再与本地的指定分支合并git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;git pull origin master:master -f 显示git状态git status git branch * master 将master分支合并到当前分支git merge master 将远程master的修改合并到本地mbl分支。git pull origin master:master -fgit add . git commit -m “test”git pull origin master:master -fgit branch * mastergit checkout mblgit pullgit merge master git push 取消commit 和 pullgit reset –hard git push origin HEAD –force EditEdit2]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[jenkins]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fjenkins%2F</url>
+      <content type="text"><![CDATA[jenkins[TOC] 启动jenkins指定端口java -jar jenkins.war –httpPort=9010 后台启动的方法 nohup command &gt; myout.file 2&gt;&amp;1 &amp;1kill `ps -ef | grep [j]enkins.war | awk &apos;&#123; print $2 &#125;&apos;` jenkins中通过execute shell启动的进程会被杀死的问题[摘要：正在jenkins中设置装备摆设主动更新安排项目时，若是采用用execute shell启动/封闭tomcat，会发明能够举行封闭tomcat，然则没法启动tomcat，固然构建会表现履行乐成，然则检察过程，tomcat是出有启动的]在jenkins中配置自动更新部署项目时，如果采取用execute shell启动/关闭tomcat，会发现可以进行关闭tomcat，但是无法启动tomcat，虽然构建会显示执行成功，但是查看进程，tomcat是没有启动的。这是因为Jenkins默认会在Build结束后Kill掉所有的衍生进程。需要进行以下配置，才能避免此类情况发生: 重设环境变量build_id在execute shell输入框中加入BUILD_ID=DONTKILLME,即可防止jenkins杀死启动的tomcat进程 在启动jenkins 的时候禁止jenkins杀死衍生进程 修改/etc/sysconfig/jenkins配置，在JENKINS_JAVA_OPTIONS中加入-Dhudson.util.ProcessTree.disable=true。需要重启jenkins生效 此方法配置一次后，所有的job都无需设置BUILD_ID，就能够防止jenkins杀死启动的tomcat进程]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[nginx]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fnginx%2F</url>
+      <content type="text"><![CDATA[启动nginx 关闭nginx -s reloadnginx -s stop 修改端口/usr/nginx*/conf/nginx.conf 查看端口占用lsof -i tcp:80lsof -i tcp:8999]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[scrt]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fscrt%2F</url>
+      <content type="text"><![CDATA[scrtlinux破解12345Name: xiaobo_lCompany:www.boll.meSerial Number:03-61-166978License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHCIssue Date:12-22-2013]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[vim]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fvim%2F</url>
+      <content type="text"><![CDATA[vim设置粘贴可以500行 1. :set viminfo=&apos;1000,&lt;500 整体下移：ctrl + e整体上移 : ctrl + y 显示行号：set nu vim配置文件：/etc/vim/vimrc 查找字符串 ?内容 N下一个 n上一个]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[seafile]]></title>
+      <url>%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fseafile%2F</url>
+      <content type="text"><![CDATA[seafile启动停止服务/opt/seafile/seafile-server-6.0.5/seafile.sh stop/opt/seafile/seafile-server-6.0.5/seahub.sh stop /opt/seafile/seafile-server-6.0.5/seafile.sh start/opt/seafile/seafile-server-6.0.5/seahub.sh start 8123]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[java 远程调试]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fjava%2Fjava%2F</url>
+      <content type="text"><![CDATA[远程调试1java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=2345 Main]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[hadoop_rest]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fhadoop%2Fhadoop_rest%2F</url>
+      <content type="text"><![CDATA[curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396 curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python -m json.tool]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[etcd]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fetcd%2F</url>
+      <content type="text"><![CDATA[介绍etcd是一个高可用的键值存储系统，主要用于共享配置和服务发现。etcd是由CoreOS开发并维护的，灵感来自于 ZooKeeper 和 Doozer，它使用Go语言编写，并通过Raft一致性算法处理日志复制以保证强一致性。Raft是一个来自Stanford的新的一致性算法，适用于分布式系统的日志复制，Raft通过选举的方式来实现一致性，在Raft中，任何一个节点都可能成为Leader。Google的容器集群管理系统Kubernetes、开源PaaS平台Cloud Foundry和CoreOS的Fleet都广泛使用了etcd。 etcd 集群的工作原理基于 raft 共识算法 (The Raft Consensus Algorithm)。etcd 在 0.5.0 版本中重新实现了 raft 算法，而非像之前那样依赖于第三方库 go-raft 。raft 共识算法的优点在于可以在高效的解决分布式系统中各个节点日志内容一致性问题的同时，也使得集群具备一定的容错能力。即使集群中出现部分节点故障、网络故障等问题，仍可保证其余大多数节点正确的步进。甚至当更多的节点（一般来说超过集群节点总数的一半）出现故障而导致集群不可用时，依然可以保证节点中的数据不会出现错误的结果。 设置值，允许目录不存在curl -x 172.22.91.78:80 -X PUT http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb -d value=”sss”|python -m json.tool 删除空目录 curl -X DELETE -x 172.22.91.78:80 http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python -m json.tool 删除目录所有内容 curl -X DELETE -x 172.22.91.78:80 http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python -m json.tool 获取成员curl -x 172.22.91.78:80 -H “Content-type: application/json” http://172.22.77.109:2379/v2/members|python -m json.tool 查看是否leadercurl -x 172.22.91.78:80 -H “Content-type: application/json” http://172.22.77.108:2379/v2/stats/self |python -m json.toolcurl -x 172.22.91.78:80 -H “Content-type: application/json” http://172.22.77.107:2379/v2/stats/leader|python -m json.tool 查看是否健康curl -x 172.22.91.78:80 -H “Content-type: application/json” http://172.22.77.107:2379/health|python -m json.tool]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[hadoop 命令]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fhadoop%2Fhadoop%2F</url>
+      <content type="text"><![CDATA[显示loghadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086 创建文件夹hadoop fs -mkdir /user/admin/aaron/newDir 上传文件hadoop fs –put /home/admin/newFile /user/admin/aaron/ 下载文件hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile 显示所有jobhadoop job -list]]></content>
+    </entry>
+
     
     <entry>
       <title><![CDATA[linux命令]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/linux%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
-      <content type="html"><![CDATA[<p>#linux 常用命令</p>
-<pre><code>* history |grep scp
-* tail -f log/UGDAP.log
-* 只显示文件名：
-</code></pre><p>ls -l | grep ^[^d] | awk ‘{print $8}’<br>只显示文件夹名：<br>ls -l |grep ^d | awk ‘{print $8}’ 或者是 ls -d */</p>
-<h2 id="恢复rm删除的文件"><a href="#恢复rm删除的文件" class="headerlink" title="恢复rm删除的文件"></a>恢复rm删除的文件</h2><h3 id="显示所删除的文件所在的分区"><a href="#显示所删除的文件所在的分区" class="headerlink" title="显示所删除的文件所在的分区"></a>显示所删除的文件所在的分区</h3><p>df -T /home</p>
-<h3 id="用debugFS查找被删除文件的inode号"><a href="#用debugFS查找被删除文件的inode号" class="headerlink" title="用debugFS查找被删除文件的inode号"></a>用debugFS查找被删除文件的inode号</h3><p>sudo debugfs<br>debugfs&gt;open /dev/sda5<br>debugfs&gt;ls -d /home/mbl/study<br>尖括号中的是inode</p>
-<h3 id="恢复inode"><a href="#恢复inode" class="headerlink" title="恢复inode"></a>恢复inode</h3><p>extundelete ${dev_describer} –restore-inode ${inode} </p>
-<h3 id="如果知道被删除文件的完整的路径，直接恢复"><a href="#如果知道被删除文件的完整的路径，直接恢复" class="headerlink" title="如果知道被删除文件的完整的路径，直接恢复"></a>如果知道被删除文件的完整的路径，直接恢复</h3><p>extundelete ${deb_describer} –restore-file ${path}  </p>
-<h2 id="shell脚本常用变量"><a href="#shell脚本常用变量" class="headerlink" title="shell脚本常用变量"></a>shell脚本常用变量</h2><p>$0: shell或shell脚本的名字<br>$*:以一对双引号给出参数列表<br>$@:将各个参数分别加双引号返回<br>$#:参数的个数<br>$_:代表上一个命令的最后一个参数<br>$$:代表所在命令的PID<br>$!:代表最后执行的后台命令的PID<br>$?:代表上一个命令执行后的退出状态</p>
-<h2 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h2><p> curl -x 172.22.91.78:80 <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python</a> -m json.tool&gt;job_1470405196301_64273.json</p>
-<h2 id="显示当前版本"><a href="#显示当前版本" class="headerlink" title="显示当前版本"></a>显示当前版本</h2><p>cat /proc/version<br>uname -a<br>cat /etc/<em>release</em></p>
-<h2 id="显示ip"><a href="#显示ip" class="headerlink" title="显示ip"></a>显示ip</h2><p>hostname -i<br>ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”<br>ifconfig enp0s25|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”</p>
-<h2 id="测试端口是否通"><a href="#测试端口是否通" class="headerlink" title="测试端口是否通"></a>测试端口是否通</h2><p>telnet 172.22.91.34 8087</p>
-<h2 id="查看端口是否被占用"><a href="#查看端口是否被占用" class="headerlink" title="查看端口是否被占用"></a>查看端口是否被占用</h2><p>netstat -tunlp |grep 80<br>lsof -i 80</p>
-<p>/bin/bash^M: 解释器错误: 没有那个文件或目录<br>sed -i ‘s/\r$//‘ check_tool.sh</p>
-<h2 id="后台启动进程，重定向输出到文件"><a href="#后台启动进程，重定向输出到文件" class="headerlink" title="后台启动进程，重定向输出到文件"></a>后台启动进程，重定向输出到文件</h2><p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;</p>
-<h2 id="杀进程"><a href="#杀进程" class="headerlink" title="杀进程"></a>杀进程</h2><p>ps -ef | grep tomcat | awk ‘{print $2}’ | xargs kill -9<br>或<br>kill <code>ps -ef | grep [j]enkins.war | awk &#39;{ print $2 }&#39;</code><br>虽然提示没有找到进程pid，但已经杀掉了</p>
-<h2 id="开机自动挂载分区"><a href="#开机自动挂载分区" class="headerlink" title="开机自动挂载分区"></a>开机自动挂载分区</h2><p>用blkid列出分区uuid和type<br>sudo  blkid<br>接下来修改自动挂载的配置文件：<br>sudo vim /etc/fstab<br>增加一行<br>UUID=11263962-9715-473f-9421-0b604e895aaa /data       ext4    defaults 0     1</p>
-<h2 id="zip解压中文乱码"><a href="#zip解压中文乱码" class="headerlink" title="zip解压中文乱码"></a>zip解压中文乱码</h2><p>ubuntu下  unzip -O CP936  xxx.zip -d exdir</p>
-<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>home目录不能有其它用户写权限<br>/root  </p>
-<p>.ssh 只能是 700</p>
-<p>linux权限<br>777 rwxrwxrwx  （所有者，本组用户，其它用户）rwx=读，写，执行</p>
-<h2 id="ssh-copy-id"><a href="#ssh-copy-id" class="headerlink" title="ssh-copy-id"></a>ssh-copy-id</h2><h2 id="设置root密码"><a href="#设置root密码" class="headerlink" title="设置root密码"></a>设置root密码</h2><p>sudo passwd root</p>
-<h2 id="在任务栏显示网速"><a href="#在任务栏显示网速" class="headerlink" title="在任务栏显示网速"></a>在任务栏显示网速</h2><p>sudo add-apt-repository ppa:nilarimogard/webupd8<br>sudo apt-get update<br>sudo apt-get install indicator-netspeed</p>
-<h2 id="设置显示桌面快捷键"><a href="#设置显示桌面快捷键" class="headerlink" title="设置显示桌面快捷键"></a>设置显示桌面快捷键</h2><p>sudo apt-get install compizconfig-settings-manager<br>ccsm</p>
-<h2 id="KWPlayer-酷我音乐盒"><a href="#KWPlayer-酷我音乐盒" class="headerlink" title="KWPlayer 酷我音乐盒"></a>KWPlayer 酷我音乐盒</h2><h2 id="Iptux-—-局域网聊天工具-飞鸽Linux版"><a href="#Iptux-—-局域网聊天工具-飞鸽Linux版" class="headerlink" title="Iptux — 局域网聊天工具(飞鸽Linux版)"></a>Iptux — 局域网聊天工具(飞鸽Linux版)</h2><p>sudo apt-get install iptux</p>
-<h2 id="System-Load-Indicator-系统状态指示器）"><a href="#System-Load-Indicator-系统状态指示器）" class="headerlink" title="System Load Indicator ( 系统状态指示器）"></a>System Load Indicator ( 系统状态指示器）</h2><p>sudo add-apt-repository ppa:indicator-multiload/stable-daily<br>sudo apt-get update<br>sudo apt-get install indicator-multiload</p>
-<h2 id="XBMC（媒体中心）"><a href="#XBMC（媒体中心）" class="headerlink" title="XBMC（媒体中心）"></a>XBMC（媒体中心）</h2><p>XBMC（媒体中心）<br>sudo add-apt-repository ppa:team-xbmc/ppa<br>sudo apt-get update<br>sudo apt-get install xbmc</p>
-<h2 id="VMware-Workstation"><a href="#VMware-Workstation" class="headerlink" title="VMware Workstation"></a>VMware Workstation</h2><p>安装方法（包含下载、安装、激活、序列号）<br><a href="http://www.kashu.org/1024.html" target="_blank" rel="external">http://www.kashu.org/1024.html</a></p>
-<h2 id="wireshark"><a href="#wireshark" class="headerlink" title="wireshark"></a>wireshark</h2><p><a href="http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/" target="_blank" rel="external">http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/</a><br>ppa:wireshark-dev/stable</p>
-<p>.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz<br>.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2</p>
-<h2 id="查看linux版本"><a href="#查看linux版本" class="headerlink" title="查看linux版本"></a>查看linux版本</h2><p>rpm -qa|grep kernel</p>
-<p>中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG</p>
-<p>fdisk -l </p>
-<p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Flinux%2Flinux%20%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%2F</url>
+      <content type="text"><![CDATA[#linux 常用命令 * history |grep scp * tail -f log/UGDAP.log * 只显示文件名： ls -l | grep ^[^d] | awk ‘{print $8}’只显示文件夹名：ls -l |grep ^d | awk ‘{print $8}’ 或者是 ls -d */ 恢复rm删除的文件显示所删除的文件所在的分区df -T /home 用debugFS查找被删除文件的inode号sudo debugfsdebugfs&gt;open /dev/sda5debugfs&gt;ls -d /home/mbl/study尖括号中的是inode 恢复inodeextundelete ${dev_describer} –restore-inode ${inode} 如果知道被删除文件的完整的路径，直接恢复extundelete ${deb_describer} –restore-file ${path} shell脚本常用变量$0: shell或shell脚本的名字$*:以一对双引号给出参数列表$@:将各个参数分别加双引号返回$#:参数的个数$_:代表上一个命令的最后一个参数$$:代表所在命令的PID$!:代表最后执行的后台命令的PID$?:代表上一个命令执行后的退出状态 curl curl -x 172.22.91.78:80 http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python -m json.tool&gt;job_1470405196301_64273.json 显示当前版本cat /proc/versionuname -acat /etc/release 显示iphostname -iifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”ifconfig enp0s25|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:” 测试端口是否通telnet 172.22.91.34 8087 查看端口是否被占用netstat -tunlp |grep 80lsof -i 80 /bin/bash^M: 解释器错误: 没有那个文件或目录sed -i ‘s/\r$//‘ check_tool.sh 后台启动进程，重定向输出到文件nohup command &gt; myout.file 2&gt;&amp;1 &amp; 杀进程ps -ef | grep tomcat | awk ‘{print $2}’ | xargs kill -9或kill ps -ef | grep [j]enkins.war | awk &#39;{ print $2 }&#39;虽然提示没有找到进程pid，但已经杀掉了 开机自动挂载分区用blkid列出分区uuid和typesudo blkid接下来修改自动挂载的配置文件：sudo vim /etc/fstab增加一行UUID=11263962-9715-473f-9421-0b604e895aaa /data ext4 defaults 0 1 zip解压中文乱码ubuntu下 unzip -O CP936 xxx.zip -d exdir 权限home目录不能有其它用户写权限/root .ssh 只能是 700 linux权限777 rwxrwxrwx （所有者，本组用户，其它用户）rwx=读，写，执行 ssh-copy-id设置root密码sudo passwd root 在任务栏显示网速sudo add-apt-repository ppa:nilarimogard/webupd8sudo apt-get updatesudo apt-get install indicator-netspeed 设置显示桌面快捷键sudo apt-get install compizconfig-settings-managerccsm KWPlayer 酷我音乐盒Iptux — 局域网聊天工具(飞鸽Linux版)sudo apt-get install iptux System Load Indicator ( 系统状态指示器）sudo add-apt-repository ppa:indicator-multiload/stable-dailysudo apt-get updatesudo apt-get install indicator-multiload XBMC（媒体中心）XBMC（媒体中心）sudo add-apt-repository ppa:team-xbmc/ppasudo apt-get updatesudo apt-get install xbmc VMware Workstation安装方法（包含下载、安装、激活、序列号）http://www.kashu.org/1024.html wiresharkhttp://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/ppa:wireshark-dev/stable .tar.gz 格式解压为 tar -zxvf xx.tar.gz.tar.bz2 格式解压为 tar -jxvf xx.tar.bz2 查看linux版本rpm -qa|grep kernel 中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG fdisk -l mkdir /mnt/usbmount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]mount /dev/sdb1 /mnt/usbumount /dev/sdb1]]></content>
     </entry>
-    
-    <entry>
-      <title><![CDATA[ubuntu]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/ubuntu/</url>
-      <content type="html"><![CDATA[<h2 id="常用软件"><a href="#常用软件" class="headerlink" title="常用软件"></a>常用软件</h2><table>
-<thead>
-<tr>
-<th>名称</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ssh</td>
-<td>客户端</td>
-</tr>
-<tr>
-<td>openssh-server</td>
-<td>服务端</td>
-</tr>
-<tr>
-<td>mysql-server</td>
-<td></td>
-</tr>
-<tr>
-<td>mysql-client</td>
-<td></td>
-</tr>
-<tr>
-<td>wine</td>
-<td></td>
-</tr>
-<tr>
-<td>gdebi</td>
-<td></td>
-</tr>
-<tr>
-<td>virtualbox</td>
-<td>虚拟机</td>
-</tr>
-<tr>
-<td>chrome</td>
-<td></td>
-</tr>
-<tr>
-<td>sougou</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>wps</td>
-<td></td>
-</tr>
-<tr>
-<td>idea</td>
-<td></td>
-</tr>
-<tr>
-<td>hadoop</td>
-</tr>
-</tbody>
-</table>
-<h2 id="中文字体"><a href="#中文字体" class="headerlink" title="中文字体"></a>中文字体</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install ttf-mscorefonts-installer #微软字体  </div><div class="line">sudo apt-get install xfonts-wqy  #文泉驿-点阵宋体  </div><div class="line">cd ~  </div><div class="line">wget http://www.stchman.com/tools/MS_fonts/tahoma.zip #Tahoma 字体  </div><div class="line">sudo unzip -d /usr/share/fonts/truetype/msttcorefonts ~/tahoma.zip  </div><div class="line">sudo fc-cache -f -v  </div><div class="line">rm -f ~/tahoma.zip  </div><div class="line">sudo fc-cache -f -s -v   #刷新字体缓存</div></pre></td></tr></table></figure>
-<h2 id="解压配置"><a href="#解压配置" class="headerlink" title="解压配置"></a>解压配置</h2><h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="root下无法输入中文"><a href="#root下无法输入中文" class="headerlink" title="root下无法输入中文"></a>root下无法输入中文</h3><p>/etc/profile中 export XMODIFIERS=@im=fcitx GTK_IM_MODULE=xim</p>
-<h3 id="WPS下搜狗输入法不能输入中文"><a href="#WPS下搜狗输入法不能输入中文" class="headerlink" title="WPS下搜狗输入法不能输入中文"></a>WPS下搜狗输入法不能输入中文</h3><p>原因：环境变量未正确设置<br>$ vi /usr/bin/wps<br>在第一行 #!/bin/bash 下添加：<br>export XMODIFIERS=”@im=fcitx”<br>export QT_IM_MODULE=”fcitx”</p>
-<p>ppt、excel部分<br>和word一样的方法添加环境变量，只是编辑的文件各不同：<br>$ vi /usr/bin/wpp<br>$ vi /usr/bin/et</p>
-<h3 id="idea-root无法输入中文"><a href="#idea-root无法输入中文" class="headerlink" title="idea root无法输入中文"></a>idea root无法输入中文</h3><p>在IDEA的bin目录下的idea.sh文件的前面加上：<br>export XMODIFIERS=@im=fcitx export QT_IM_MODULE=fcitx</p>
-<h3 id="无法打开系统设置"><a href="#无法打开系统设置" class="headerlink" title="无法打开系统设置"></a>无法打开系统设置</h3><p>sudo apt-get install unity-control-center</p>
-<h3 id="Ubuntu上方边栏不显示时间，有三中可能原因及相应的解决方法："><a href="#Ubuntu上方边栏不显示时间，有三中可能原因及相应的解决方法：" class="headerlink" title="Ubuntu上方边栏不显示时间，有三中可能原因及相应的解决方法："></a>Ubuntu上方边栏不显示时间，有三中可能原因及相应的解决方法：</h3><pre><code>1. 原因：系统设置为了不显示时间。
-</code></pre><p>解决方法：右上角小齿轮-&gt;系统设置-&gt;时间和日期-&gt;时钟-&gt;勾选“在菜单栏显示时钟”</p>
-<pre><code>2. 原因：显示时间的进程出错了。
 
-3. 解决方法：重新登录，或重启电脑，或使用下述命令：
-</code></pre><p>sudo restart lighddm<br>警告：该命令会使所有用户退出登录。</p>
-<pre><code>4. 原因：indicator-datetime 被误删了。
-</code></pre><p>解决方法：重新安装indicator-datetime。 首先，在确认indicator-datetime确实被误删之后，使用命令sudo apt-get install indicator-datetime 安装。其次，配置日期时间：sudo dpkg-reconfigure –frontend noninteractive tzdata 。最后，重启unity：sudo killall unity-panel-service 。</p>
-]]></content>
-    </entry>
     
     <entry>
       <title><![CDATA[shell脚本]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/shell%E8%84%9A%E6%9C%AC/</url>
-      <content type="html"><![CDATA[<p>cd <code>dirname $0</code></p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Flinux%2Fshell%E8%84%9A%E6%9C%AC%2F</url>
+      <content type="text"><![CDATA[cd dirname $0]]></content>
     </entry>
+
     
     <entry>
-      <title><![CDATA[html]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/html/</url>
-      <content type="html"><![CDATA[<h2 id="事件相应两次的问题"><a href="#事件相应两次的问题" class="headerlink" title="事件相应两次的问题"></a>事件相应两次的问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;meta charset=&quot;utf-8&quot;&gt;</div><div class="line">&lt;title&gt;菜鸟教程(runoob.com)&lt;/title&gt;</div><div class="line">&lt;script src=&quot;http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js&quot;&gt;</div><div class="line">&lt;/script&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">  &lt;label id=&quot;mylabel&quot; &gt;</div><div class="line">  &lt;input type=&quot;checkbox&quot; value=&quot;&quot; level=&quot;$!category.level&quot; data-id=&quot;$!category.id&quot; data-parentId=&quot;$!categoryInfo.id&quot; data-type=&quot;categoryInfoType&quot;&gt;$!category.name</div><div class="line">&lt;/label&gt;</div><div class="line">&lt;div id=&quot;test&quot;&gt;</div><div class="line">　 &lt;input type=&quot;checkbox&quot; name=&quot;abc&quot; id=&quot;abc&quot;/&gt;</div><div class="line">  &lt;label for=&quot;abc&quot;&gt;3423432432432432&lt;/label&gt;</div><div class="line">&lt;/div&gt;</div><div class="line">&lt;script type=&quot;text/javascript&quot;&gt;</div><div class="line">  $(&quot;#test&quot;).click(function(ev) &#123;</div><div class="line">  console.log(ev.target);</div><div class="line">  &#125;);</div><div class="line">  $(&quot;#mylabel&quot;).click(function(event) &#123;</div><div class="line">console.log(event.target);</div><div class="line">&#125;);</div><div class="line">&lt;/script&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
-<h2 id="设置textArea-允许拖动方向"><a href="#设置textArea-允许拖动方向" class="headerlink" title="设置textArea 允许拖动方向"></a>设置textArea 允许拖动方向</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;textarea  style=&quot;resize:vertical;&quot;&gt;&lt;/textarea&gt;</div></pre></td></tr></table></figure>
-<p>resize的值，可以为：</p>
-<ul>
-<li>both</li>
-<li>vertical</li>
-<li>horizontal</li>
-<li>none</li>
-</ul>
-]]></content>
+      <title><![CDATA[ubuntu]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Flinux%2Fubuntu%2F</url>
+      <content type="text"><![CDATA[常用软件 名称 说明 ssh 客户端 openssh-server 服务端 mysql-server mysql-client wine gdebi virtualbox 虚拟机 chrome sougou wps idea hadoop 中文字体12345678sudo apt-get install ttf-mscorefonts-installer #微软字体 sudo apt-get install xfonts-wqy #文泉驿-点阵宋体 cd ~ wget http://www.stchman.com/tools/MS_fonts/tahoma.zip #Tahoma 字体 sudo unzip -d /usr/share/fonts/truetype/msttcorefonts ~/tahoma.zip sudo fc-cache -f -v rm -f ~/tahoma.zip sudo fc-cache -f -s -v #刷新字体缓存 解压配置常见问题root下无法输入中文/etc/profile中 export XMODIFIERS=@im=fcitx GTK_IM_MODULE=xim WPS下搜狗输入法不能输入中文原因：环境变量未正确设置$ vi /usr/bin/wps在第一行 #!/bin/bash 下添加：export XMODIFIERS=”@im=fcitx”export QT_IM_MODULE=”fcitx” ppt、excel部分和word一样的方法添加环境变量，只是编辑的文件各不同：$ vi /usr/bin/wpp$ vi /usr/bin/et idea root无法输入中文在IDEA的bin目录下的idea.sh文件的前面加上：export XMODIFIERS=@im=fcitx export QT_IM_MODULE=fcitx 无法打开系统设置sudo apt-get install unity-control-center Ubuntu上方边栏不显示时间，有三中可能原因及相应的解决方法：1. 原因：系统设置为了不显示时间。 解决方法：右上角小齿轮-&gt;系统设置-&gt;时间和日期-&gt;时钟-&gt;勾选“在菜单栏显示时钟” 2. 原因：显示时间的进程出错了。 3. 解决方法：重新登录，或重启电脑，或使用下述命令： sudo restart lighddm警告：该命令会使所有用户退出登录。 4. 原因：indicator-datetime 被误删了。 解决方法：重新安装indicator-datetime。 首先，在确认indicator-datetime确实被误删之后，使用命令sudo apt-get install indicator-datetime 安装。其次，配置日期时间：sudo dpkg-reconfigure –frontend noninteractive tzdata 。最后，重启unity：sudo killall unity-panel-service 。]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[jquery]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/jquery/</url>
-      <content type="html"><![CDATA[<h1 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h1><p>$(“#id”)<br>$(“.样式”)<br>$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”)   $(“input[data-type=group_checkbox]”)<br>$(this)<br>$(#id).find(“input”) 查找后代input元素</p>
-<p>$(“#addQueueDiv”).show();<br>$(“#addQueueDiv”).hide();</p>
-<p>$(“#addQueueDiv”)[0].style.visibility=”visible”<br>$(“#addQueueDiv”)[0].style.visibility=”hidden”</p>
-<p>tab切换事件<br>$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) {<br>   console.log(e.target) // activated tab<br>});</p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fweb%2Fjquery%2F</url>
+      <content type="text"><![CDATA[jquery$(“#id”)$(“.样式”)$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”) $(“input[data-type=group_checkbox]”)$(this)$(#id).find(“input”) 查找后代input元素 $(“#addQueueDiv”).show();$(“#addQueueDiv”).hide(); $(“#addQueueDiv”)[0].style.visibility=”visible”$(“#addQueueDiv”)[0].style.visibility=”hidden” tab切换事件$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) { console.log(e.target) // activated tab});]]></content>
     </entry>
-    
-    <entry>
-      <title><![CDATA[playframework]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/playframework/</url>
-      <content type="html"><![CDATA[<p>目录结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">web_app                         根目录               </div><div class="line">|   sbt                         SBT Unix 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt.bat                     SBT Windows 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt-launch.jar              SBT 启动的Java可执行类库</div><div class="line">|</div><div class="line">+---app                         Play Web 应用全部代码所在目录</div><div class="line">|   |</div><div class="line">|   +---models                  模型代码所在目录</div><div class="line">|   |       Message.scala       留言板例程模型代码</div><div class="line">|   |</div><div class="line">|   +---controllers             控制器代码所在目录</div><div class="line">|   |       Application.scala   默认控制器代码</div><div class="line">|   |</div><div class="line">|   \---views                   视图（Play Scala HTML模板） 代码所在目录</div><div class="line">|           main.scala.html     主模板文件</div><div class="line">|           index.scala.html    首页模板文件</div><div class="line">|           msgboard.scala.html 留言板例程模板文件</div><div class="line">|</div><div class="line">+---conf                        Play 配置文件所在目录</div><div class="line">|       application.conf        应用配置文件</div><div class="line">|       routes                  应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理</div><div class="line">|</div><div class="line">+---logs                        日志目录</div><div class="line">|       application.log         应用运行日志</div><div class="line">|</div><div class="line">+---project                     SBT工程文件</div><div class="line">|       build.properties        保存所需的SBT版本信息，通常无需更改</div><div class="line">|       Build.scala             主要的工程配置文件</div><div class="line">|       plugins.sbt             告知SBT本工程所需要的插件以及下载位置</div><div class="line">|</div><div class="line">+---public                      存储一切直接发送给浏览器的资源文件</div><div class="line">|   |</div><div class="line">|   +---images                  图像文件，如JPEG、PNG、GIF等</div><div class="line">|   |</div><div class="line">|   +---javascripts             JavaScript脚本文件</div><div class="line">|   |</div><div class="line">|   \---stylesheets             CSS样式表文件</div><div class="line">|</div><div class="line">\---target                      存放编译后的可执行代码和编译时的中间代码</div></pre></td></tr></table></figure></p>
-<p><img src="https://www.playframework.com/documentation/1.1.1/images/diagrams_path" alt=""></p>
-<p>执行play,进入play命令行后，执行:<br>idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程； </p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[springMVC]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/springMVC/</url>
-      <content type="html"><![CDATA[<h2 id="基于注解的Spring-AOP的配置和使用"><a href="#基于注解的Spring-AOP的配置和使用" class="headerlink" title="基于注解的Spring AOP的配置和使用"></a>基于注解的Spring AOP的配置和使用</h2><p>AOP是OOP的延续，是Aspect Oriented Programming的缩写，意思是面向切面编程。可以通过预编译方式和运行期动态代理实现在不修改源代码的情况下给程序动态统一添加功能的一种技术。AOP实际是GoF设计模式的延续，设计模式孜孜不倦追求的是调用者和被调用者之间的解耦，AOP可以说也是这种目标的一种实现。</p>
-<ul>
-<li><strong>切面（Aspect）</strong>：官方的抽象定义为“一个关注点的模块化，这个关注点可能会横切多个对象”，在本例中，“切面”就是类TestAspect所关注的具体行为，例如，AServiceImpl.barA()的调用就是切面TestAspect所关注的行为之一。“切面”在ApplicationContext中<aop:aspect>来配置。</aop:aspect></li>
-<li><strong>连接点（Joinpoint）</strong> ：程序执行过程中的某一行为，例如，UserService.get的调用或者UserService.delete抛出异常等行为。</li>
-<li><strong>通知（Advice）</strong> ：“切面”对于某个“连接点”所产生的动作，例如，TestAspect中对com.spring.service包下所有类的方法进行日志记录的动作就是一个Advice。其中，一个“切面”可以包含多个“Advice”，例如ServiceAspect。</li>
-<li><strong>切入点（Pointcut）</strong> ：匹配连接点的断言，在AOP中通知和一个切入点表达式关联。例如，TestAspect中的所有通知所关注的连接点，都由切入点表达式execution(<em> com.spring.service.</em>.*(..))来决定。</li>
-<li><strong>目标对象（Target Object）</strong> ：被一个或者多个切面所通知的对象。例如，AServcieImpl和BServiceImpl，当然在实际运行时，Spring AOP采用代理实现，实际AOP操作的是TargetObject的代理对象。</li>
-<li><strong>AOP代理（AOP Proxy）</strong> ：在Spring AOP中有两种代理方式，JDK动态代理和CGLIB代理。默认情况下，TargetObject实现了接口时，则采用JDK动态代理，例如，AServiceImpl；反之，采用CGLIB代理，例如，BServiceImpl。强制使用CGLIB代理需要将 <aop:config>的 proxy-target-class属性设为true。</aop:config></li>
-</ul>
-<p>通知（Advice）类型：</p>
-<ul>
-<li><strong>前置通知（Before advice）</strong>：在某连接点（JoinPoint）之前执行的通知，但这个通知不能阻止连接点前的执行。ApplicationContext中在<aop:aspect>里面使用<aop:before>元素进行声明。例如，TestAspect中的doBefore方法。</aop:before></aop:aspect></li>
-<li><strong>后置通知（After advice）</strong>：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。ApplicationContext中在<aop:aspect>里面使用<aop:after>元素进行声明。例如，ServiceAspect中的returnAfter方法，所以Teser中调用UserService.delete抛出异常时，returnAfter方法仍然执行。</aop:after></aop:aspect></li>
-<li><strong>返回后通知（After return advice）</strong>：在某连接点正常完成后执行的通知，不包括抛出异常的情况。ApplicationContext中在<aop:aspect>里面使用<after-returning>元素进行声明。</after-returning></aop:aspect></li>
-<li><strong>环绕通知（Around advice）</strong>：包围一个连接点的通知，类似Web中Servlet规范中的Filter的doFilter方法。可以在方法的调用前后完成自定义的行为，也可以选择不执行。ApplicationContext中在<aop:aspect>里面使用<aop:around>元素进行声明。例如，ServiceAspect中的around方法。</aop:around></aop:aspect></li>
-<li><strong>抛出异常后通知（After throwing advice）</strong>：在方法抛出异常退出时执行的通知。ApplicationContext中在<aop:aspect>里面使用<aop:after-throwing>元素进行声明。例如，ServiceAspect中的returnThrow方法。</aop:after-throwing></aop:aspect></li>
-</ul>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[mongodb]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/</url>
-      <content type="html"><![CDATA[<h2 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h2><p>./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp;     –fork  </p>
-<p>show dbs</p>
-<h2 id="使用数据库mydb"><a href="#使用数据库mydb" class="headerlink" title="使用数据库mydb"></a>使用数据库mydb</h2><p>use mydb</p>
-<h2 id="显示表"><a href="#显示表" class="headerlink" title="显示表"></a>显示表</h2><p>show collections</p>
-<h2 id="查看表foo下的记录"><a href="#查看表foo下的记录" class="headerlink" title="查看表foo下的记录"></a>查看表foo下的记录</h2><p>db.foo.find()   </p>
-]]></content>
-    </entry>
+
     
     <entry>
       <title><![CDATA[tomcat]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/tomcat/</url>
-      <content type="html"><![CDATA[<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><p>Linxu系统: apach/bin/startup.sh开始处中增加如下内容： </p>
-<pre><code>1. declare -x CATALINA_OPTS=&quot;-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788&quot;   
-</code></pre><p>.Windows系统: apach/bin/startup.bat开始处中增加如下内容： </p>
-<pre><code>1. SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788  
-</code></pre>]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fweb%2Ftomcat%2F</url>
+      <content type="text"><![CDATA[远程调试Linxu系统: apach/bin/startup.sh开始处中增加如下内容： 1. declare -x CATALINA_OPTS=&quot;-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788&quot; .Windows系统: apach/bin/startup.bat开始处中增加如下内容： 1. SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788]]></content>
     </entry>
+
     
     <entry>
-      <title><![CDATA[mysql 命令]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E7%94%A8%E6%B3%95/</url>
-      <content type="html"><![CDATA[<h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
-]]></content>
+      <title><![CDATA[playframework]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fweb%2Fplayframework%2F</url>
+      <content type="text"><![CDATA[目录结构123456789101112131415161718192021222324252627282930313233343536373839web_app 根目录 | sbt SBT Unix 批处理脚本用于启动sbt-launch.jar | sbt.bat SBT Windows 批处理脚本用于启动sbt-launch.jar | sbt-launch.jar SBT 启动的Java可执行类库|+---app Play Web 应用全部代码所在目录| || +---models 模型代码所在目录| | Message.scala 留言板例程模型代码| || +---controllers 控制器代码所在目录| | Application.scala 默认控制器代码| || \---views 视图（Play Scala HTML模板） 代码所在目录| main.scala.html 主模板文件| index.scala.html 首页模板文件| msgboard.scala.html 留言板例程模板文件|+---conf Play 配置文件所在目录| application.conf 应用配置文件| routes 应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理|+---logs 日志目录| application.log 应用运行日志|+---project SBT工程文件| build.properties 保存所需的SBT版本信息，通常无需更改| Build.scala 主要的工程配置文件| plugins.sbt 告知SBT本工程所需要的插件以及下载位置|+---public 存储一切直接发送给浏览器的资源文件| || +---images 图像文件，如JPEG、PNG、GIF等| || +---javascripts JavaScript脚本文件| || \---stylesheets CSS样式表文件|\---target 存放编译后的可执行代码和编译时的中间代码 执行play,进入play命令行后，执行:idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程；]]></content>
     </entry>
+
+    
+    <entry>
+      <title><![CDATA[mongodb]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2F%E6%95%B0%E6%8D%AE%E5%BA%93%2Fmongodb%2F</url>
+      <content type="text"><![CDATA[启动mongodb./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp; –fork show dbs 使用数据库mydbuse mydb 显示表show collections 查看表foo下的记录db.foo.find()]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[springMVC]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fweb%2FspringMVC%2F</url>
+      <content type="text"><![CDATA[基于注解的Spring AOP的配置和使用AOP是OOP的延续，是Aspect Oriented Programming的缩写，意思是面向切面编程。可以通过预编译方式和运行期动态代理实现在不修改源代码的情况下给程序动态统一添加功能的一种技术。AOP实际是GoF设计模式的延续，设计模式孜孜不倦追求的是调用者和被调用者之间的解耦，AOP可以说也是这种目标的一种实现。 切面（Aspect）：官方的抽象定义为“一个关注点的模块化，这个关注点可能会横切多个对象”，在本例中，“切面”就是类TestAspect所关注的具体行为，例如，AServiceImpl.barA()的调用就是切面TestAspect所关注的行为之一。“切面”在ApplicationContext中来配置。 连接点（Joinpoint） ：程序执行过程中的某一行为，例如，UserService.get的调用或者UserService.delete抛出异常等行为。 通知（Advice） ：“切面”对于某个“连接点”所产生的动作，例如，TestAspect中对com.spring.service包下所有类的方法进行日志记录的动作就是一个Advice。其中，一个“切面”可以包含多个“Advice”，例如ServiceAspect。 切入点（Pointcut） ：匹配连接点的断言，在AOP中通知和一个切入点表达式关联。例如，TestAspect中的所有通知所关注的连接点，都由切入点表达式execution( com.spring.service..*(..))来决定。 目标对象（Target Object） ：被一个或者多个切面所通知的对象。例如，AServcieImpl和BServiceImpl，当然在实际运行时，Spring AOP采用代理实现，实际AOP操作的是TargetObject的代理对象。 AOP代理（AOP Proxy） ：在Spring AOP中有两种代理方式，JDK动态代理和CGLIB代理。默认情况下，TargetObject实现了接口时，则采用JDK动态代理，例如，AServiceImpl；反之，采用CGLIB代理，例如，BServiceImpl。强制使用CGLIB代理需要将 的 proxy-target-class属性设为true。 通知（Advice）类型： 前置通知（Before advice）：在某连接点（JoinPoint）之前执行的通知，但这个通知不能阻止连接点前的执行。ApplicationContext中在里面使用元素进行声明。例如，TestAspect中的doBefore方法。 后置通知（After advice）：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。ApplicationContext中在里面使用元素进行声明。例如，ServiceAspect中的returnAfter方法，所以Teser中调用UserService.delete抛出异常时，returnAfter方法仍然执行。 返回后通知（After return advice）：在某连接点正常完成后执行的通知，不包括抛出异常的情况。ApplicationContext中在里面使用元素进行声明。 环绕通知（Around advice）：包围一个连接点的通知，类似Web中Servlet规范中的Filter的doFilter方法。可以在方法的调用前后完成自定义的行为，也可以选择不执行。ApplicationContext中在里面使用元素进行声明。例如，ServiceAspect中的around方法。 抛出异常后通知（After throwing advice）：在方法抛出异常退出时执行的通知。ApplicationContext中在里面使用元素进行声明。例如，ServiceAspect中的returnThrow方法。]]></content>
+    </entry>
+
     
     <entry>
       <title><![CDATA[树莓派安装后需要做的几件事]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%A0%91%E8%8E%93%E6%B4%BE/%E5%AE%89%E8%A3%85%E5%90%8E/</url>
-      <content type="html"><![CDATA[<h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><h3 id="查看路由器dhcp列表，获取ip，使用scrt登录"><a href="#查看路由器dhcp列表，获取ip，使用scrt登录" class="headerlink" title="查看路由器dhcp列表，获取ip，使用scrt登录"></a>查看路由器dhcp列表，获取ip，使用scrt登录</h3><h3 id="修改-etc-apt-sources-list"><a href="#修改-etc-apt-sources-list" class="headerlink" title="修改/etc/apt/sources.list"></a>修改/etc/apt/sources.list</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div><div class="line">deb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div></pre></td></tr></table></figure>
-<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><p>安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install xrdp</div><div class="line">sudo apt-get install vnc4server tightvncserver</div></pre></td></tr></table></figure></p>
-<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><p>sudo apt-get install ttf-wqy-zenhei</p>
-<h2 id="安装输入法"><a href="#安装输入法" class="headerlink" title="安装输入法"></a>安装输入法</h2><p>sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin</p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2F%E6%A0%91%E8%8E%93%E6%B4%BE%2F%E5%AE%89%E8%A3%85%E5%90%8E%2F</url>
+      <content type="text"><![CDATA[安装后ssh登录查看路由器dhcp列表，获取ip，使用scrt登录修改/etc/apt/sources.list12deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpideb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi 远程桌面安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢12sudo apt-get install xrdpsudo apt-get install vnc4server tightvncserver 安装字体sudo apt-get install ttf-wqy-zenhei 安装输入法sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[mysql]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/</url>
-      <content type="html"><![CDATA[<p>[TOC]</p>
-<h2 id="mysql启动服务"><a href="#mysql启动服务" class="headerlink" title="mysql启动服务"></a>mysql启动服务</h2><h3 id="启动mysql："><a href="#启动mysql：" class="headerlink" title="启动mysql："></a>启动mysql：</h3><p>方式一：sudo /etc/init.d/mysql start<br>方式二：sudo start mysql<br>方式三：sudo service mysql start</p>
-<h3 id="停止mysql："><a href="#停止mysql：" class="headerlink" title="停止mysql："></a>停止mysql：</h3><p>方式一：sudo /etc/init.d/mysql stop<br>方式二：sudo stop mysql<br>方式san：sudo service mysql stop</p>
-<h3 id="重启mysql："><a href="#重启mysql：" class="headerlink" title="重启mysql："></a>重启mysql：</h3><p>方式一：sudo/etc/init.d/mysql restart<br>方式二：sudo restart mysql<br>方式三：sudo service mysql restart</p>
-<pre><code>* 以root用户登入
-</code></pre><p>mysql -u root -p</p>
-<h3 id="创建普通用户"><a href="#创建普通用户" class="headerlink" title="创建普通用户"></a>创建普通用户</h3><p>create user ‘salt’@’localhost’;<br>set password for ‘salt’@’localhost’ = password(‘salt’); </p>
-<h3 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h3><p>create database UGDAP;</p>
-<h3 id="显示所有数据库"><a href="#显示所有数据库" class="headerlink" title="显示所有数据库"></a>显示所有数据库</h3><p>show databases;</p>
-<h3 id="为用户salt授予数据库UGDAP下所有表打所有权限"><a href="#为用户salt授予数据库UGDAP下所有表打所有权限" class="headerlink" title="为用户salt授予数据库UGDAP下所有表打所有权限"></a>为用户salt授予数据库UGDAP下所有表打所有权限</h3><p>grant all privileges on UGDAP.* to salt@localhost identified by ‘salt’;<br>flush privileges;</p>
-<h3 id="以salt用户登入（远程登入）"><a href="#以salt用户登入（远程登入）" class="headerlink" title="以salt用户登入（远程登入）"></a>以salt用户登入（远程登入）</h3><p>mysql -u salt -psalt<br>mysql -h 192.168.200.213 -P 3306 -usalt -psalt</p>
-<h3 id="使用指定数据库"><a href="#使用指定数据库" class="headerlink" title="使用指定数据库"></a>使用指定数据库</h3><p>use UGDAP;</p>
-<h3 id="查看所有表"><a href="#查看所有表" class="headerlink" title="查看所有表"></a>查看所有表</h3><p>show tables; </p>
-<h3 id="删除库和表"><a href="#删除库和表" class="headerlink" title="删除库和表"></a>删除库和表</h3><p>drop database 库名;<br>drop table 表名； </p>
-<h3 id="将表中记录清空"><a href="#将表中记录清空" class="headerlink" title="将表中记录清空"></a>将表中记录清空</h3><p>delete from 表名; </p>
-<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><p>create table tb_emp1<br>(<br> id  INT(11),<br> name VARCHAR(25),<br> deptid  INT (11),<br> salary FLOAT<br>);</p>
-<h3 id="显示表结构"><a href="#显示表结构" class="headerlink" title="显示表结构"></a>显示表结构</h3><p>describe tb_emp1;</p>
-<h3 id="导入sql-执行sql脚本（shell中以及mysql中）"><a href="#导入sql-执行sql脚本（shell中以及mysql中）" class="headerlink" title="导入sql/执行sql脚本（shell中以及mysql中）"></a>导入sql/执行sql脚本（shell中以及mysql中）</h3><p>mysql db_name &lt; text_file<br>mysql db_name -u username -p &lt; text_file  </p>
-<p>mysql&gt; source file_name<br>mysql&gt; . file_name</p>
-<h3 id="导出数据库"><a href="#导出数据库" class="headerlink" title="导出数据库"></a>导出数据库</h3><p>mysqldump -h 192.168.200.213 -P 3306 -usalt -psalt –default-character-set=utf8 UGDAP&gt;./UGDAP.sql</p>
-<h3 id="卸载mysql"><a href="#卸载mysql" class="headerlink" title="卸载mysql"></a>卸载mysql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">sudo rm /var/lib/mysql/ -R</div><div class="line"></div><div class="line">//删除mysql的数据文件</div><div class="line"></div><div class="line"></div><div class="line">sudo rm /etc/mysql/ -R</div><div class="line"></div><div class="line">//删除mqsql的配置文件</div><div class="line"></div><div class="line">sudo apt-get autoremove mysql* --purge</div><div class="line"></div><div class="line">sudo apt-get remove apparmor</div><div class="line"></div><div class="line">sudo apt-get autoremove</div><div class="line">1 sudo apt-get autoremove --purge mysql-server-5.0</div><div class="line">2 sudo apt-get remove mysql-server</div><div class="line">3 sudo apt-get autoremove mysql-server</div><div class="line">4 sudo apt-get remove mysql-common (非常重要)</div><div class="line"></div><div class="line">dpkg -l |grep ^rc|awk &apos;&#123;print $2&#125;&apos; |sudo xargs dpkg -P</div></pre></td></tr></table></figure>
-<pre><code>* 安装 mysql
-</code></pre><p>1 sudo apt-get install mysql-server<br>2 sudo apt-get install mysql-client<br>3 sudo apt-get install php5-mysql(安装php5-mysql 是将php和mysql连接起来 ) </p>
-<p>一旦安装完成，MySQL 服务器应该自动启动。您可以在终端提示符后运行以下命令来检查 MySQL 服务器是否正在运行：<br>1 sudo netstat -tap | grep mysql</p>
-<p>当您运行该命令时，您可以看到类似下面的行：<br>tcp 0 0 localhost.localdomain:mysql <em>:</em> LISTEN -如果服务器不能正常运行，您可以通过下列命令启动它：</p>
-<p>1 sudo /etc/init.d/mysql restart</p>
-<h2 id="修改root用户密码"><a href="#修改root用户密码" class="headerlink" title="修改root用户密码"></a>修改root用户密码</h2><p>###第一步：修改Mysql配置文件<br>[root@liama01 ~]# vi /etc/my.cnf<br>在mysqld下，加入skip-grant-tables</p>
-<p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码</p>
-<p>service mysqld restart<br>mysql -uroot -p 回车</p>
-<p>mysql&gt; use mysql<br>mysql&gt; update user set password=PASSWORD(‘123456’) WHERE user=”root”;<br>mysql&gt; flush privileges;</p>
-]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2F%E6%95%B0%E6%8D%AE%E5%BA%93%2Fmysql%2F</url>
+      <content type="text"><![CDATA[[TOC] mysql启动服务启动mysql：方式一：sudo /etc/init.d/mysql start方式二：sudo start mysql方式三：sudo service mysql start 停止mysql：方式一：sudo /etc/init.d/mysql stop方式二：sudo stop mysql方式san：sudo service mysql stop 重启mysql：方式一：sudo/etc/init.d/mysql restart方式二：sudo restart mysql方式三：sudo service mysql restart * 以root用户登入 mysql -u root -p 创建普通用户create user ‘salt’@’localhost’;set password for ‘salt’@’localhost’ = password(‘salt’); 创建数据库create database UGDAP; 显示所有数据库show databases; 为用户salt授予数据库UGDAP下所有表打所有权限grant all privileges on UGDAP.* to salt@localhost identified by ‘salt’;flush privileges; 以salt用户登入（远程登入）mysql -u salt -psaltmysql -h 192.168.200.213 -P 3306 -usalt -psalt 使用指定数据库use UGDAP; 查看所有表show tables; 删除库和表drop database 库名;drop table 表名； 将表中记录清空delete from 表名; 创建表create table tb_emp1( id INT(11), name VARCHAR(25), deptid INT (11), salary FLOAT); 显示表结构describe tb_emp1; 导入sql/执行sql脚本（shell中以及mysql中）mysql db_name &lt; text_filemysql db_name -u username -p &lt; text_file mysql&gt; source file_namemysql&gt; . file_name 导出数据库mysqldump -h 192.168.200.213 -P 3306 -usalt -psalt –default-character-set=utf8 UGDAP&gt;./UGDAP.sql 卸载mysql1234567891011121314151617181920sudo rm /var/lib/mysql/ -R//删除mysql的数据文件sudo rm /etc/mysql/ -R//删除mqsql的配置文件sudo apt-get autoremove mysql* --purgesudo apt-get remove apparmorsudo apt-get autoremove1 sudo apt-get autoremove --purge mysql-server-5.02 sudo apt-get remove mysql-server3 sudo apt-get autoremove mysql-server4 sudo apt-get remove mysql-common (非常重要)dpkg -l |grep ^rc|awk &apos;&#123;print $2&#125;&apos; |sudo xargs dpkg -P * 安装 mysql 1 sudo apt-get install mysql-server2 sudo apt-get install mysql-client3 sudo apt-get install php5-mysql(安装php5-mysql 是将php和mysql连接起来 ) 一旦安装完成，MySQL 服务器应该自动启动。您可以在终端提示符后运行以下命令来检查 MySQL 服务器是否正在运行：1 sudo netstat -tap | grep mysql 当您运行该命令时，您可以看到类似下面的行：tcp 0 0 localhost.localdomain:mysql : LISTEN -如果服务器不能正常运行，您可以通过下列命令启动它： 1 sudo /etc/init.d/mysql restart 修改root用户密码###第一步：修改Mysql配置文件[root@liama01 ~]# vi /etc/my.cnf在mysqld下，加入skip-grant-tables ###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码 service mysqld restartmysql -uroot -p 回车 mysql&gt; use mysqlmysql&gt; update user set password=PASSWORD(‘123456’) WHERE user=”root”;mysql&gt; flush privileges;]]></content>
     </entry>
+
+    
+    <entry>
+      <title><![CDATA[mysql 命令]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2F%E6%95%B0%E6%8D%AE%E5%BA%93%2Fmysql%E7%94%A8%E6%B3%95%2F</url>
+      <content type="text"><![CDATA[返回players表中town列所有数据项打集合以’,’分割的集合SELECT group_concat(town) FROM players group by town]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[html]]></title>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fweb%2Fhtml%2F</url>
+      <content type="text"><![CDATA[事件相应两次的问题12345678910111213141516171819202122232425&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;菜鸟教程(runoob.com)&lt;/title&gt;&lt;script src=&quot;http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js&quot;&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt; &lt;label id=&quot;mylabel&quot; &gt; &lt;input type=&quot;checkbox&quot; value=&quot;&quot; level=&quot;$!category.level&quot; data-id=&quot;$!category.id&quot; data-parentId=&quot;$!categoryInfo.id&quot; data-type=&quot;categoryInfoType&quot;&gt;$!category.name&lt;/label&gt;&lt;div id=&quot;test&quot;&gt; &lt;input type=&quot;checkbox&quot; name=&quot;abc&quot; id=&quot;abc&quot;/&gt; &lt;label for=&quot;abc&quot;&gt;3423432432432432&lt;/label&gt;&lt;/div&gt;&lt;script type=&quot;text/javascript&quot;&gt; $(&quot;#test&quot;).click(function(ev) &#123; console.log(ev.target); &#125;); $(&quot;#mylabel&quot;).click(function(event) &#123;console.log(event.target);&#125;);&lt;/script&gt;&lt;/body&gt;&lt;/html&gt; 设置textArea 允许拖动方向1&lt;textarea style=&quot;resize:vertical;&quot;&gt;&lt;/textarea&gt; resize的值，可以为： both vertical horizontal none]]></content>
+    </entry>
+
     
     <entry>
       <title><![CDATA[fair-scheduler]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/hadoop/yarn/fair-scheduler/</url>
-      <content type="html"><![CDATA[<h1 id="fair-scheduler-xml的配置"><a href="#fair-scheduler-xml的配置" class="headerlink" title="fair-scheduler.xml的配置"></a>fair-scheduler.xml的配置</h1><p>在一个公司内部的Hadoop Yarn集群，肯定会被多个业务、多个用户同时使用，共享Yarn的资源，如果不做资源的管理与规划，那么整个Yarn的资源很容易被某一个用户提交的Application占满，其它任务只能等待，这种当然很不合理，我们希望每个业务都有属于自己的特定资源来运行MapReduce任务，Hadoop中提供的公平调度器–Fair Scheduler，就可以满足这种需求。</p>
-<p>Fair Scheduler将整个Yarn的可用资源划分成多个资源池，每个资源池中可以配置最小和最大的可用资源（内存和CPU）、最大可同时运行Application数量、权重、以及可以提交和管理Application的用户等。</p>
-<h2 id="根据用户名分配资源池"><a href="#根据用户名分配资源池" class="headerlink" title="根据用户名分配资源池"></a>根据用户名分配资源池</h2><p><img src="http://7xipth.com1.z0.glb.clouddn.com/1026-1.jpg" alt=""></p>
-<p>如图所示，假设整个Yarn集群的可用资源为100vCPU，100GB内存，现在为3个业务各自规划一个资源池，另外，规划一个default资源池，用于运行其他用户和业务提交的任务。如果没有在任务中指定资源池（通过参数mapreduce.job.queuename），那么可以配置使用用户名作为资源池名称来提交任务，即用户businessA提交的任务被分配到资源池businessA中，用户businessC提交的任务被分配到资源池businessC中。除了配置的固定用户，其他用户提交的任务将会被分配到资源池default中。</p>
-<p>这里的用户名，就是提交Application所使用的Linux/Unix用户名。</p>
-<p>另外，每个资源池可以配置允许提交任务的用户名，比如，在资源池businessA中配置了允许用户businessA和用户lxw1234提交任务，如果使用用户lxw1234提交任务，并且在任务中指定了资源池为businessA，那么也可以正常提交到资源池businessA中。</p>
-<h2 id="根据权重获得额外的空闲资源"><a href="#根据权重获得额外的空闲资源" class="headerlink" title="根据权重获得额外的空闲资源"></a>根据权重获得额外的空闲资源</h2><p>在每个资源池的配置项中，有个weight属性（默认为1），标记了资源池的权重，当资源池中有任务等待，并且集群中有空闲资源时候，每个资源池可以根据权重获得不同比例的集群空闲资源。</p>
-<p>比如，资源池businessA和businessB的权重分别为2和1，这两个资源池中的资源都已经跑满了，并且还有任务在排队，此时集群中有30个Container的空闲资源，那么，businessA将会额外获得20个Container的资源，businessB会额外获得10个Container的资源。</p>
-<h2 id="最小资源保证"><a href="#最小资源保证" class="headerlink" title="最小资源保证"></a>最小资源保证</h2><p>在每个资源池中，允许配置该资源池的最小资源，这是为了防止把空闲资源共享出去还未回收的时候，该资源池有任务需要运行时候的资源保证。</p>
-<p>比如，资源池businessA中配置了最小资源为（5vCPU，5GB），那么即使没有任务运行，Yarn也会为资源池businessA预留出最小资源，一旦有任务需要运行，而集群中已经没有其他空闲资源的时候，这个最小资源也可以保证资源池businessA中的任务可以先运行起来，随后再从集群中获取资源。</p>
-<h2 id="动态更新资源配额"><a href="#动态更新资源配额" class="headerlink" title="动态更新资源配额"></a>动态更新资源配额</h2><p>Fair Scheduler除了需要在yarn-site.xml文件中启用和配置之外，还需要一个XML文件来配置资源池以及配额，而该XML中每个资源池的配额可以动态更新，之后使用命令：yarn rmadmin –refreshQueues 来使得其生效即可，不用重启Yarn集群。</p>
-<p>需要注意的是：动态更新只支持修改资源池配额，如果是新增或减少资源池，则需要重启Yarn集群。</p>
-<pre><code>1. 配置文件yarn-site.xml
-（1） yarn.scheduler.fair.allocation.file ：自定义XML配置文件所在位置，该文件主要用于描述各个队列的属性，比如资源量、权重等，具体配置格式将在后面介绍。
-（2）  yarn.scheduler.fair.user-as-default-queue：当应用程序未指定队列名时，是否指定用户名作为应用程序所在的队列名。如果设置为false或者未设置，所有未知队列的应用程序将被提交到default队列中，默认值为true。
-（3）  yarn.scheduler.fair.preemption：是否启用抢占机制，默认值是false。
-（4）  yarn.scheduler.fair.sizebasedweight：在一个队列内部分配资源时，默认情况下，采用公平轮询的方法将资源分配各各个应用程序，而该参数则提供了另外一种资源分配方式：按照应用程序资源需求数目分配资源，即需求资源数量越多，分配的资源越多。默认情况下，该参数值为false。
-（5）  yarn.scheduler.assignmultiple：是否启动批量分配功能。当一个节点出现大量资源时，可以一次分配完成，也可以多次分配完成。默认情况下，该参数值为false。
-（6）  yarn.scheduler.fair.max.assign：如果开启批量分配功能，可指定一次分配的container数目。默认情况下，该参数值为-1，表示不限制。
-（7）  yarn.scheduler.fair.locality.threshold.node：当应用程序请求某个节点上资源时，它可以接受的可跳过的最大资源调度机会。当按照分配策略，可将一个节点上的资源分配给某个应用程序时，如果该节点不是应用程序期望的节点，可选择跳过该分配机会暂时将资源分配给其他应用程序，直到出现满足该应用程序需的节点资源出现。通常而言，一次心跳代表一次调度机会，而该参数则表示跳过调度机会占节点总数的比例，默认情况下，该值为-1.0，表示不跳过任何调度机会。
-（8）  yarn.scheduler.fair.locality.threshold.rack：当应用程序请求某个机架上资源时，它可以接受的可跳过的最大资源调度机会。
-（9）  yarn.scheduler.increment-allocation-mb：内存规整化单位，默认是1024，这意味着，如果一个Container请求资源是1.5GB，则将被调度器规整化为ceiling(1.5 GB / 1GB) * 1G=2GB。
-（10）  yarn.scheduler.increment-allocation-vcores：虚拟CPU规整化单位，默认是1，含义与内存规整化单位类似。
-2. 自定义配置文件
-Fair Scheduler允许用户将队列信息专门放到一个配置文件（默认是fair-scheduler.xml），对于每个队列，管理员可配置以下几个选项：
-（1）  minResources ：最少资源保证量，设置格式为“X mb, Y vcores”，当一个队列的最少资源保证量未满足时，它将优先于其他同级队列获得资源，对于不同的调度策略（后面会详细介绍），最少资源保证量的含义不同，对于fair策略，则只考虑内存资源，即如果一个队列使用的内存资源超过了它的最少资源量，则认为它已得到了满足；对于drf策略，则考虑主资源使用的资源量，即如果一个队列的主资源量超过它的最少资源量，则认为它已得到了满足。
-（2）  maxResources：最多可以使用的资源量，fair scheduler会保证每个队列使用的资源量不会超过该队列的最多可使用资源量。
-（3）  maxRunningApps：最多同时运行的应用程序数目。通过限制该数目，可防止超量Map Task同时运行时产生的中间输出结果撑爆磁盘。
-（4）  minSharePreemptionTimeout：最小共享量抢占时间。如果一个资源池在该时间内使用的资源量一直低于最小资源量，则开始抢占资源。
-（5）  schedulingMode/schedulingPolicy：队列采用的调度模式，可以是fifo、fair或者drf。
-（6）  aclSubmitApps：可向队列中提交应用程序的Linux用户或用户组列表，默认情况下为“*”，表示任何用户均可以向该队列提交应用程序。需要注意的是，该属性具有继承性，即子队列的列表会继承父队列的列表。配置该属性时，用户之间或用户组之间用“，”分割，用户和用户组之间用空格分割，比如“user1, user2 group1,group2”。
-（7）  aclAdministerApps：该队列的管理员列表。一个队列的管理员可管理该队列中的资源和应用程序，比如可杀死任意应用程序。
-管理员也可为单个用户添加maxRunningJobs属性限制其最多同时运行的应用程序数目。此外，管理员也可通过以下参数设置以上属性的默认值：
-（1）  userMaxJobsDefault：用户的maxRunningJobs属性的默认值。
-（2） defaultMinSharePreemptionTimeout ：队列的minSharePreemptionTimeout属性的默认值。
-（3）  defaultPoolSchedulingMode：队列的schedulingMode属性的默认值。
-（4）  fairSharePreemptionTimeout：公平共享量抢占时间。如果一个资源池在该时间内使用资源量一直低于公平共享量的一半，则开始抢占资源。
-</code></pre>]]></content>
+      <url>%2F2016%2F11%2F09%2F%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%2Fhadoop%2Fyarn%2Ffair-scheduler%2F</url>
+      <content type="text"><![CDATA[fair-scheduler.xml的配置在一个公司内部的Hadoop Yarn集群，肯定会被多个业务、多个用户同时使用，共享Yarn的资源，如果不做资源的管理与规划，那么整个Yarn的资源很容易被某一个用户提交的Application占满，其它任务只能等待，这种当然很不合理，我们希望每个业务都有属于自己的特定资源来运行MapReduce任务，Hadoop中提供的公平调度器–Fair Scheduler，就可以满足这种需求。 Fair Scheduler将整个Yarn的可用资源划分成多个资源池，每个资源池中可以配置最小和最大的可用资源（内存和CPU）、最大可同时运行Application数量、权重、以及可以提交和管理Application的用户等。 根据用户名分配资源池 如图所示，假设整个Yarn集群的可用资源为100vCPU，100GB内存，现在为3个业务各自规划一个资源池，另外，规划一个default资源池，用于运行其他用户和业务提交的任务。如果没有在任务中指定资源池（通过参数mapreduce.job.queuename），那么可以配置使用用户名作为资源池名称来提交任务，即用户businessA提交的任务被分配到资源池businessA中，用户businessC提交的任务被分配到资源池businessC中。除了配置的固定用户，其他用户提交的任务将会被分配到资源池default中。 这里的用户名，就是提交Application所使用的Linux/Unix用户名。 另外，每个资源池可以配置允许提交任务的用户名，比如，在资源池businessA中配置了允许用户businessA和用户lxw1234提交任务，如果使用用户lxw1234提交任务，并且在任务中指定了资源池为businessA，那么也可以正常提交到资源池businessA中。 根据权重获得额外的空闲资源在每个资源池的配置项中，有个weight属性（默认为1），标记了资源池的权重，当资源池中有任务等待，并且集群中有空闲资源时候，每个资源池可以根据权重获得不同比例的集群空闲资源。 比如，资源池businessA和businessB的权重分别为2和1，这两个资源池中的资源都已经跑满了，并且还有任务在排队，此时集群中有30个Container的空闲资源，那么，businessA将会额外获得20个Container的资源，businessB会额外获得10个Container的资源。 最小资源保证在每个资源池中，允许配置该资源池的最小资源，这是为了防止把空闲资源共享出去还未回收的时候，该资源池有任务需要运行时候的资源保证。 比如，资源池businessA中配置了最小资源为（5vCPU，5GB），那么即使没有任务运行，Yarn也会为资源池businessA预留出最小资源，一旦有任务需要运行，而集群中已经没有其他空闲资源的时候，这个最小资源也可以保证资源池businessA中的任务可以先运行起来，随后再从集群中获取资源。 动态更新资源配额Fair Scheduler除了需要在yarn-site.xml文件中启用和配置之外，还需要一个XML文件来配置资源池以及配额，而该XML中每个资源池的配额可以动态更新，之后使用命令：yarn rmadmin –refreshQueues 来使得其生效即可，不用重启Yarn集群。 需要注意的是：动态更新只支持修改资源池配额，如果是新增或减少资源池，则需要重启Yarn集群。 1. 配置文件yarn-site.xml （1） yarn.scheduler.fair.allocation.file ：自定义XML配置文件所在位置，该文件主要用于描述各个队列的属性，比如资源量、权重等，具体配置格式将在后面介绍。 （2） yarn.scheduler.fair.user-as-default-queue：当应用程序未指定队列名时，是否指定用户名作为应用程序所在的队列名。如果设置为false或者未设置，所有未知队列的应用程序将被提交到default队列中，默认值为true。 （3） yarn.scheduler.fair.preemption：是否启用抢占机制，默认值是false。 （4） yarn.scheduler.fair.sizebasedweight：在一个队列内部分配资源时，默认情况下，采用公平轮询的方法将资源分配各各个应用程序，而该参数则提供了另外一种资源分配方式：按照应用程序资源需求数目分配资源，即需求资源数量越多，分配的资源越多。默认情况下，该参数值为false。 （5） yarn.scheduler.assignmultiple：是否启动批量分配功能。当一个节点出现大量资源时，可以一次分配完成，也可以多次分配完成。默认情况下，该参数值为false。 （6） yarn.scheduler.fair.max.assign：如果开启批量分配功能，可指定一次分配的container数目。默认情况下，该参数值为-1，表示不限制。 （7） yarn.scheduler.fair.locality.threshold.node：当应用程序请求某个节点上资源时，它可以接受的可跳过的最大资源调度机会。当按照分配策略，可将一个节点上的资源分配给某个应用程序时，如果该节点不是应用程序期望的节点，可选择跳过该分配机会暂时将资源分配给其他应用程序，直到出现满足该应用程序需的节点资源出现。通常而言，一次心跳代表一次调度机会，而该参数则表示跳过调度机会占节点总数的比例，默认情况下，该值为-1.0，表示不跳过任何调度机会。 （8） yarn.scheduler.fair.locality.threshold.rack：当应用程序请求某个机架上资源时，它可以接受的可跳过的最大资源调度机会。 （9） yarn.scheduler.increment-allocation-mb：内存规整化单位，默认是1024，这意味着，如果一个Container请求资源是1.5GB，则将被调度器规整化为ceiling(1.5 GB / 1GB) * 1G=2GB。 （10） yarn.scheduler.increment-allocation-vcores：虚拟CPU规整化单位，默认是1，含义与内存规整化单位类似。 2. 自定义配置文件 Fair Scheduler允许用户将队列信息专门放到一个配置文件（默认是fair-scheduler.xml），对于每个队列，管理员可配置以下几个选项： （1） minResources ：最少资源保证量，设置格式为“X mb, Y vcores”，当一个队列的最少资源保证量未满足时，它将优先于其他同级队列获得资源，对于不同的调度策略（后面会详细介绍），最少资源保证量的含义不同，对于fair策略，则只考虑内存资源，即如果一个队列使用的内存资源超过了它的最少资源量，则认为它已得到了满足；对于drf策略，则考虑主资源使用的资源量，即如果一个队列的主资源量超过它的最少资源量，则认为它已得到了满足。 （2） maxResources：最多可以使用的资源量，fair scheduler会保证每个队列使用的资源量不会超过该队列的最多可使用资源量。 （3） maxRunningApps：最多同时运行的应用程序数目。通过限制该数目，可防止超量Map Task同时运行时产生的中间输出结果撑爆磁盘。 （4） minSharePreemptionTimeout：最小共享量抢占时间。如果一个资源池在该时间内使用的资源量一直低于最小资源量，则开始抢占资源。 （5） schedulingMode/schedulingPolicy：队列采用的调度模式，可以是fifo、fair或者drf。 （6） aclSubmitApps：可向队列中提交应用程序的Linux用户或用户组列表，默认情况下为“*”，表示任何用户均可以向该队列提交应用程序。需要注意的是，该属性具有继承性，即子队列的列表会继承父队列的列表。配置该属性时，用户之间或用户组之间用“，”分割，用户和用户组之间用空格分割，比如“user1, user2 group1,group2”。 （7） aclAdministerApps：该队列的管理员列表。一个队列的管理员可管理该队列中的资源和应用程序，比如可杀死任意应用程序。 管理员也可为单个用户添加maxRunningJobs属性限制其最多同时运行的应用程序数目。此外，管理员也可通过以下参数设置以上属性的默认值： （1） userMaxJobsDefault：用户的maxRunningJobs属性的默认值。 （2） defaultMinSharePreemptionTimeout ：队列的minSharePreemptionTimeout属性的默认值。 （3） defaultPoolSchedulingMode：队列的schedulingMode属性的默认值。 （4） fairSharePreemptionTimeout：公平共享量抢占时间。如果一个资源池在该时间内使用资源量一直低于公平共享量的一半，则开始抢占资源。]]></content>
     </entry>
+
     
   
-  
-    
-    <entry>
-      <title></title>
-      <url>https://maobaolong.github.io/README.html</url>
-      <content type="html"><![CDATA[<h1 id="mblnote"><a href="#mblnote" class="headerlink" title="mblnote"></a>mblnote</h1><p>markdown记录的笔记</p>
-]]></content>
-    </entry>
-    
   
 </search>
