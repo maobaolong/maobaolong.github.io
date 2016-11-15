@@ -4,11 +4,9 @@
   
     
     <entry>
-      <title><![CDATA[hadoop_rest]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/hadoop/hadoop_rest/</url>
-      <content type="html"><![CDATA[<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
-<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
-]]></content>
+      <title><![CDATA[java 远程调试]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/java/java/</url>
+      <content type="html"><![CDATA[<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=2345 Main</div></pre></td></tr></table></figure>]]></content>
     </entry>
     
     <entry>
@@ -23,6 +21,13 @@
 <p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
 <p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[scrt]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/scrt/</url>
+      <content type="html"><![CDATA[<h1 id="scrt"><a href="#scrt" class="headerlink" title="scrt"></a>scrt</h1><h2 id="linux破解"><a href="#linux破解" class="headerlink" title="linux破解"></a>linux破解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: xiaobo_l</div><div class="line">Company:www.boll.me</div><div class="line">Serial Number:03-61-166978</div><div class="line">License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHC</div><div class="line">Issue Date:12-22-2013</div></pre></td></tr></table></figure>
 ]]></content>
     </entry>
     
@@ -43,36 +48,10 @@
     </entry>
     
     <entry>
-      <title><![CDATA[git]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/git/</url>
-      <content type="html"><![CDATA[<h2 id="git-push-origin-master报错"><a href="#git-push-origin-master报错" class="headerlink" title="git push origin master报错"></a>git push origin master报错</h2><p>fatal: could not read Username for ‘<a href="https://github.com" target="_blank" rel="external">https://github.com</a>‘: No such file or directo<br>原因使用https方式的时候 在git remote add origin 的https url 里面没有用户名和密码<br>修改为如下：<br>git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a><br><a href="https://github.com/kemayo/sublime-text-git/issues/176" target="_blank" rel="external">https://github.com/kemayo/sublime-text-git/issues/176</a><br>或者直接修改 .git/config 隐藏文件 为git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a> 格式</p>
-<h2 id="显示当前分支"><a href="#显示当前分支" class="headerlink" title="显示当前分支"></a>显示当前分支</h2><p>git branch</p>
-<h2 id="显示远程信息"><a href="#显示远程信息" class="headerlink" title="显示远程信息"></a>显示远程信息</h2><p>git remote -v</p>
-<h2 id="强制回退到master分支"><a href="#强制回退到master分支" class="headerlink" title="强制回退到master分支"></a>强制回退到master分支</h2><p>取回远程主机某个分支的更新，再与本地的指定分支合并<br>git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;<br>git pull origin master:master -f</p>
-<h2 id="显示git状态"><a href="#显示git状态" class="headerlink" title="显示git状态"></a>显示git状态</h2><p>git status</p>
-<p>git branch * master</p>
-<h2 id="将master分支合并到当前分支"><a href="#将master分支合并到当前分支" class="headerlink" title="将master分支合并到当前分支"></a>将master分支合并到当前分支</h2><p>git merge master</p>
-<h2 id="将远程master的修改合并到本地mbl分支。"><a href="#将远程master的修改合并到本地mbl分支。" class="headerlink" title="将远程master的修改合并到本地mbl分支。"></a>将远程master的修改合并到本地mbl分支。</h2><p>git pull origin master:master -f<br>git add .<br> git commit -m “test”<br>git pull origin master:master -f<br>git branch * master<br>git checkout mbl<br>git pull<br>git merge master<br> git push</p>
-<h2 id="取消commit-和-pull"><a href="#取消commit-和-pull" class="headerlink" title="取消commit 和 pull"></a>取消commit 和 pull</h2><p>git reset –hard <commit_id><br>git push origin HEAD –force</commit_id></p>
-<p>Edit<br>Edit2</p>
-]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[seafile]]></title>
       <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/seafile/</url>
       <content type="html"><![CDATA[<h1 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h1><h2 id="启动停止服务"><a href="#启动停止服务" class="headerlink" title="启动停止服务"></a>启动停止服务</h2><p>/opt/seafile/seafile-server-6.0.5/seafile.sh stop<br>/opt/seafile/seafile-server-6.0.5/seahub.sh stop</p>
 <p>/opt/seafile/seafile-server-6.0.5/seafile.sh start<br>/opt/seafile/seafile-server-6.0.5/seahub.sh start 8123</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[nginx]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/nginx/</url>
-      <content type="html"><![CDATA[<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>nginx </p>
-<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><p>nginx -s reload<br>nginx -s stop</p>
-<h2 id="修改端口"><a href="#修改端口" class="headerlink" title="修改端口"></a>修改端口</h2><p>/usr/nginx*/conf/nginx.conf</p>
-<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><p>lsof -i tcp:80<br>lsof -i tcp:8999</p>
 ]]></content>
     </entry>
     
@@ -85,6 +64,16 @@
 <p>显示行号：set nu</p>
 <p>vim配置文件：/etc/vim/vimrc</p>
 <p>查找字符串 ?内容    N下一个   n上一个</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[nginx]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/nginx/</url>
+      <content type="html"><![CDATA[<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>nginx </p>
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><p>nginx -s reload<br>nginx -s stop</p>
+<h2 id="修改端口"><a href="#修改端口" class="headerlink" title="修改端口"></a>修改端口</h2><p>/usr/nginx*/conf/nginx.conf</p>
+<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><p>lsof -i tcp:80<br>lsof -i tcp:8999</p>
 ]]></content>
     </entry>
     
@@ -108,6 +97,28 @@
       <content type="html"><![CDATA[<h2 id="启动zookeeper"><a href="#启动zookeeper" class="headerlink" title="启动zookeeper"></a>启动zookeeper</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/zookeeper-server-start.sh config/zookeeper.properties &amp;</div></pre></td></tr></table></figure>
 <h2 id="启动KAFKA"><a href="#启动KAFKA" class="headerlink" title="启动KAFKA"></a>启动KAFKA</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-server-start.sh config/server.properties &amp;</div></pre></td></tr></table></figure>
 <h2 id="模拟consumer"><a href="#模拟consumer" class="headerlink" title="模拟consumer"></a>模拟consumer</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-console-consumer.sh --zookeeper 127.0.0.1:2181 --from-beginning --topic self_healing</div></pre></td></tr></table></figure>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[velocity]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/velocity/</url>
+      <content type="html"><![CDATA[<h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[git]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/git/</url>
+      <content type="html"><![CDATA[<h2 id="git-push-origin-master报错"><a href="#git-push-origin-master报错" class="headerlink" title="git push origin master报错"></a>git push origin master报错</h2><p>fatal: could not read Username for ‘<a href="https://github.com" target="_blank" rel="external">https://github.com</a>‘: No such file or directo<br>原因使用https方式的时候 在git remote add origin 的https url 里面没有用户名和密码<br>修改为如下：<br>git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a><br><a href="https://github.com/kemayo/sublime-text-git/issues/176" target="_blank" rel="external">https://github.com/kemayo/sublime-text-git/issues/176</a><br>或者直接修改 .git/config 隐藏文件 为git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a> 格式</p>
+<h2 id="显示当前分支"><a href="#显示当前分支" class="headerlink" title="显示当前分支"></a>显示当前分支</h2><p>git branch</p>
+<h2 id="显示远程信息"><a href="#显示远程信息" class="headerlink" title="显示远程信息"></a>显示远程信息</h2><p>git remote -v</p>
+<h2 id="强制回退到master分支"><a href="#强制回退到master分支" class="headerlink" title="强制回退到master分支"></a>强制回退到master分支</h2><p>取回远程主机某个分支的更新，再与本地的指定分支合并<br>git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;<br>git pull origin master:master -f</p>
+<h2 id="显示git状态"><a href="#显示git状态" class="headerlink" title="显示git状态"></a>显示git状态</h2><p>git status</p>
+<p>git branch * master</p>
+<h2 id="将master分支合并到当前分支"><a href="#将master分支合并到当前分支" class="headerlink" title="将master分支合并到当前分支"></a>将master分支合并到当前分支</h2><p>git merge master</p>
+<h2 id="将远程master的修改合并到本地mbl分支。"><a href="#将远程master的修改合并到本地mbl分支。" class="headerlink" title="将远程master的修改合并到本地mbl分支。"></a>将远程master的修改合并到本地mbl分支。</h2><p>git pull origin master:master -f<br>git add .<br> git commit -m “test”<br>git pull origin master:master -f<br>git branch * master<br>git checkout mbl<br>git pull<br>git merge master<br> git push</p>
+<h2 id="取消commit-和-pull"><a href="#取消commit-和-pull" class="headerlink" title="取消commit 和 pull"></a>取消commit 和 pull</h2><p>git reset –hard <commit_id><br>git push origin HEAD –force</commit_id></p>
+<p>Edit<br>Edit2</p>
 ]]></content>
     </entry>
     
@@ -177,22 +188,9 @@
     </entry>
     
     <entry>
-      <title><![CDATA[velocity]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/velocity/</url>
-      <content type="html"><![CDATA[<h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>]]></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[正则表达式]]></title>
       <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/</url>
       <content type="html"><![CDATA[<h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h2><p>(?:  pattern)是非捕获型括号  匹配pattern，但不捕获匹配结果。<br>(pattern )是捕获型括号。  匹配pattern，匹配pattern并捕获结果,自动获取组号<br>(?<name> pattern )  匹配pattern，  匹配pattern并捕获结果，设置name为组名<br>    使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。<br>    如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。<br>     为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。问题里的非捕获型括号就是为此使用的。</name></p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[scrt]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/scrt/</url>
-      <content type="html"><![CDATA[<h1 id="scrt"><a href="#scrt" class="headerlink" title="scrt"></a>scrt</h1><h2 id="linux破解"><a href="#linux破解" class="headerlink" title="linux破解"></a>linux破解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: xiaobo_l</div><div class="line">Company:www.boll.me</div><div class="line">Serial Number:03-61-166978</div><div class="line">License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHC</div><div class="line">Issue Date:12-22-2013</div></pre></td></tr></table></figure>
 ]]></content>
     </entry>
     
@@ -208,9 +206,11 @@
     </entry>
     
     <entry>
-      <title><![CDATA[java 远程调试]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/java/java/</url>
-      <content type="html"><![CDATA[<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=2345 Main</div></pre></td></tr></table></figure>]]></content>
+      <title><![CDATA[hadoop_rest]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/hadoop/hadoop_rest/</url>
+      <content type="html"><![CDATA[<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
+<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
+]]></content>
     </entry>
     
     <entry>
@@ -282,13 +282,6 @@
 <p>中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG</p>
 <p>fdisk -l </p>
 <p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[shell脚本]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/shell%E8%84%9A%E6%9C%AC/</url>
-      <content type="html"><![CDATA[<p>cd <code>dirname $0</code></p>
 ]]></content>
     </entry>
     
@@ -371,12 +364,9 @@
     </entry>
     
     <entry>
-      <title><![CDATA[jquery]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/jquery/</url>
-      <content type="html"><![CDATA[<h1 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h1><p>$(“#id”)<br>$(“.样式”)<br>$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”)   $(“input[data-type=group_checkbox]”)<br>$(this)<br>$(#id).find(“input”) 查找后代input元素</p>
-<p>$(“#addQueueDiv”).show();<br>$(“#addQueueDiv”).hide();</p>
-<p>$(“#addQueueDiv”)[0].style.visibility=”visible”<br>$(“#addQueueDiv”)[0].style.visibility=”hidden”</p>
-<p>tab切换事件<br>$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) {<br>   console.log(e.target) // activated tab<br>});</p>
+      <title><![CDATA[shell脚本]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/linux/shell%E8%84%9A%E6%9C%AC/</url>
+      <content type="html"><![CDATA[<p>cd <code>dirname $0</code></p>
 ]]></content>
     </entry>
     
@@ -392,6 +382,16 @@
 <li>horizontal</li>
 <li>none</li>
 </ul>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[jquery]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/jquery/</url>
+      <content type="html"><![CDATA[<h1 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h1><p>$(“#id”)<br>$(“.样式”)<br>$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”)   $(“input[data-type=group_checkbox]”)<br>$(this)<br>$(#id).find(“input”) 查找后代input元素</p>
+<p>$(“#addQueueDiv”).show();<br>$(“#addQueueDiv”).hide();</p>
+<p>$(“#addQueueDiv”)[0].style.visibility=”visible”<br>$(“#addQueueDiv”)[0].style.visibility=”hidden”</p>
+<p>tab切换事件<br>$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) {<br>   console.log(e.target) // activated tab<br>});</p>
 ]]></content>
     </entry>
     
@@ -428,6 +428,17 @@
     </entry>
     
     <entry>
+      <title><![CDATA[mongodb]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/</url>
+      <content type="html"><![CDATA[<h2 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h2><p>./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp;     –fork  </p>
+<p>show dbs</p>
+<h2 id="使用数据库mydb"><a href="#使用数据库mydb" class="headerlink" title="使用数据库mydb"></a>使用数据库mydb</h2><p>use mydb</p>
+<h2 id="显示表"><a href="#显示表" class="headerlink" title="显示表"></a>显示表</h2><p>show collections</p>
+<h2 id="查看表foo下的记录"><a href="#查看表foo下的记录" class="headerlink" title="查看表foo下的记录"></a>查看表foo下的记录</h2><p>db.foo.find()   </p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[tomcat]]></title>
       <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web/tomcat/</url>
       <content type="html"><![CDATA[<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><p>Linxu系统: apach/bin/startup.sh开始处中增加如下内容： </p>
@@ -438,13 +449,19 @@
     </entry>
     
     <entry>
-      <title><![CDATA[mongodb]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/</url>
-      <content type="html"><![CDATA[<h2 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h2><p>./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp;     –fork  </p>
-<p>show dbs</p>
-<h2 id="使用数据库mydb"><a href="#使用数据库mydb" class="headerlink" title="使用数据库mydb"></a>使用数据库mydb</h2><p>use mydb</p>
-<h2 id="显示表"><a href="#显示表" class="headerlink" title="显示表"></a>显示表</h2><p>show collections</p>
-<h2 id="查看表foo下的记录"><a href="#查看表foo下的记录" class="headerlink" title="查看表foo下的记录"></a>查看表foo下的记录</h2><p>db.foo.find()   </p>
+      <title><![CDATA[mysql 命令]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E7%94%A8%E6%B3%95/</url>
+      <content type="html"><![CDATA[<h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[树莓派安装后需要做的几件事]]></title>
+      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%A0%91%E8%8E%93%E6%B4%BE/%E5%AE%89%E8%A3%85%E5%90%8E/</url>
+      <content type="html"><![CDATA[<h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><h3 id="查看路由器dhcp列表，获取ip，使用scrt登录"><a href="#查看路由器dhcp列表，获取ip，使用scrt登录" class="headerlink" title="查看路由器dhcp列表，获取ip，使用scrt登录"></a>查看路由器dhcp列表，获取ip，使用scrt登录</h3><h3 id="修改-etc-apt-sources-list"><a href="#修改-etc-apt-sources-list" class="headerlink" title="修改/etc/apt/sources.list"></a>修改/etc/apt/sources.list</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div><div class="line">deb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div></pre></td></tr></table></figure>
+<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><p>安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install xrdp</div><div class="line">sudo apt-get install vnc4server tightvncserver</div></pre></td></tr></table></figure></p>
+<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><p>sudo apt-get install ttf-wqy-zenhei</p>
+<h2 id="安装输入法"><a href="#安装输入法" class="headerlink" title="安装输入法"></a>安装输入法</h2><p>sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin</p>
 ]]></content>
     </entry>
     
@@ -481,23 +498,6 @@
 <p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码</p>
 <p>service mysqld restart<br>mysql -uroot -p 回车</p>
 <p>mysql&gt; use mysql<br>mysql&gt; update user set password=PASSWORD(‘123456’) WHERE user=”root”;<br>mysql&gt; flush privileges;</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[mysql 命令]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql%E7%94%A8%E6%B3%95/</url>
-      <content type="html"><![CDATA[<h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
-]]></content>
-    </entry>
-    
-    <entry>
-      <title><![CDATA[树莓派安装后需要做的几件事]]></title>
-      <url>https://maobaolong.github.io/2016/11/09/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/%E6%A0%91%E8%8E%93%E6%B4%BE/%E5%AE%89%E8%A3%85%E5%90%8E/</url>
-      <content type="html"><![CDATA[<h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><h3 id="查看路由器dhcp列表，获取ip，使用scrt登录"><a href="#查看路由器dhcp列表，获取ip，使用scrt登录" class="headerlink" title="查看路由器dhcp列表，获取ip，使用scrt登录"></a>查看路由器dhcp列表，获取ip，使用scrt登录</h3><h3 id="修改-etc-apt-sources-list"><a href="#修改-etc-apt-sources-list" class="headerlink" title="修改/etc/apt/sources.list"></a>修改/etc/apt/sources.list</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div><div class="line">deb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div></pre></td></tr></table></figure>
-<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><p>安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install xrdp</div><div class="line">sudo apt-get install vnc4server tightvncserver</div></pre></td></tr></table></figure></p>
-<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><p>sudo apt-get install ttf-wqy-zenhei</p>
-<h2 id="安装输入法"><a href="#安装输入法" class="headerlink" title="安装输入法"></a>安装输入法</h2><p>sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin</p>
 ]]></content>
     </entry>
     
