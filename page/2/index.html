@@ -147,60 +147,6 @@
       <div class="body-wrap">
         
   
-    <article id="post-技术学习/velocity" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/velocity/">velocity</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/2016/11/09/技术学习/velocity/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/velocity/">velocity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/模板引擎/">模板引擎</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
     <article id="post-技术学习/zookeeper" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -314,6 +260,60 @@
 
 
   
+    <article id="post-技术学习/velocity" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/09/技术学习/velocity/">velocity</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/11/09/技术学习/velocity/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/velocity/">velocity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/模板引擎/">模板引擎</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
     <article id="post-技术学习/正则表达式" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -369,7 +369,7 @@
 
 
   
-    <article id="post-技术学习/hadoop/hadoop" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/linux/centos" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -379,7 +379,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/hadoop/hadoop/">hadoop 命令</a>
+      <a class="article-title" href="/2016/11/09/技术学习/linux/centos/">CENTOS笔记</a>
     </h1>
   
 
@@ -387,23 +387,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="显示log"><a href="#显示log" class="headerlink" title="显示log"></a>显示log</h2><p>hadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086</p>
-<h2 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h2><p>hadoop fs -mkdir /user/admin/aaron/newDir</p>
-<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>hadoop fs –put /home/admin/newFile /user/admin/aaron/</p>
-<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile</p>
-<h2 id="显示所有job"><a href="#显示所有job" class="headerlink" title="显示所有job"></a>显示所有job</h2><p>hadoop job -list</p>
+        <h1 id="CENTOS笔记"><a href="#CENTOS笔记" class="headerlink" title="CENTOS笔记"></a>CENTOS笔记</h1><p>[TOC]</p>
+<p>##连接无线网</p>
+<h3 id="ip-addr"><a href="#ip-addr" class="headerlink" title="ip addr"></a>ip addr</h3><p>找到自己的无线网接口 （ps:本人的是wlp5s0）</p>
+<h3 id="ip-link-set-wlp5s0-up"><a href="#ip-link-set-wlp5s0-up" class="headerlink" title="ip link set wlp5s0 up"></a>ip link set wlp5s0 up</h3><p>打开无线网的驱动</p>
+<h3 id="ip-link-show-wlp5s0"><a href="#ip-link-show-wlp5s0" class="headerlink" title="ip link show wlp5s0"></a>ip link show wlp5s0</h3><p>查看该网络接口的状态</p>
+<h3 id="连接无线网"><a href="#连接无线网" class="headerlink" title="连接无线网"></a>连接无线网</h3><p>wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk)</p>
+<h3 id="dhcp分配ip"><a href="#dhcp分配ip" class="headerlink" title="dhcp分配ip"></a>dhcp分配ip</h3><p>dhclient wlp5s0(为wlp5s0分配ip地址)</p>
+<h2 id="软件源"><a href="#软件源" class="headerlink" title="软件源"></a>软件源</h2><h3 id="下载源"><a href="#下载源" class="headerlink" title="下载源"></a>下载源</h3><p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="external">http://mirrors.aliyun.com/repo/Centos-7.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></p>
+<p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.sohu.com/help/CentOS-Base-sohu.repo" target="_blank" rel="external">http://mirrors.sohu.com/help/CentOS-Base-sohu.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://centos.ustc.edu.cn/CentOS-Base.repo" target="_blank" rel="external">http://centos.ustc.edu.cn/CentOS-Base.repo</a></p>
+<h3 id="安装源"><a href="#安装源" class="headerlink" title="安装源"></a>安装源</h3><p>yum clean all<br>yum makecache</p>
+<h2 id="ssh修改端口号"><a href="#ssh修改端口号" class="headerlink" title="ssh修改端口号"></a>ssh修改端口号</h2><h3 id="step1-修改-etc-ssh-sshd-config"><a href="#step1-修改-etc-ssh-sshd-config" class="headerlink" title="step1 修改/etc/ssh/sshd_config"></a>step1 修改/etc/ssh/sshd_config</h3><p>vi /etc/ssh/sshd_config<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#Port 22         //这行去掉#号</div><div class="line">Port 20000      //下面添加这一行</div></pre></td></tr></table></figure></p>
+<h3 id="step2-修改SELinux"><a href="#step2-修改SELinux" class="headerlink" title="step2 修改SELinux"></a>step2 修改SELinux</h3><p>yum -y install policycoreutils-python</p>
+<p>使用以下命令查看当前SElinux 允许的ssh端口：<br>semanage port -l | grep ssh</p>
+<p>添加20000端口到 SELinux<br>semanage port -a -t ssh_port_t -p tcp 20000</p>
+<p>然后确认一下是否添加进去<br>semanage port -l | grep ssh<br>如果成功会输出<br>ssh_port_t                    tcp    20000, 22</p>
+<h3 id="step3-重启ssh"><a href="#step3-重启ssh" class="headerlink" title="step3 重启ssh"></a>step3 重启ssh</h3><p>systemctl restart sshd.service</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/hadoop/hadoop/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/linux/centos/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -546,7 +557,7 @@
 
 
   
-    <article id="post-技术学习/linux/linux 常用命令" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/hadoop/hadoop" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -556,7 +567,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/linux/linux 常用命令/">linux命令</a>
+      <a class="article-title" href="/2016/11/09/技术学习/hadoop/hadoop/">hadoop 命令</a>
     </h1>
   
 
@@ -564,54 +575,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>#linux 常用命令</p>
-<pre><code>* history |grep scp
-* tail -f log/UGDAP.log
-* 只显示文件名：
-</code></pre><p>ls -l | grep ^[^d] | awk ‘{print $8}’<br>只显示文件夹名：<br>ls -l |grep ^d | awk ‘{print $8}’ 或者是 ls -d */</p>
-<h2 id="恢复rm删除的文件"><a href="#恢复rm删除的文件" class="headerlink" title="恢复rm删除的文件"></a>恢复rm删除的文件</h2><h3 id="显示所删除的文件所在的分区"><a href="#显示所删除的文件所在的分区" class="headerlink" title="显示所删除的文件所在的分区"></a>显示所删除的文件所在的分区</h3><p>df -T /home</p>
-<h3 id="用debugFS查找被删除文件的inode号"><a href="#用debugFS查找被删除文件的inode号" class="headerlink" title="用debugFS查找被删除文件的inode号"></a>用debugFS查找被删除文件的inode号</h3><p>sudo debugfs<br>debugfs&gt;open /dev/sda5<br>debugfs&gt;ls -d /home/mbl/study<br>尖括号中的是inode</p>
-<h3 id="恢复inode"><a href="#恢复inode" class="headerlink" title="恢复inode"></a>恢复inode</h3><p>extundelete ${dev_describer} –restore-inode ${inode} </p>
-<h3 id="如果知道被删除文件的完整的路径，直接恢复"><a href="#如果知道被删除文件的完整的路径，直接恢复" class="headerlink" title="如果知道被删除文件的完整的路径，直接恢复"></a>如果知道被删除文件的完整的路径，直接恢复</h3><p>extundelete ${deb_describer} –restore-file ${path}  </p>
-<h2 id="shell脚本常用变量"><a href="#shell脚本常用变量" class="headerlink" title="shell脚本常用变量"></a>shell脚本常用变量</h2><p>$0: shell或shell脚本的名字<br>$*:以一对双引号给出参数列表<br>$@:将各个参数分别加双引号返回<br>$#:参数的个数<br>$_:代表上一个命令的最后一个参数<br>$$:代表所在命令的PID<br>$!:代表最后执行的后台命令的PID<br>$?:代表上一个命令执行后的退出状态</p>
-<h2 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h2><p> curl -x 172.22.91.78:80 <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python</a> -m json.tool&gt;job_1470405196301_64273.json</p>
-<h2 id="显示当前版本"><a href="#显示当前版本" class="headerlink" title="显示当前版本"></a>显示当前版本</h2><p>cat /proc/version<br>uname -a<br>cat /etc/<em>release</em></p>
-<h2 id="显示ip"><a href="#显示ip" class="headerlink" title="显示ip"></a>显示ip</h2><p>hostname -i<br>ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”<br>ifconfig enp0s25|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”</p>
-<h2 id="测试端口是否通"><a href="#测试端口是否通" class="headerlink" title="测试端口是否通"></a>测试端口是否通</h2><p>telnet 172.22.91.34 8087</p>
-<h2 id="查看端口是否被占用"><a href="#查看端口是否被占用" class="headerlink" title="查看端口是否被占用"></a>查看端口是否被占用</h2><p>netstat -tunlp |grep 80<br>lsof -i 80</p>
-<p>/bin/bash^M: 解释器错误: 没有那个文件或目录<br>sed -i ‘s/\r$//‘ check_tool.sh</p>
-<h2 id="后台启动进程，重定向输出到文件"><a href="#后台启动进程，重定向输出到文件" class="headerlink" title="后台启动进程，重定向输出到文件"></a>后台启动进程，重定向输出到文件</h2><p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;</p>
-<h2 id="杀进程"><a href="#杀进程" class="headerlink" title="杀进程"></a>杀进程</h2><p>ps -ef | grep tomcat | awk ‘{print $2}’ | xargs kill -9<br>或<br>kill <code>ps -ef | grep [j]enkins.war | awk &#39;{ print $2 }&#39;</code><br>虽然提示没有找到进程pid，但已经杀掉了</p>
-<h2 id="开机自动挂载分区"><a href="#开机自动挂载分区" class="headerlink" title="开机自动挂载分区"></a>开机自动挂载分区</h2><p>用blkid列出分区uuid和type<br>sudo  blkid<br>接下来修改自动挂载的配置文件：<br>sudo vim /etc/fstab<br>增加一行<br>UUID=11263962-9715-473f-9421-0b604e895aaa /data       ext4    defaults 0     1</p>
-<h2 id="zip解压中文乱码"><a href="#zip解压中文乱码" class="headerlink" title="zip解压中文乱码"></a>zip解压中文乱码</h2><p>ubuntu下  unzip -O CP936  xxx.zip -d exdir</p>
-<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>home目录不能有其它用户写权限<br>/root  </p>
-<p>.ssh 只能是 700</p>
-<p>linux权限<br>777 rwxrwxrwx  （所有者，本组用户，其它用户）rwx=读，写，执行</p>
-<h2 id="ssh-copy-id"><a href="#ssh-copy-id" class="headerlink" title="ssh-copy-id"></a>ssh-copy-id</h2><h2 id="设置root密码"><a href="#设置root密码" class="headerlink" title="设置root密码"></a>设置root密码</h2><p>sudo passwd root</p>
-<h2 id="在任务栏显示网速"><a href="#在任务栏显示网速" class="headerlink" title="在任务栏显示网速"></a>在任务栏显示网速</h2><p>sudo add-apt-repository ppa:nilarimogard/webupd8<br>sudo apt-get update<br>sudo apt-get install indicator-netspeed</p>
-<h2 id="设置显示桌面快捷键"><a href="#设置显示桌面快捷键" class="headerlink" title="设置显示桌面快捷键"></a>设置显示桌面快捷键</h2><p>sudo apt-get install compizconfig-settings-manager<br>ccsm</p>
-<h2 id="KWPlayer-酷我音乐盒"><a href="#KWPlayer-酷我音乐盒" class="headerlink" title="KWPlayer 酷我音乐盒"></a>KWPlayer 酷我音乐盒</h2><h2 id="Iptux-—-局域网聊天工具-飞鸽Linux版"><a href="#Iptux-—-局域网聊天工具-飞鸽Linux版" class="headerlink" title="Iptux — 局域网聊天工具(飞鸽Linux版)"></a>Iptux — 局域网聊天工具(飞鸽Linux版)</h2><p>sudo apt-get install iptux</p>
-<h2 id="System-Load-Indicator-系统状态指示器）"><a href="#System-Load-Indicator-系统状态指示器）" class="headerlink" title="System Load Indicator ( 系统状态指示器）"></a>System Load Indicator ( 系统状态指示器）</h2><p>sudo add-apt-repository ppa:indicator-multiload/stable-daily<br>sudo apt-get update<br>sudo apt-get install indicator-multiload</p>
-<h2 id="XBMC（媒体中心）"><a href="#XBMC（媒体中心）" class="headerlink" title="XBMC（媒体中心）"></a>XBMC（媒体中心）</h2><p>XBMC（媒体中心）<br>sudo add-apt-repository ppa:team-xbmc/ppa<br>sudo apt-get update<br>sudo apt-get install xbmc</p>
-<h2 id="VMware-Workstation"><a href="#VMware-Workstation" class="headerlink" title="VMware Workstation"></a>VMware Workstation</h2><p>安装方法（包含下载、安装、激活、序列号）<br><a href="http://www.kashu.org/1024.html" target="_blank" rel="external">http://www.kashu.org/1024.html</a></p>
-<h2 id="wireshark"><a href="#wireshark" class="headerlink" title="wireshark"></a>wireshark</h2><p><a href="http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/" target="_blank" rel="external">http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/</a><br>ppa:wireshark-dev/stable</p>
-<p>.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz<br>.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2</p>
-<h2 id="查看linux版本"><a href="#查看linux版本" class="headerlink" title="查看linux版本"></a>查看linux版本</h2><p>rpm -qa|grep kernel</p>
-<p>中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG</p>
-<p>fdisk -l </p>
-<p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
+        <h2 id="显示log"><a href="#显示log" class="headerlink" title="显示log"></a>显示log</h2><p>hadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086</p>
+<h2 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h2><p>hadoop fs -mkdir /user/admin/aaron/newDir</p>
+<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>hadoop fs –put /home/admin/newFile /user/admin/aaron/</p>
+<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile</p>
+<h2 id="显示所有job"><a href="#显示所有job" class="headerlink" title="显示所有job"></a>显示所有job</h2><p>hadoop job -list</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/linux/linux 常用命令/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/hadoop/hadoop/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -817,7 +797,7 @@
 
 
   
-    <article id="post-技术学习/web/jquery" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/linux/linux 常用命令" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -827,7 +807,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/web/jquery/">jquery</a>
+      <a class="article-title" href="/2016/11/09/技术学习/linux/linux 常用命令/">linux命令</a>
     </h1>
   
 
@@ -835,22 +815,54 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h1><p>$(“#id”)<br>$(“.样式”)<br>$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”)   $(“input[data-type=group_checkbox]”)<br>$(this)<br>$(#id).find(“input”) 查找后代input元素</p>
-<p>$(“#addQueueDiv”).show();<br>$(“#addQueueDiv”).hide();</p>
-<p>$(“#addQueueDiv”)[0].style.visibility=”visible”<br>$(“#addQueueDiv”)[0].style.visibility=”hidden”</p>
-<p>tab切换事件<br>$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) {<br>   console.log(e.target) // activated tab<br>});</p>
+        <p>#linux 常用命令</p>
+<pre><code>* history |grep scp
+* tail -f log/UGDAP.log
+* 只显示文件名：
+</code></pre><p>ls -l | grep ^[^d] | awk ‘{print $8}’<br>只显示文件夹名：<br>ls -l |grep ^d | awk ‘{print $8}’ 或者是 ls -d */</p>
+<h2 id="恢复rm删除的文件"><a href="#恢复rm删除的文件" class="headerlink" title="恢复rm删除的文件"></a>恢复rm删除的文件</h2><h3 id="显示所删除的文件所在的分区"><a href="#显示所删除的文件所在的分区" class="headerlink" title="显示所删除的文件所在的分区"></a>显示所删除的文件所在的分区</h3><p>df -T /home</p>
+<h3 id="用debugFS查找被删除文件的inode号"><a href="#用debugFS查找被删除文件的inode号" class="headerlink" title="用debugFS查找被删除文件的inode号"></a>用debugFS查找被删除文件的inode号</h3><p>sudo debugfs<br>debugfs&gt;open /dev/sda5<br>debugfs&gt;ls -d /home/mbl/study<br>尖括号中的是inode</p>
+<h3 id="恢复inode"><a href="#恢复inode" class="headerlink" title="恢复inode"></a>恢复inode</h3><p>extundelete ${dev_describer} –restore-inode ${inode} </p>
+<h3 id="如果知道被删除文件的完整的路径，直接恢复"><a href="#如果知道被删除文件的完整的路径，直接恢复" class="headerlink" title="如果知道被删除文件的完整的路径，直接恢复"></a>如果知道被删除文件的完整的路径，直接恢复</h3><p>extundelete ${deb_describer} –restore-file ${path}  </p>
+<h2 id="shell脚本常用变量"><a href="#shell脚本常用变量" class="headerlink" title="shell脚本常用变量"></a>shell脚本常用变量</h2><p>$0: shell或shell脚本的名字<br>$*:以一对双引号给出参数列表<br>$@:将各个参数分别加双引号返回<br>$#:参数的个数<br>$_:代表上一个命令的最后一个参数<br>$$:代表所在命令的PID<br>$!:代表最后执行的后台命令的PID<br>$?:代表上一个命令执行后的退出状态</p>
+<h2 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h2><p> curl -x 172.22.91.78:80 <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python</a> -m json.tool&gt;job_1470405196301_64273.json</p>
+<h2 id="显示当前版本"><a href="#显示当前版本" class="headerlink" title="显示当前版本"></a>显示当前版本</h2><p>cat /proc/version<br>uname -a<br>cat /etc/<em>release</em></p>
+<h2 id="显示ip"><a href="#显示ip" class="headerlink" title="显示ip"></a>显示ip</h2><p>hostname -i<br>ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”<br>ifconfig enp0s25|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”</p>
+<h2 id="测试端口是否通"><a href="#测试端口是否通" class="headerlink" title="测试端口是否通"></a>测试端口是否通</h2><p>telnet 172.22.91.34 8087</p>
+<h2 id="查看端口是否被占用"><a href="#查看端口是否被占用" class="headerlink" title="查看端口是否被占用"></a>查看端口是否被占用</h2><p>netstat -tunlp |grep 80<br>lsof -i 80</p>
+<p>/bin/bash^M: 解释器错误: 没有那个文件或目录<br>sed -i ‘s/\r$//‘ check_tool.sh</p>
+<h2 id="后台启动进程，重定向输出到文件"><a href="#后台启动进程，重定向输出到文件" class="headerlink" title="后台启动进程，重定向输出到文件"></a>后台启动进程，重定向输出到文件</h2><p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;</p>
+<h2 id="杀进程"><a href="#杀进程" class="headerlink" title="杀进程"></a>杀进程</h2><p>ps -ef | grep tomcat | awk ‘{print $2}’ | xargs kill -9<br>或<br>kill <code>ps -ef | grep [j]enkins.war | awk &#39;{ print $2 }&#39;</code><br>虽然提示没有找到进程pid，但已经杀掉了</p>
+<h2 id="开机自动挂载分区"><a href="#开机自动挂载分区" class="headerlink" title="开机自动挂载分区"></a>开机自动挂载分区</h2><p>用blkid列出分区uuid和type<br>sudo  blkid<br>接下来修改自动挂载的配置文件：<br>sudo vim /etc/fstab<br>增加一行<br>UUID=11263962-9715-473f-9421-0b604e895aaa /data       ext4    defaults 0     1</p>
+<h2 id="zip解压中文乱码"><a href="#zip解压中文乱码" class="headerlink" title="zip解压中文乱码"></a>zip解压中文乱码</h2><p>ubuntu下  unzip -O CP936  xxx.zip -d exdir</p>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>home目录不能有其它用户写权限<br>/root  </p>
+<p>.ssh 只能是 700</p>
+<p>linux权限<br>777 rwxrwxrwx  （所有者，本组用户，其它用户）rwx=读，写，执行</p>
+<h2 id="ssh-copy-id"><a href="#ssh-copy-id" class="headerlink" title="ssh-copy-id"></a>ssh-copy-id</h2><h2 id="设置root密码"><a href="#设置root密码" class="headerlink" title="设置root密码"></a>设置root密码</h2><p>sudo passwd root</p>
+<h2 id="在任务栏显示网速"><a href="#在任务栏显示网速" class="headerlink" title="在任务栏显示网速"></a>在任务栏显示网速</h2><p>sudo add-apt-repository ppa:nilarimogard/webupd8<br>sudo apt-get update<br>sudo apt-get install indicator-netspeed</p>
+<h2 id="设置显示桌面快捷键"><a href="#设置显示桌面快捷键" class="headerlink" title="设置显示桌面快捷键"></a>设置显示桌面快捷键</h2><p>sudo apt-get install compizconfig-settings-manager<br>ccsm</p>
+<h2 id="KWPlayer-酷我音乐盒"><a href="#KWPlayer-酷我音乐盒" class="headerlink" title="KWPlayer 酷我音乐盒"></a>KWPlayer 酷我音乐盒</h2><h2 id="Iptux-—-局域网聊天工具-飞鸽Linux版"><a href="#Iptux-—-局域网聊天工具-飞鸽Linux版" class="headerlink" title="Iptux — 局域网聊天工具(飞鸽Linux版)"></a>Iptux — 局域网聊天工具(飞鸽Linux版)</h2><p>sudo apt-get install iptux</p>
+<h2 id="System-Load-Indicator-系统状态指示器）"><a href="#System-Load-Indicator-系统状态指示器）" class="headerlink" title="System Load Indicator ( 系统状态指示器）"></a>System Load Indicator ( 系统状态指示器）</h2><p>sudo add-apt-repository ppa:indicator-multiload/stable-daily<br>sudo apt-get update<br>sudo apt-get install indicator-multiload</p>
+<h2 id="XBMC（媒体中心）"><a href="#XBMC（媒体中心）" class="headerlink" title="XBMC（媒体中心）"></a>XBMC（媒体中心）</h2><p>XBMC（媒体中心）<br>sudo add-apt-repository ppa:team-xbmc/ppa<br>sudo apt-get update<br>sudo apt-get install xbmc</p>
+<h2 id="VMware-Workstation"><a href="#VMware-Workstation" class="headerlink" title="VMware Workstation"></a>VMware Workstation</h2><p>安装方法（包含下载、安装、激活、序列号）<br><a href="http://www.kashu.org/1024.html" target="_blank" rel="external">http://www.kashu.org/1024.html</a></p>
+<h2 id="wireshark"><a href="#wireshark" class="headerlink" title="wireshark"></a>wireshark</h2><p><a href="http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/" target="_blank" rel="external">http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/</a><br>ppa:wireshark-dev/stable</p>
+<p>.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz<br>.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2</p>
+<h2 id="查看linux版本"><a href="#查看linux版本" class="headerlink" title="查看linux版本"></a>查看linux版本</h2><p>rpm -qa|grep kernel</p>
+<p>中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG</p>
+<p>fdisk -l </p>
+<p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/web/jquery/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/linux/linux 常用命令/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jquery/">jquery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -950,18 +962,6 @@
   		
   			<div class="friends-wrap" id="js-friends">
   			
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接1</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接2</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接3</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接4</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接5</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接6</a>
-  	        
   	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:8000">seafile</a>
   	        
   	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>

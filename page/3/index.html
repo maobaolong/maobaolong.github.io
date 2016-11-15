@@ -147,7 +147,7 @@
       <div class="body-wrap">
         
   
-    <article id="post-技术学习/web/springMVC" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/数据库/mysql用法" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -157,7 +157,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/web/springMVC/">springMVC</a>
+      <a class="article-title" href="/2016/11/09/技术学习/数据库/mysql用法/">mysql 命令</a>
     </h1>
   
 
@@ -165,35 +165,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="基于注解的Spring-AOP的配置和使用"><a href="#基于注解的Spring-AOP的配置和使用" class="headerlink" title="基于注解的Spring AOP的配置和使用"></a>基于注解的Spring AOP的配置和使用</h2><p>AOP是OOP的延续，是Aspect Oriented Programming的缩写，意思是面向切面编程。可以通过预编译方式和运行期动态代理实现在不修改源代码的情况下给程序动态统一添加功能的一种技术。AOP实际是GoF设计模式的延续，设计模式孜孜不倦追求的是调用者和被调用者之间的解耦，AOP可以说也是这种目标的一种实现。</p>
-<ul>
-<li><strong>切面（Aspect）</strong>：官方的抽象定义为“一个关注点的模块化，这个关注点可能会横切多个对象”，在本例中，“切面”就是类TestAspect所关注的具体行为，例如，AServiceImpl.barA()的调用就是切面TestAspect所关注的行为之一。“切面”在ApplicationContext中<aop:aspect>来配置。</aop:aspect></li>
-<li><strong>连接点（Joinpoint）</strong> ：程序执行过程中的某一行为，例如，UserService.get的调用或者UserService.delete抛出异常等行为。</li>
-<li><strong>通知（Advice）</strong> ：“切面”对于某个“连接点”所产生的动作，例如，TestAspect中对com.spring.service包下所有类的方法进行日志记录的动作就是一个Advice。其中，一个“切面”可以包含多个“Advice”，例如ServiceAspect。</li>
-<li><strong>切入点（Pointcut）</strong> ：匹配连接点的断言，在AOP中通知和一个切入点表达式关联。例如，TestAspect中的所有通知所关注的连接点，都由切入点表达式execution(<em> com.spring.service.</em>.*(..))来决定。</li>
-<li><strong>目标对象（Target Object）</strong> ：被一个或者多个切面所通知的对象。例如，AServcieImpl和BServiceImpl，当然在实际运行时，Spring AOP采用代理实现，实际AOP操作的是TargetObject的代理对象。</li>
-<li><strong>AOP代理（AOP Proxy）</strong> ：在Spring AOP中有两种代理方式，JDK动态代理和CGLIB代理。默认情况下，TargetObject实现了接口时，则采用JDK动态代理，例如，AServiceImpl；反之，采用CGLIB代理，例如，BServiceImpl。强制使用CGLIB代理需要将 <aop:config>的 proxy-target-class属性设为true。</aop:config></li>
-</ul>
-<p>通知（Advice）类型：</p>
-<ul>
-<li><strong>前置通知（Before advice）</strong>：在某连接点（JoinPoint）之前执行的通知，但这个通知不能阻止连接点前的执行。ApplicationContext中在<aop:aspect>里面使用<aop:before>元素进行声明。例如，TestAspect中的doBefore方法。</aop:before></aop:aspect></li>
-<li><strong>后置通知（After advice）</strong>：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。ApplicationContext中在<aop:aspect>里面使用<aop:after>元素进行声明。例如，ServiceAspect中的returnAfter方法，所以Teser中调用UserService.delete抛出异常时，returnAfter方法仍然执行。</aop:after></aop:aspect></li>
-<li><strong>返回后通知（After return advice）</strong>：在某连接点正常完成后执行的通知，不包括抛出异常的情况。ApplicationContext中在<aop:aspect>里面使用<after-returning>元素进行声明。</after-returning></aop:aspect></li>
-<li><strong>环绕通知（Around advice）</strong>：包围一个连接点的通知，类似Web中Servlet规范中的Filter的doFilter方法。可以在方法的调用前后完成自定义的行为，也可以选择不执行。ApplicationContext中在<aop:aspect>里面使用<aop:around>元素进行声明。例如，ServiceAspect中的around方法。</aop:around></aop:aspect></li>
-<li><strong>抛出异常后通知（After throwing advice）</strong>：在方法抛出异常退出时执行的通知。ApplicationContext中在<aop:aspect>里面使用<aop:after-throwing>元素进行声明。例如，ServiceAspect中的returnThrow方法。</aop:after-throwing></aop:aspect></li>
-</ul>
+        <h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/web/springMVC/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/数据库/mysql用法/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springMVC/">springMVC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/框架/">框架</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql/">sql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
 	</div>
 
       
@@ -218,7 +202,7 @@
 
 
   
-    <article id="post-技术学习/hadoop/hadoop_rest" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/web/playframework" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -228,7 +212,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/hadoop/hadoop_rest/">hadoop_rest</a>
+      <a class="article-title" href="/2016/11/09/技术学习/web/playframework/">playframework</a>
     </h1>
   
 
@@ -236,20 +220,79 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
-<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
+        <p>目录结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">web_app                         根目录               </div><div class="line">|   sbt                         SBT Unix 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt.bat                     SBT Windows 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt-launch.jar              SBT 启动的Java可执行类库</div><div class="line">|</div><div class="line">+---app                         Play Web 应用全部代码所在目录</div><div class="line">|   |</div><div class="line">|   +---models                  模型代码所在目录</div><div class="line">|   |       Message.scala       留言板例程模型代码</div><div class="line">|   |</div><div class="line">|   +---controllers             控制器代码所在目录</div><div class="line">|   |       Application.scala   默认控制器代码</div><div class="line">|   |</div><div class="line">|   \---views                   视图（Play Scala HTML模板） 代码所在目录</div><div class="line">|           main.scala.html     主模板文件</div><div class="line">|           index.scala.html    首页模板文件</div><div class="line">|           msgboard.scala.html 留言板例程模板文件</div><div class="line">|</div><div class="line">+---conf                        Play 配置文件所在目录</div><div class="line">|       application.conf        应用配置文件</div><div class="line">|       routes                  应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理</div><div class="line">|</div><div class="line">+---logs                        日志目录</div><div class="line">|       application.log         应用运行日志</div><div class="line">|</div><div class="line">+---project                     SBT工程文件</div><div class="line">|       build.properties        保存所需的SBT版本信息，通常无需更改</div><div class="line">|       Build.scala             主要的工程配置文件</div><div class="line">|       plugins.sbt             告知SBT本工程所需要的插件以及下载位置</div><div class="line">|</div><div class="line">+---public                      存储一切直接发送给浏览器的资源文件</div><div class="line">|   |</div><div class="line">|   +---images                  图像文件，如JPEG、PNG、GIF等</div><div class="line">|   |</div><div class="line">|   +---javascripts             JavaScript脚本文件</div><div class="line">|   |</div><div class="line">|   \---stylesheets             CSS样式表文件</div><div class="line">|</div><div class="line">\---target                      存放编译后的可执行代码和编译时的中间代码</div></pre></td></tr></table></figure></p>
+<p><img src="https://www.playframework.com/documentation/1.1.1/images/diagrams_path" alt=""></p>
+<p>执行play,进入play命令行后，执行:<br>idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程； </p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/hadoop/hadoop_rest/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/web/playframework/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/playframework/">playframework</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/框架/">框架</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/web/jquery" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/09/技术学习/web/jquery/">jquery</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="jquery"><a href="#jquery" class="headerlink" title="jquery"></a>jquery</h1><p>$(“#id”)<br>$(“.样式”)<br>$(“标签名[属性名=属性值][属性名2=属性值2][属性名3!=属性值3]”)   $(“input[data-type=group_checkbox]”)<br>$(this)<br>$(#id).find(“input”) 查找后代input元素</p>
+<p>$(“#addQueueDiv”).show();<br>$(“#addQueueDiv”).hide();</p>
+<p>$(“#addQueueDiv”)[0].style.visibility=”visible”<br>$(“#addQueueDiv”)[0].style.visibility=”hidden”</p>
+<p>tab切换事件<br>$(document).on(‘shown.bs.tab’, ‘a[data-toggle=”tab”]’, function(e) {<br>   console.log(e.target) // activated tab<br>});</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/11/09/技术学习/web/jquery/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jquery/">jquery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -395,7 +438,7 @@
 
 
   
-    <article id="post-技术学习/web/playframework" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/web/springMVC" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -405,7 +448,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/web/playframework/">playframework</a>
+      <a class="article-title" href="/2016/11/09/技术学习/web/springMVC/">springMVC</a>
     </h1>
   
 
@@ -413,21 +456,35 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>目录结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">web_app                         根目录               </div><div class="line">|   sbt                         SBT Unix 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt.bat                     SBT Windows 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt-launch.jar              SBT 启动的Java可执行类库</div><div class="line">|</div><div class="line">+---app                         Play Web 应用全部代码所在目录</div><div class="line">|   |</div><div class="line">|   +---models                  模型代码所在目录</div><div class="line">|   |       Message.scala       留言板例程模型代码</div><div class="line">|   |</div><div class="line">|   +---controllers             控制器代码所在目录</div><div class="line">|   |       Application.scala   默认控制器代码</div><div class="line">|   |</div><div class="line">|   \---views                   视图（Play Scala HTML模板） 代码所在目录</div><div class="line">|           main.scala.html     主模板文件</div><div class="line">|           index.scala.html    首页模板文件</div><div class="line">|           msgboard.scala.html 留言板例程模板文件</div><div class="line">|</div><div class="line">+---conf                        Play 配置文件所在目录</div><div class="line">|       application.conf        应用配置文件</div><div class="line">|       routes                  应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理</div><div class="line">|</div><div class="line">+---logs                        日志目录</div><div class="line">|       application.log         应用运行日志</div><div class="line">|</div><div class="line">+---project                     SBT工程文件</div><div class="line">|       build.properties        保存所需的SBT版本信息，通常无需更改</div><div class="line">|       Build.scala             主要的工程配置文件</div><div class="line">|       plugins.sbt             告知SBT本工程所需要的插件以及下载位置</div><div class="line">|</div><div class="line">+---public                      存储一切直接发送给浏览器的资源文件</div><div class="line">|   |</div><div class="line">|   +---images                  图像文件，如JPEG、PNG、GIF等</div><div class="line">|   |</div><div class="line">|   +---javascripts             JavaScript脚本文件</div><div class="line">|   |</div><div class="line">|   \---stylesheets             CSS样式表文件</div><div class="line">|</div><div class="line">\---target                      存放编译后的可执行代码和编译时的中间代码</div></pre></td></tr></table></figure></p>
-<p><img src="https://www.playframework.com/documentation/1.1.1/images/diagrams_path" alt=""></p>
-<p>执行play,进入play命令行后，执行:<br>idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程； </p>
+        <h2 id="基于注解的Spring-AOP的配置和使用"><a href="#基于注解的Spring-AOP的配置和使用" class="headerlink" title="基于注解的Spring AOP的配置和使用"></a>基于注解的Spring AOP的配置和使用</h2><p>AOP是OOP的延续，是Aspect Oriented Programming的缩写，意思是面向切面编程。可以通过预编译方式和运行期动态代理实现在不修改源代码的情况下给程序动态统一添加功能的一种技术。AOP实际是GoF设计模式的延续，设计模式孜孜不倦追求的是调用者和被调用者之间的解耦，AOP可以说也是这种目标的一种实现。</p>
+<ul>
+<li><strong>切面（Aspect）</strong>：官方的抽象定义为“一个关注点的模块化，这个关注点可能会横切多个对象”，在本例中，“切面”就是类TestAspect所关注的具体行为，例如，AServiceImpl.barA()的调用就是切面TestAspect所关注的行为之一。“切面”在ApplicationContext中<aop:aspect>来配置。</aop:aspect></li>
+<li><strong>连接点（Joinpoint）</strong> ：程序执行过程中的某一行为，例如，UserService.get的调用或者UserService.delete抛出异常等行为。</li>
+<li><strong>通知（Advice）</strong> ：“切面”对于某个“连接点”所产生的动作，例如，TestAspect中对com.spring.service包下所有类的方法进行日志记录的动作就是一个Advice。其中，一个“切面”可以包含多个“Advice”，例如ServiceAspect。</li>
+<li><strong>切入点（Pointcut）</strong> ：匹配连接点的断言，在AOP中通知和一个切入点表达式关联。例如，TestAspect中的所有通知所关注的连接点，都由切入点表达式execution(<em> com.spring.service.</em>.*(..))来决定。</li>
+<li><strong>目标对象（Target Object）</strong> ：被一个或者多个切面所通知的对象。例如，AServcieImpl和BServiceImpl，当然在实际运行时，Spring AOP采用代理实现，实际AOP操作的是TargetObject的代理对象。</li>
+<li><strong>AOP代理（AOP Proxy）</strong> ：在Spring AOP中有两种代理方式，JDK动态代理和CGLIB代理。默认情况下，TargetObject实现了接口时，则采用JDK动态代理，例如，AServiceImpl；反之，采用CGLIB代理，例如，BServiceImpl。强制使用CGLIB代理需要将 <aop:config>的 proxy-target-class属性设为true。</aop:config></li>
+</ul>
+<p>通知（Advice）类型：</p>
+<ul>
+<li><strong>前置通知（Before advice）</strong>：在某连接点（JoinPoint）之前执行的通知，但这个通知不能阻止连接点前的执行。ApplicationContext中在<aop:aspect>里面使用<aop:before>元素进行声明。例如，TestAspect中的doBefore方法。</aop:before></aop:aspect></li>
+<li><strong>后置通知（After advice）</strong>：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。ApplicationContext中在<aop:aspect>里面使用<aop:after>元素进行声明。例如，ServiceAspect中的returnAfter方法，所以Teser中调用UserService.delete抛出异常时，returnAfter方法仍然执行。</aop:after></aop:aspect></li>
+<li><strong>返回后通知（After return advice）</strong>：在某连接点正常完成后执行的通知，不包括抛出异常的情况。ApplicationContext中在<aop:aspect>里面使用<after-returning>元素进行声明。</after-returning></aop:aspect></li>
+<li><strong>环绕通知（Around advice）</strong>：包围一个连接点的通知，类似Web中Servlet规范中的Filter的doFilter方法。可以在方法的调用前后完成自定义的行为，也可以选择不执行。ApplicationContext中在<aop:aspect>里面使用<aop:around>元素进行声明。例如，ServiceAspect中的around方法。</aop:around></aop:aspect></li>
+<li><strong>抛出异常后通知（After throwing advice）</strong>：在方法抛出异常退出时执行的通知。ApplicationContext中在<aop:aspect>里面使用<aop:after-throwing>元素进行声明。例如，ServiceAspect中的returnThrow方法。</aop:after-throwing></aop:aspect></li>
+</ul>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/web/playframework/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/web/springMVC/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/playframework/">playframework</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/框架/">框架</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java/">java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/springMVC/">springMVC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/框架/">框架</a></li></ul>
 	</div>
 
       
@@ -452,7 +509,7 @@
 
 
   
-    <article id="post-技术学习/数据库/mysql用法" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/树莓派/安装后" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -462,7 +519,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/数据库/mysql用法/">mysql 命令</a>
+      <a class="article-title" href="/2016/11/09/技术学习/树莓派/安装后/">树莓派安装后需要做的几件事</a>
     </h1>
   
 
@@ -470,19 +527,81 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
+        <h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><h3 id="查看路由器dhcp列表，获取ip，使用scrt登录"><a href="#查看路由器dhcp列表，获取ip，使用scrt登录" class="headerlink" title="查看路由器dhcp列表，获取ip，使用scrt登录"></a>查看路由器dhcp列表，获取ip，使用scrt登录</h3><h3 id="修改-etc-apt-sources-list"><a href="#修改-etc-apt-sources-list" class="headerlink" title="修改/etc/apt/sources.list"></a>修改/etc/apt/sources.list</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div><div class="line">deb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div></pre></td></tr></table></figure>
+<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><p>安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install xrdp</div><div class="line">sudo apt-get install vnc4server tightvncserver</div></pre></td></tr></table></figure></p>
+<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><p>sudo apt-get install ttf-wqy-zenhei</p>
+<h2 id="安装输入法"><a href="#安装输入法" class="headerlink" title="安装输入法"></a>安装输入法</h2><p>sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/数据库/mysql用法/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/树莓派/安装后/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql/">sql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/树莓派/">树莓派</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/数据库/mongodb" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/09/技术学习/数据库/mongodb/">mongodb</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h2><p>./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp;     –fork  </p>
+<p>show dbs</p>
+<h2 id="使用数据库mydb"><a href="#使用数据库mydb" class="headerlink" title="使用数据库mydb"></a>使用数据库mydb</h2><p>use mydb</p>
+<h2 id="显示表"><a href="#显示表" class="headerlink" title="显示表"></a>显示表</h2><p>show collections</p>
+<h2 id="查看表foo下的记录"><a href="#查看表foo下的记录" class="headerlink" title="查看表foo下的记录"></a>查看表foo下的记录</h2><p>db.foo.find()   </p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/11/09/技术学习/数据库/mongodb/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
 	</div>
 
       
@@ -567,123 +686,6 @@
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
 		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-技术学习/数据库/mongodb" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/数据库/mongodb/">mongodb</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="启动mongodb"><a href="#启动mongodb" class="headerlink" title="启动mongodb"></a>启动mongodb</h2><p>./mongod –dbpath ../dbpath/ –logpath ../logs/mongodb.log –logappend &amp;     –fork  </p>
-<p>show dbs</p>
-<h2 id="使用数据库mydb"><a href="#使用数据库mydb" class="headerlink" title="使用数据库mydb"></a>使用数据库mydb</h2><p>use mydb</p>
-<h2 id="显示表"><a href="#显示表" class="headerlink" title="显示表"></a>显示表</h2><p>show collections</p>
-<h2 id="查看表foo下的记录"><a href="#查看表foo下的记录" class="headerlink" title="查看表foo下的记录"></a>查看表foo下的记录</h2><p>db.foo.find()   </p>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/2016/11/09/技术学习/数据库/mongodb/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-技术学习/树莓派/安装后" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/树莓派/安装后/">树莓派安装后需要做的几件事</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><h2 id="ssh登录"><a href="#ssh登录" class="headerlink" title="ssh登录"></a>ssh登录</h2><h3 id="查看路由器dhcp列表，获取ip，使用scrt登录"><a href="#查看路由器dhcp列表，获取ip，使用scrt登录" class="headerlink" title="查看路由器dhcp列表，获取ip，使用scrt登录"></a>查看路由器dhcp列表，获取ip，使用scrt登录</h3><h3 id="修改-etc-apt-sources-list"><a href="#修改-etc-apt-sources-list" class="headerlink" title="修改/etc/apt/sources.list"></a>修改/etc/apt/sources.list</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div><div class="line">deb-src http://mirrors.aliyun.com/raspbian/raspbian/ jessie main non-free contrib rpi</div></pre></td></tr></table></figure>
-<h2 id="远程桌面"><a href="#远程桌面" class="headerlink" title="远程桌面"></a>远程桌面</h2><p>安装远程桌面，ubuntu下需要使用xrdesktop连接 ，比windows远程桌面慢<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install xrdp</div><div class="line">sudo apt-get install vnc4server tightvncserver</div></pre></td></tr></table></figure></p>
-<h2 id="安装字体"><a href="#安装字体" class="headerlink" title="安装字体"></a>安装字体</h2><p>sudo apt-get install ttf-wqy-zenhei</p>
-<h2 id="安装输入法"><a href="#安装输入法" class="headerlink" title="安装输入法"></a>安装输入法</h2><p>sudo apt-get install fcitx fcitx-googlepinyin fcitx-module-cloudpinyin fcitx-sunpinyin</p>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/2016/11/09/技术学习/树莓派/安装后/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/树莓派/">树莓派</a></li></ul>
 	</div>
 
       
@@ -874,18 +876,6 @@ Fair Scheduler允许用户将队列信息专门放到一个配置文件（默认
   		
   			<div class="friends-wrap" id="js-friends">
   			
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接1</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接2</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接3</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接4</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接5</a>
-  	        
-  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">友情链接6</a>
-  	        
   	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:8000">seafile</a>
   	        
   	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>
