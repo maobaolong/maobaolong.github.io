@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      mysql | maobaolong 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="maobaolong">
+    
+    
+
+    <meta name="description" content="介绍mysql的命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql | maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/数据库/mysql/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta property="og:description" content="介绍mysql的命令">
+<meta property="og:updated_time" content="2016-11-15T10:12:03.744Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql | maobaolong">
+<meta name="twitter:description" content="介绍mysql的命令">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    <link rel="stylesheet" href="/css/uno.css">
+    <link rel="stylesheet" href="/css/highlight.css">
+    <link rel="stylesheet" href="/css/archive.css">
+    <link rel="stylesheet" href="/css/china-social-icon.css">
+
+</head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">maobaolong</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archives" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">mysql</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2016-11-09" class="post-meta__date date">2016-11-09</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+            <font class="categories">
+            &#8226; 分类:
+            <a class="categories-link" href="/categories/技术学习-数据库-mysql/">技术学习,数据库,mysql</a>
+            </font>
+          
+
+          
+             &#8226; 标签:
+            <font class="tags">
+              <a class="tags-link" href="/tags/mysql/">mysql</a>, <a class="tags-link" href="/tags/技术学习/">技术学习</a>, <a class="tags-link" href="/tags/数据库/">数据库</a>
+            </font>
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <p>[TOC]</p>
+<h2 id="mysql启动服务"><a href="#mysql启动服务" class="headerlink" title="mysql启动服务"></a>mysql启动服务</h2><h3 id="启动mysql："><a href="#启动mysql：" class="headerlink" title="启动mysql："></a>启动mysql：</h3><p>方式一：sudo /etc/init.d/mysql start<br>方式二：sudo start mysql<br>方式三：sudo service mysql start</p>
+<h3 id="停止mysql："><a href="#停止mysql：" class="headerlink" title="停止mysql："></a>停止mysql：</h3><p>方式一：sudo /etc/init.d/mysql stop<br>方式二：sudo stop mysql<br>方式san：sudo service mysql stop</p>
+<h3 id="重启mysql："><a href="#重启mysql：" class="headerlink" title="重启mysql："></a>重启mysql：</h3><p>方式一：sudo/etc/init.d/mysql restart<br>方式二：sudo restart mysql<br>方式三：sudo service mysql restart</p>
+<pre><code>* 以root用户登入
+</code></pre><p>mysql -u root -p</p>
+<h3 id="创建普通用户"><a href="#创建普通用户" class="headerlink" title="创建普通用户"></a>创建普通用户</h3><p>create user ‘salt’@’localhost’;<br>set password for ‘salt’@’localhost’ = password(‘salt’); </p>
+<h3 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h3><p>create database UGDAP;</p>
+<h3 id="显示所有数据库"><a href="#显示所有数据库" class="headerlink" title="显示所有数据库"></a>显示所有数据库</h3><p>show databases;</p>
+<h3 id="为用户salt授予数据库UGDAP下所有表打所有权限"><a href="#为用户salt授予数据库UGDAP下所有表打所有权限" class="headerlink" title="为用户salt授予数据库UGDAP下所有表打所有权限"></a>为用户salt授予数据库UGDAP下所有表打所有权限</h3><p>grant all privileges on UGDAP.* to salt@localhost identified by ‘salt’;<br>flush privileges;</p>
+<h3 id="以salt用户登入（远程登入）"><a href="#以salt用户登入（远程登入）" class="headerlink" title="以salt用户登入（远程登入）"></a>以salt用户登入（远程登入）</h3><p>mysql -u salt -psalt<br>mysql -h 192.168.200.213 -P 3306 -usalt -psalt</p>
+<h3 id="使用指定数据库"><a href="#使用指定数据库" class="headerlink" title="使用指定数据库"></a>使用指定数据库</h3><p>use UGDAP;</p>
+<h3 id="查看所有表"><a href="#查看所有表" class="headerlink" title="查看所有表"></a>查看所有表</h3><p>show tables; </p>
+<h3 id="删除库和表"><a href="#删除库和表" class="headerlink" title="删除库和表"></a>删除库和表</h3><p>drop database 库名;<br>drop table 表名； </p>
+<h3 id="将表中记录清空"><a href="#将表中记录清空" class="headerlink" title="将表中记录清空"></a>将表中记录清空</h3><p>delete from 表名; </p>
+<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><p>create table tb_emp1<br>(<br> id  INT(11),<br> name VARCHAR(25),<br> deptid  INT (11),<br> salary FLOAT<br>);</p>
+<h3 id="显示表结构"><a href="#显示表结构" class="headerlink" title="显示表结构"></a>显示表结构</h3><p>describe tb_emp1;</p>
+<h3 id="导入sql-执行sql脚本（shell中以及mysql中）"><a href="#导入sql-执行sql脚本（shell中以及mysql中）" class="headerlink" title="导入sql/执行sql脚本（shell中以及mysql中）"></a>导入sql/执行sql脚本（shell中以及mysql中）</h3><p>mysql db_name &lt; text_file<br>mysql db_name -u username -p &lt; text_file  </p>
+<p>mysql&gt; source file_name<br>mysql&gt; . file_name</p>
+<h3 id="导出数据库"><a href="#导出数据库" class="headerlink" title="导出数据库"></a>导出数据库</h3><p>mysqldump -h 192.168.200.213 -P 3306 -usalt -psalt –default-character-set=utf8 UGDAP&gt;./UGDAP.sql</p>
+<h3 id="卸载mysql"><a href="#卸载mysql" class="headerlink" title="卸载mysql"></a>卸载mysql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">sudo rm /var/lib/mysql/ -R</div><div class="line"></div><div class="line">//删除mysql的数据文件</div><div class="line"></div><div class="line"></div><div class="line">sudo rm /etc/mysql/ -R</div><div class="line"></div><div class="line">//删除mqsql的配置文件</div><div class="line"></div><div class="line">sudo apt-get autoremove mysql* --purge</div><div class="line"></div><div class="line">sudo apt-get remove apparmor</div><div class="line"></div><div class="line">sudo apt-get autoremove</div><div class="line">1 sudo apt-get autoremove --purge mysql-server-5.0</div><div class="line">2 sudo apt-get remove mysql-server</div><div class="line">3 sudo apt-get autoremove mysql-server</div><div class="line">4 sudo apt-get remove mysql-common (非常重要)</div><div class="line"></div><div class="line">dpkg -l |grep ^rc|awk &apos;&#123;print $2&#125;&apos; |sudo xargs dpkg -P</div></pre></td></tr></table></figure>
+<pre><code>* 安装 mysql
+</code></pre><p>1 sudo apt-get install mysql-server<br>2 sudo apt-get install mysql-client<br>3 sudo apt-get install php5-mysql(安装php5-mysql 是将php和mysql连接起来 ) </p>
+<p>一旦安装完成，MySQL 服务器应该自动启动。您可以在终端提示符后运行以下命令来检查 MySQL 服务器是否正在运行：<br>1 sudo netstat -tap | grep mysql</p>
+<p>当您运行该命令时，您可以看到类似下面的行：<br>tcp 0 0 localhost.localdomain:mysql <em>:</em> LISTEN -如果服务器不能正常运行，您可以通过下列命令启动它：</p>
+<p>1 sudo /etc/init.d/mysql restart</p>
+<h2 id="修改root用户密码"><a href="#修改root用户密码" class="headerlink" title="修改root用户密码"></a>修改root用户密码</h2><p>###第一步：修改Mysql配置文件<br>[root@liama01 ~]# vi /etc/my.cnf<br>在mysqld下，加入skip-grant-tables</p>
+<p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码</p>
+<p>service mysqld restart<br>mysql -uroot -p 回车</p>
+<p>mysql&gt; use mysql<br>mysql&gt; update user set password=PASSWORD(‘123456’) WHERE user=”root”;<br>mysql&gt; flush privileges;</p>
+
+  </section>
+
+  
+  
+
+<section class="post-comments">
+
+    <div class="ds-thread" data-thread-key="2016/11/09/技术学习/数据库/mysql/"></div>
+
+    <script type="text/javascript">
+      var duoshuoQuery = {short_name:"maobaolong"};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+    </script> 
+
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>

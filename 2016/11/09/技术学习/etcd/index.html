@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      etcd | maobaolong 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="maobaolong">
+    
+    
+
+    <meta name="description" content="介绍etcd的api">
+<meta property="og:type" content="article">
+<meta property="og:title" content="etcd | maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/etcd/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta property="og:description" content="介绍etcd的api">
+<meta property="og:updated_time" content="2016-11-15T10:14:25.952Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="etcd | maobaolong">
+<meta name="twitter:description" content="介绍etcd的api">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    <link rel="stylesheet" href="/css/uno.css">
+    <link rel="stylesheet" href="/css/highlight.css">
+    <link rel="stylesheet" href="/css/archive.css">
+    <link rel="stylesheet" href="/css/china-social-icon.css">
+
+</head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">maobaolong</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archives" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">etcd</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2016-11-09" class="post-meta__date date">2016-11-09</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+            <font class="categories">
+            &#8226; 分类:
+            <a class="categories-link" href="/categories/技术学习-etcd-分布式/">技术学习,etcd,分布式</a>
+            </font>
+          
+
+          
+             &#8226; 标签:
+            <font class="tags">
+              <a class="tags-link" href="/tags/etcd/">etcd</a>, <a class="tags-link" href="/tags/分布式/">分布式</a>, <a class="tags-link" href="/tags/技术学习/">技术学习</a>
+            </font>
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>etcd是一个高可用的键值存储系统，主要用于共享配置和服务发现。etcd是由CoreOS开发并维护的，灵感来自于 ZooKeeper 和 Doozer，它使用Go语言编写，并通过Raft一致性算法处理日志复制以保证强一致性。Raft是一个来自Stanford的新的一致性算法，适用于分布式系统的日志复制，Raft通过选举的方式来实现一致性，在Raft中，任何一个节点都可能成为Leader。Google的容器集群管理系统Kubernetes、开源PaaS平台Cloud Foundry和CoreOS的Fleet都广泛使用了etcd。</p>
+<p>etcd 集群的工作原理基于 raft 共识算法 (The Raft Consensus Algorithm)。etcd 在 0.5.0 版本中重新实现了 raft 算法，而非像之前那样依赖于第三方库 go-raft 。raft 共识算法的优点在于可以在高效的解决分布式系统中各个节点日志内容一致性问题的同时，也使得集群具备一定的容错能力。即使集群中出现部分节点故障、网络故障等问题，仍可保证其余大多数节点正确的步进。甚至当更多的节点（一般来说超过集群节点总数的一半）出现故障而导致集群不可用时，依然可以保证节点中的数据不会出现错误的结果。</p>
+<h2 id="设置值，允许目录不存在"><a href="#设置值，允许目录不存在" class="headerlink" title="设置值，允许目录不存在"></a>设置值，允许目录不存在</h2><p>curl -x 172.22.91.78:80 -X PUT <a href="http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb" target="_blank" rel="external">http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb</a> -d value=”sss”|python -m json.tool</p>
+<h2 id="删除空目录"><a href="#删除空目录" class="headerlink" title="删除空目录"></a>删除空目录</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python</a> -m json.tool</p>
+<h2 id="删除目录所有内容"><a href="#删除目录所有内容" class="headerlink" title="删除目录所有内容"></a>删除目录所有内容</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python</a> -m json.tool</p>
+<h2 id="获取成员"><a href="#获取成员" class="headerlink" title="获取成员"></a>获取成员</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.109:2379/v2/members|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/members|python</a> -m json.tool</p>
+<h2 id="查看是否leader"><a href="#查看是否leader" class="headerlink" title="查看是否leader"></a>查看是否leader</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.108:2379/v2/stats/self" target="_blank" rel="external">http://172.22.77.108:2379/v2/stats/self</a> |python -m json.tool<br>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/v2/stats/leader|python" target="_blank" rel="external">http://172.22.77.107:2379/v2/stats/leader|python</a> -m json.tool</p>
+<h2 id="查看是否健康"><a href="#查看是否健康" class="headerlink" title="查看是否健康"></a>查看是否健康</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/health|python" target="_blank" rel="external">http://172.22.77.107:2379/health|python</a> -m json.tool</p>
+
+  </section>
+
+  
+  
+
+<section class="post-comments">
+
+    <div class="ds-thread" data-thread-key="2016/11/09/技术学习/etcd/"></div>
+
+    <script type="text/javascript">
+      var duoshuoQuery = {short_name:"maobaolong"};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+    </script> 
+
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>

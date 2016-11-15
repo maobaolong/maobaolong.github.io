@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    
+
+    <title>
+      CENTOS笔记 | maobaolong 
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+      <meta name="author" content="maobaolong">
+    
+    
+
+    <meta name="description" content="介绍centos软件安装，配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CENTOS笔记 | maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/linux/centos/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta property="og:description" content="介绍centos软件安装，配置">
+<meta property="og:updated_time" content="2016-11-15T10:07:38.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CENTOS笔记 | maobaolong">
+<meta name="twitter:description" content="介绍centos软件安装，配置">
+    
+    
+    
+      <link rel="icon" type="image/x-icon" href="/favicon.png">
+    
+    <link rel="stylesheet" href="/css/uno.css">
+    <link rel="stylesheet" href="/css/highlight.css">
+    <link rel="stylesheet" href="/css/archive.css">
+    <link rel="stylesheet" href="/css/china-social-icon.css">
+
+</head>
+<body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="icon icon-list btn-mobile-menu__icon"></i>
+        <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+
+<header class="panel-cover panel-cover--collapsed">
+
+
+  <div class="panel-main">
+
+  
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        
+
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage">maobaolong</a></h1>
+        <hr class="panel-cover__divider" />
+
+        
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+
+              
+                
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">首页</a></li>
+              
+                
+                <li class="navigation__item"><a href="/about" title="" class="">关于</a></li>
+              
+                
+                <li class="navigation__item"><a href="/archives" title="" class="">归档</a></li>
+              
+
+            </ul>
+          </nav>
+
+          <!-- ----------------------------
+To add a new social icon simply duplicate one of the list items from below
+and change the class in the <i> tag to match the desired social network
+and then add your link to the <a>. Here is a full list of social network
+classes that you can use:
+
+    icon-social-500px
+    icon-social-behance
+    icon-social-delicious
+    icon-social-designer-news
+    icon-social-deviant-art
+    icon-social-digg
+    icon-social-dribbble
+    icon-social-facebook
+    icon-social-flickr
+    icon-social-forrst
+    icon-social-foursquare
+    icon-social-github
+    icon-social-google-plus
+    icon-social-hi5
+    icon-social-instagram
+    icon-social-lastfm
+    icon-social-linkedin
+    icon-social-medium
+    icon-social-myspace
+    icon-social-path
+    icon-social-pinterest
+    icon-social-rdio
+    icon-social-reddit
+    icon-social-skype
+    icon-social-spotify
+    icon-social-stack-overflow
+    icon-social-steam
+    icon-social-stumbleupon
+    icon-social-treehouse
+    icon-social-tumblr
+    icon-social-twitter
+    icon-social-vimeo
+    icon-social-xbox
+    icon-social-yelp
+    icon-social-youtube
+    icon-social-zerply
+    icon-mail
+
+-------------------------------->
+
+<!-- add social info here -->
+
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner entry">
+            
+
+<article class="post-container post-container--single">
+
+  <header class="post-header">
+    
+    <h1 class="post-title">CENTOS笔记</h1>
+
+    
+
+    <div class="post-meta">
+      <time datetime="2016-11-09" class="post-meta__date date">2016-11-09</time> 
+
+      <span class="post-meta__tags tags">
+
+          
+            <font class="categories">
+            &#8226; 分类:
+            <a class="categories-link" href="/categories/技术学习-linux-centos/">技术学习,linux,centos</a>
+            </font>
+          
+
+          
+             &#8226; 标签:
+            <font class="tags">
+              <a class="tags-link" href="/tags/centos/">centos</a>, <a class="tags-link" href="/tags/linux/">linux</a>, <a class="tags-link" href="/tags/技术学习/">技术学习</a>
+            </font>
+          
+
+      </span>
+    </div>
+    
+    
+
+  </header>
+
+  <section id="post-content" class="article-content post">
+    <h1 id="CENTOS笔记"><a href="#CENTOS笔记" class="headerlink" title="CENTOS笔记"></a>CENTOS笔记</h1><p>[TOC]</p>
+<p>##连接无线网</p>
+<h3 id="ip-addr"><a href="#ip-addr" class="headerlink" title="ip addr"></a>ip addr</h3><p>找到自己的无线网接口 （ps:本人的是wlp5s0）</p>
+<h3 id="ip-link-set-wlp5s0-up"><a href="#ip-link-set-wlp5s0-up" class="headerlink" title="ip link set wlp5s0 up"></a>ip link set wlp5s0 up</h3><p>打开无线网的驱动</p>
+<h3 id="ip-link-show-wlp5s0"><a href="#ip-link-show-wlp5s0" class="headerlink" title="ip link show wlp5s0"></a>ip link show wlp5s0</h3><p>查看该网络接口的状态</p>
+<h3 id="连接无线网"><a href="#连接无线网" class="headerlink" title="连接无线网"></a>连接无线网</h3><p>wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk)</p>
+<h3 id="dhcp分配ip"><a href="#dhcp分配ip" class="headerlink" title="dhcp分配ip"></a>dhcp分配ip</h3><p>dhclient wlp5s0(为wlp5s0分配ip地址)</p>
+<h2 id="软件源"><a href="#软件源" class="headerlink" title="软件源"></a>软件源</h2><h3 id="下载源"><a href="#下载源" class="headerlink" title="下载源"></a>下载源</h3><p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="external">http://mirrors.aliyun.com/repo/Centos-7.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></p>
+<p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.sohu.com/help/CentOS-Base-sohu.repo" target="_blank" rel="external">http://mirrors.sohu.com/help/CentOS-Base-sohu.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://centos.ustc.edu.cn/CentOS-Base.repo" target="_blank" rel="external">http://centos.ustc.edu.cn/CentOS-Base.repo</a></p>
+<h3 id="安装源"><a href="#安装源" class="headerlink" title="安装源"></a>安装源</h3><p>yum clean all<br>yum makecache</p>
+<h2 id="ssh修改端口号"><a href="#ssh修改端口号" class="headerlink" title="ssh修改端口号"></a>ssh修改端口号</h2><h3 id="step1-修改-etc-ssh-sshd-config"><a href="#step1-修改-etc-ssh-sshd-config" class="headerlink" title="step1 修改/etc/ssh/sshd_config"></a>step1 修改/etc/ssh/sshd_config</h3><p>vi /etc/ssh/sshd_config<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#Port 22         //这行去掉#号</div><div class="line">Port 20000      //下面添加这一行</div></pre></td></tr></table></figure></p>
+<h3 id="step2-修改SELinux"><a href="#step2-修改SELinux" class="headerlink" title="step2 修改SELinux"></a>step2 修改SELinux</h3><p>yum -y install policycoreutils-python</p>
+<p>使用以下命令查看当前SElinux 允许的ssh端口：<br>semanage port -l | grep ssh</p>
+<p>添加20000端口到 SELinux<br>semanage port -a -t ssh_port_t -p tcp 20000</p>
+<p>然后确认一下是否添加进去<br>semanage port -l | grep ssh<br>如果成功会输出<br>ssh_port_t                    tcp    20000, 22</p>
+<h3 id="step3-重启ssh"><a href="#step3-重启ssh" class="headerlink" title="step3 重启ssh"></a>step3 重启ssh</h3><p>systemctl restart sshd.service</p>
+
+  </section>
+
+  
+  
+
+<section class="post-comments">
+
+    <div class="ds-thread" data-thread-key="2016/11/09/技术学习/linux/centos/"></div>
+
+    <script type="text/javascript">
+      var duoshuoQuery = {short_name:"maobaolong"};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+    </script> 
+
+</section>
+
+
+</article>
+
+
+            <footer class="footer">
+
+    <span class="footer__copyright">&copy; 2014-2015. | 由<a href="https://hexo.io/">Hexo</a>强力驱动 | 主题<a href="https://github.com/someus/huno">Huno</a></span>
+    
+</footer>
+        </div>
+    </div>
+
+    <!-- js files -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/scale.fix.js"></script>
+    
+
+    
+
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"> 
+        $(document).ready(function(){
+            MathJax.Hub.Config({ 
+                tex2jax: {inlineMath: [['[latex]','[/latex]'], ['\\(','\\)']]} 
+            });
+        });
+    </script>
+
+
+    
+
+    <script src="/js/awesome-toc.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.awesome_toc({
+                overlay: true,
+                contentId: "post-content",
+            });
+        });
+    </script>
+
+
+    
+    
+    <!--kill ie6 -->
+<!--[if IE 6]>
+  <script src="//letskillie6.googlecode.com/svn/trunk/2/zh_CN.js"></script>
+<![endif]-->
+
+</body>
+</html>
