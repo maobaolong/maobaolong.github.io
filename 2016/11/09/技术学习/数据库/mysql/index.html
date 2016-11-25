@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/数据库/mysql/index.html">
 <meta property="og:site_name" content="maobaolong">
 <meta property="og:description" content="介绍mysql的命令">
-<meta property="og:updated_time" content="2016-11-15T10:30:50.193Z">
+<meta property="og:updated_time" content="2016-11-16T01:08:52.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql">
 <meta name="twitter:description" content="介绍mysql的命令">
@@ -193,10 +193,12 @@
 <p>一旦安装完成，MySQL 服务器应该自动启动。您可以在终端提示符后运行以下命令来检查 MySQL 服务器是否正在运行：<br>1 sudo netstat -tap | grep mysql</p>
 <p>当您运行该命令时，您可以看到类似下面的行：<br>tcp 0 0 localhost.localdomain:mysql <em>:</em> LISTEN -如果服务器不能正常运行，您可以通过下列命令启动它：</p>
 <p>1 sudo /etc/init.d/mysql restart</p>
-<h2 id="修改root用户密码"><a href="#修改root用户密码" class="headerlink" title="修改root用户密码"></a>修改root用户密码</h2><p>###第一步：修改Mysql配置文件<br>[root@liama01 ~]# vi /etc/my.cnf<br>在mysqld下，加入skip-grant-tables</p>
-<p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码</p>
-<p>service mysqld restart<br>mysql -uroot -p 回车</p>
-<p>mysql&gt; use mysql<br>mysql&gt; update user set password=PASSWORD(‘123456’) WHERE user=”root”;<br>mysql&gt; flush privileges;</p>
+<h2 id="修改root用户密码"><a href="#修改root用户密码" class="headerlink" title="修改root用户密码"></a>修改root用户密码</h2><p>###第一步：修改Mysql配置文件<br>[root@liama01 ~]# vi /etc/my.cnf<br>在mysqld下，加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">skip-grant-tables</div><div class="line">skip-networking</div></pre></td></tr></table></figure></p>
+<p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">service mysqld restart</div><div class="line">mysql -uroot -p 回车</div><div class="line"></div><div class="line">mysql&gt; use mysql</div><div class="line">mysql&gt; update user set password=PASSWORD(&apos;root&apos;) WHERE user=&quot;root&quot;;</div><div class="line">mysql&gt; flush privileges;</div></pre></td></tr></table></figure></p>
+<p>###第三步：去掉跳过，并重启服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vi /etc/my.cnf</div><div class="line">去掉skip-grant-tables和skip-networking</div><div class="line">service mysqld restart</div></pre></td></tr></table></figure>
+<p>###第四步：重置密码<br>如果不重置会报错</p>
+<p>ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.<br>执行重新设置密码<br>mysql&gt; ALTER USER ‘root’@’localhost’ IDENTIFIED BY ‘<strong><em>**</em></strong>‘</p>
 
       
     </div>
@@ -226,11 +228,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2016/11/09/技术学习/数据库/mongodb/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/09/技术学习/树莓派/安装后/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          mongodb
+          树莓派安装后需要做的几件事
         
       </div>
     </a>
@@ -350,7 +352,7 @@
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 14px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 14px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/java/" style="font-size: 12px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 10px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16px;">linux</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 12px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 16px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/分布式/" style="font-size: 14px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 14px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/框架/" style="font-size: 12px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a>
+    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
     			</div>
     	</section>
     

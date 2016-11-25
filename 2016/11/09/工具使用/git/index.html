@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://maobaolong.github.io/2016/11/09/工具使用/git/index.html">
 <meta property="og:site_name" content="maobaolong">
 <meta property="og:description" content="记录git的常用命令。">
-<meta property="og:updated_time" content="2016-11-15T09:55:56.602Z">
+<meta property="og:updated_time" content="2016-11-25T13:33:46.700Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git">
 <meta name="twitter:description" content="记录git的常用命令。">
@@ -176,8 +176,20 @@
 <h2 id="将master分支合并到当前分支"><a href="#将master分支合并到当前分支" class="headerlink" title="将master分支合并到当前分支"></a>将master分支合并到当前分支</h2><p>git merge master</p>
 <h2 id="将远程master的修改合并到本地mbl分支。"><a href="#将远程master的修改合并到本地mbl分支。" class="headerlink" title="将远程master的修改合并到本地mbl分支。"></a>将远程master的修改合并到本地mbl分支。</h2><p>git pull origin master:master -f<br>git add .<br> git commit -m “test”<br>git pull origin master:master -f<br>git branch * master<br>git checkout mbl<br>git pull<br>git merge master<br> git push</p>
 <h2 id="取消commit-和-pull"><a href="#取消commit-和-pull" class="headerlink" title="取消commit 和 pull"></a>取消commit 和 pull</h2><p>git reset –hard <commit_id><br>git push origin HEAD –force</commit_id></p>
-<p>Edit<br>Edit2</p>
-
+<h2 id="git-更换仓库"><a href="#git-更换仓库" class="headerlink" title="git 更换仓库"></a>git 更换仓库</h2><ol>
+<li>从原地址克隆一份裸版本库，比如原本托管于 GitHub<br>git clone –bare git://github.com/username/project.git</li>
+<li>然后到新的 Git 服务器上创建一个新项目，比如 GitCafe。</li>
+<li><p>以镜像推送的方式上传代码到 GitCafe 服务器上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd project.git</div><div class="line">git push --mirror git@gitcafe.com/username/newproject.git</div></pre></td></tr></table></figure>
+</li>
+<li><p>先查看remote的名字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -r</div></pre></td></tr></table></figure>
+</li>
+<li><p>假设你的remote是origin，用git remote set_url 更换地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote set-url origin remote_git_address</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit -am &quot;提交说明&quot;</div></pre></td></tr></table></figure>
       
     </div>
     <div class="article-info article-info-index">
@@ -206,18 +218,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2016/11/09/技术学习/java/java/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/09/技术学习/hadoop/hadoop_rest/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          java 远程调试
+          hadoop_rest
         
       </div>
     </a>
   
   
-    <a href="/2016/11/09/技术学习/hadoop/hadoop/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">hadoop 命令</div>
+    <a href="/2016/11/09/技术学习/linux/centos/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CENTOS笔记</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -330,7 +342,7 @@
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 14px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 14px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/java/" style="font-size: 12px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 10px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16px;">linux</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 12px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 16px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/分布式/" style="font-size: 14px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 14px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/框架/" style="font-size: 12px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a>
+    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
     			</div>
     	</section>
     

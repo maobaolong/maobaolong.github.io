@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/数据库/mysql用法/index.html">
 <meta property="og:site_name" content="maobaolong">
 <meta property="og:description" content="介绍mysql的sql语句">
-<meta property="og:updated_time" content="2016-11-15T10:30:53.683Z">
+<meta property="og:updated_time" content="2016-11-25T13:31:05.876Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 命令">
 <meta name="twitter:description" content="介绍mysql的sql语句">
@@ -167,7 +167,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
+        <h1 id="mysql-语句"><a href="#mysql-语句" class="headerlink" title="mysql 语句"></a>mysql 语句</h1><h2 id="返回players表中town列所有数据项打集合以’-’分割的集合"><a href="#返回players表中town列所有数据项打集合以’-’分割的集合" class="headerlink" title="返回players表中town列所有数据项打集合以’,’分割的集合"></a>返回players表中town列所有数据项打集合以’,’分割的集合</h2><p>SELECT group_concat(town) FROM <code>players</code> group by town</p>
+<h2 id="获取符合条件的记录个数，表头为count"><a href="#获取符合条件的记录个数，表头为count" class="headerlink" title="获取符合条件的记录个数，表头为count"></a>获取符合条件的记录个数，表头为count</h2><p>select count(*) as count from t_cluster_config_xml where cluster_name = ‘alto’</p>
+<h2 id="如果存在则不插入"><a href="#如果存在则不插入" class="headerlink" title="如果存在则不插入"></a>如果存在则不插入</h2><p>insert into t_cluster_config_xml(a,b)<br>select a,b from DUAL WHERE NOT EXISTS(SELECT a FROM t_cluster_config_xml WHERE a = ‘a’);</p>
 
       
     </div>
@@ -197,18 +199,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2016/11/09/技术学习/linux/linux 常用命令/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/09/技术学习/数据库/mongodb/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          linux命令
+          mongodb
         
       </div>
     </a>
   
   
-    <a href="/2016/11/09/技术学习/web/playframework/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">playframework</div>
+    <a href="/2016/11/09/技术学习/web/springMVC/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">springMVC</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -321,7 +323,7 @@
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 14px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 14px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/java/" style="font-size: 12px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 10px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16px;">linux</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 12px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 16px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/分布式/" style="font-size: 14px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 14px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/框架/" style="font-size: 12px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a>
+    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
     			</div>
     	</section>
     
