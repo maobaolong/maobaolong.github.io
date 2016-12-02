@@ -147,7 +147,7 @@
       <div class="body-wrap">
         
   
-    <article id="post-技术学习/kafka" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/etcd" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -157,7 +157,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/kafka/">kafka</a>
+      <a class="article-title" href="/2016/11/09/技术学习/etcd/">etcd</a>
     </h1>
   
 
@@ -165,21 +165,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="启动zookeeper"><a href="#启动zookeeper" class="headerlink" title="启动zookeeper"></a>启动zookeeper</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/zookeeper-server-start.sh config/zookeeper.properties &amp;</div></pre></td></tr></table></figure>
-<h2 id="启动KAFKA"><a href="#启动KAFKA" class="headerlink" title="启动KAFKA"></a>启动KAFKA</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-server-start.sh config/server.properties &amp;</div></pre></td></tr></table></figure>
-<h2 id="模拟consumer"><a href="#模拟consumer" class="headerlink" title="模拟consumer"></a>模拟consumer</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-console-consumer.sh --zookeeper 127.0.0.1:2181 --from-beginning --topic self_healing</div></pre></td></tr></table></figure>
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>etcd是一个高可用的键值存储系统，主要用于共享配置和服务发现。etcd是由CoreOS开发并维护的，灵感来自于 ZooKeeper 和 Doozer，它使用Go语言编写，并通过Raft一致性算法处理日志复制以保证强一致性。Raft是一个来自Stanford的新的一致性算法，适用于分布式系统的日志复制，Raft通过选举的方式来实现一致性，在Raft中，任何一个节点都可能成为Leader。Google的容器集群管理系统Kubernetes、开源PaaS平台Cloud Foundry和CoreOS的Fleet都广泛使用了etcd。</p>
+<p>etcd 集群的工作原理基于 raft 共识算法 (The Raft Consensus Algorithm)。etcd 在 0.5.0 版本中重新实现了 raft 算法，而非像之前那样依赖于第三方库 go-raft 。raft 共识算法的优点在于可以在高效的解决分布式系统中各个节点日志内容一致性问题的同时，也使得集群具备一定的容错能力。即使集群中出现部分节点故障、网络故障等问题，仍可保证其余大多数节点正确的步进。甚至当更多的节点（一般来说超过集群节点总数的一半）出现故障而导致集群不可用时，依然可以保证节点中的数据不会出现错误的结果。</p>
+<h2 id="设置值，允许目录不存在"><a href="#设置值，允许目录不存在" class="headerlink" title="设置值，允许目录不存在"></a>设置值，允许目录不存在</h2><p>curl -x 172.22.91.78:80 -X PUT <a href="http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb" target="_blank" rel="external">http://172.22.77.107:2379/v2/keys/presto/clustertest/y2/worker2/bbb</a> -d value=”sss”|python -m json.tool</p>
+<h2 id="删除空目录"><a href="#删除空目录" class="headerlink" title="删除空目录"></a>删除空目录</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?dir=true|python</a> -m json.tool</p>
+<h2 id="删除目录所有内容"><a href="#删除目录所有内容" class="headerlink" title="删除目录所有内容"></a>删除目录所有内容</h2><p> curl -X DELETE -x 172.22.91.78:80 <a href="http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/keys/presto/clustertest/66?recursive=true|python</a> -m json.tool</p>
+<h2 id="获取成员"><a href="#获取成员" class="headerlink" title="获取成员"></a>获取成员</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.109:2379/v2/members|python" target="_blank" rel="external">http://172.22.77.109:2379/v2/members|python</a> -m json.tool</p>
+<h2 id="查看是否leader"><a href="#查看是否leader" class="headerlink" title="查看是否leader"></a>查看是否leader</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.108:2379/v2/stats/self" target="_blank" rel="external">http://172.22.77.108:2379/v2/stats/self</a> |python -m json.tool<br>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/v2/stats/leader|python" target="_blank" rel="external">http://172.22.77.107:2379/v2/stats/leader|python</a> -m json.tool</p>
+<h2 id="查看是否健康"><a href="#查看是否健康" class="headerlink" title="查看是否健康"></a>查看是否健康</h2><p>curl -x 172.22.91.78:80 -H “Content-type: application/json” <a href="http://172.22.77.107:2379/health|python" target="_blank" rel="external">http://172.22.77.107:2379/health|python</a> -m json.tool</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/kafka/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/etcd/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分布式/">分布式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/etcd/">etcd</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分布式/">分布式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -204,7 +209,7 @@
 
 
   
-    <article id="post-技术学习/velocity" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-工具使用/scrt" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -214,7 +219,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/velocity/">velocity</a>
+      <a class="article-title" href="/2016/11/09/工具使用/scrt/">scrt 破解和使用</a>
     </h1>
   
 
@@ -222,74 +227,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="JAVA中的map传到vm中"><a href="#JAVA中的map传到vm中" class="headerlink" title="JAVA中的map传到vm中"></a>JAVA中的map传到vm中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">One option along the lines of what you already have should be to add the attributes to the model as a map. So in java</div><div class="line">map = new HashMap(); </div><div class="line">map.put(&quot;id&quot;, &quot;solikang&quot;)</div><div class="line">map.put(&quot;pwd&quot;, &quot;1234&quot;)</div><div class="line">map.put(&quot;email&quot;, &quot;something@example.com&quot;);</div><div class="line">model.addAttribute(&quot;data&quot;, map);</div><div class="line">Then in velocity</div><div class="line">#foreach ($key in $data.keySet())</div><div class="line">  &lt;input type=&quot;hidden&quot; name=&quot;$key&quot; value=&quot;$data.get($key)&quot;&gt;</div><div class="line">#end</div></pre></td></tr></table></figure>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/2016/11/09/技术学习/velocity/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/velocity/">velocity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/模板引擎/">模板引擎</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-工具使用/haproxy" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/工具使用/haproxy/">haproxy</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>uname -a 查看linux版本<br>vim -R README   ，查找 ?linux ，N查找下一个，找到linux版本对应target<br>make TARGET=linux2628</p>
-<h2 id="ubuntu-apt-get-install-haproxy安装即可"><a href="#ubuntu-apt-get-install-haproxy安装即可" class="headerlink" title="ubuntu apt-get install haproxy安装即可"></a>ubuntu apt-get install haproxy安装即可</h2><h2 id="centos-用yum安装即可"><a href="#centos-用yum安装即可" class="headerlink" title="centos 用yum安装即可"></a>centos 用yum安装即可</h2><p>yum haproxy -y<br>haproxy x86_64 1.5.14-3.el7 base 833 k</p>
+        <h1 id="scrt"><a href="#scrt" class="headerlink" title="scrt"></a>scrt</h1><h2 id="linux下破解"><a href="#linux下破解" class="headerlink" title="linux下破解"></a>linux下破解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: xiaobo_l</div><div class="line">Company:www.boll.me</div><div class="line">Serial Number:03-61-166978</div><div class="line">License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHC</div><div class="line">Issue Date:12-22-2013</div></pre></td></tr></table></figure>
+<h2 id="设置反空闲"><a href="#设置反空闲" class="headerlink" title="设置反空闲"></a>设置反空闲</h2><p>会话选项 –&gt; 终端 –&gt; 反空闲   –&gt; 发送字符串 可以设置，比如发送 \n 、null或其他信息过去，后面可以设置每隔多少秒发送，比如可以3000秒一次，这样可以保证不会掉线</p>
+<h2 id="全局会话设置"><a href="#全局会话设置" class="headerlink" title="全局会话设置"></a>全局会话设置</h2><p>如果想应用于所有会话的话，选择全局选项-&gt;默认会话-&gt;编辑默认设置.做上述修改修改就可以全局使用了.</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/工具使用/haproxy/" class="archive-article-date">
+      <a href="/2016/11/09/工具使用/scrt/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/haproxy/">haproxy</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/scrt/">scrt</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
 	</div>
 
       
@@ -314,7 +266,7 @@
 
 
   
-    <article id="post-技术学习/zookeeper" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-工具使用/seafile" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -324,7 +276,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/zookeeper/">zookeeper</a>
+      <a class="article-title" href="/2016/11/09/工具使用/seafile/">seafile</a>
     </h1>
   
 
@@ -332,77 +284,79 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>zkCli.sh -server IP:port</p>
-<p>ls(查看当前节点数据),<br>ls2(查看当前节点数据并能看到更新次数等数据) ,<br>create(创建一个节点) ,<br>get(得到一个节点，包含数据和更新次数等数据),<br>set(修改节点)<br>delete(删除一个节点)</p>
-<p>四字命令，nc 服务器地址 端口号<br>nc 192.168.193.84 2181</p>
-<table>
-<thead>
-<tr>
-<th>ZooKeeper 四字命令</th>
-<th>功能描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>conf</td>
-<td>输出相关服务配置的详细信息。</td>
-</tr>
-<tr>
-<td>cons</td>
-<td>列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息。包括“接受 / 发送”的包数量、会话 id 、操作延迟、最后的操作执行等等信息。</td>
-</tr>
-<tr>
-<td>dump</td>
-<td>列出未经处理的会话和临时节点。</td>
-</tr>
-<tr>
-<td>envi</td>
-<td>输出关于服务环境的详细信息（区别于 conf 命令）。</td>
-</tr>
-<tr>
-<td>reqs</td>
-<td>列出未经处理的请求</td>
-</tr>
-<tr>
-<td>ruok</td>
-<td>测试服务是否处于正确状态。如果确实如此，那么服务返回“ imok”，否则不做任何相应。</td>
-</tr>
-<tr>
-<td>stat</td>
-<td>输出关于性能和连接的客户端的列表。</td>
-</tr>
-<tr>
-<td>wchs</td>
-<td>列出服务器 watch 的详细信息。</td>
-</tr>
-<tr>
-<td>wchc</td>
-<td>通过 session 列出服务器 watch 的详细信息，它的输出是一个与watch 相关的会话的列表。</td>
-</tr>
-<tr>
-<td>wchp</td>
-<td>通过路径列出服务器 watch 的详细信息。它输出一个与 session 相关的路径。</td>
-</tr>
-<tr>
-<td>mntr</td>
-<td>显示zk信息</td>
-</tr>
-</tbody>
-</table>
-<h2 id="获取当前zk服务器的serverId"><a href="#获取当前zk服务器的serverId" class="headerlink" title="获取当前zk服务器的serverId"></a>获取当前zk服务器的serverId</h2><p>echo conf|nc 192.168.193.83 2181</p>
-<h2 id="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"><a href="#获取当前zk服务器的角色，如果为leader，则可以获得follower个数" class="headerlink" title="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"></a>获取当前zk服务器的角色，如果为leader，则可以获得follower个数</h2><p>echo mntr|nc 192.168.193.85 2181</p>
+        <h1 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h1><h2 id="启动停止服务"><a href="#启动停止服务" class="headerlink" title="启动停止服务"></a>启动停止服务</h2><p>/opt/seafile/seafile-server-6.0.5/seafile.sh stop<br>/opt/seafile/seafile-server-6.0.5/seahub.sh stop</p>
+<p>/opt/seafile/seafile-server-6.0.5/seafile.sh start<br>/opt/seafile/seafile-server-6.0.5/seahub.sh start 8123</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/zookeeper/" class="archive-article-date">
+      <a href="/2016/11/09/工具使用/seafile/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zookeeper/">zookeeper</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分布式/">分布式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/seafile/">seafile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/tomcat" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/09/工具使用/tomcat/">tomcat</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><p>Linxu系统: apach/bin/startup.sh开始处中增加如下内容： </p>
+<pre><code>1. declare -x CATALINA_OPTS=&quot;-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788&quot;   
+</code></pre><p>.Windows系统: apach/bin/startup.bat开始处中增加如下内容： </p>
+<pre><code>1. SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788  
+</code></pre><h2 id="tomcat-配置域名到多个工程目录配置"><a href="#tomcat-配置域名到多个工程目录配置" class="headerlink" title="tomcat 配置域名到多个工程目录配置"></a>tomcat 配置域名到多个工程目录配置</h2><p>tomcat server.xml host appbase</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/11/09/工具使用/tomcat/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tomcat/">tomcat</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/容器/">容器</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -427,7 +381,7 @@
 
 
   
-    <article id="post-技术学习/正则表达式" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-工具使用/jenkins" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -437,7 +391,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/正则表达式/">正则表达式</a>
+      <a class="article-title" href="/2016/11/09/工具使用/jenkins/">jenkins</a>
     </h1>
   
 
@@ -445,25 +399,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h2><p>(?:  pattern)是非捕获型括号  匹配pattern，但不捕获匹配结果。<br>(pattern )是捕获型括号。  匹配pattern，匹配pattern并捕获结果,自动获取组号<br>(?<name> pattern )  匹配pattern，  匹配pattern并捕获结果，设置name为组名<br>    使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。<br>    如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。<br>     为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。问题里的非捕获型括号就是为此使用的。</name></p>
+        <h1 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h1><p>[TOC]</p>
+<h2 id="启动jenkins指定端口"><a href="#启动jenkins指定端口" class="headerlink" title="启动jenkins指定端口"></a>启动jenkins指定端口</h2><p>java -jar jenkins.war –httpPort=9010</p>
+<font color="red"><strong>后台启动的方法</strong></font>
+
+<p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kill `ps -ef | grep [j]enkins.war | awk &apos;&#123; print $2 &#125;&apos;`</div></pre></td></tr></table></figure></p>
+<h2 id="jenkins中通过execute-shell启动的进程会被杀死的问题"><a href="#jenkins中通过execute-shell启动的进程会被杀死的问题" class="headerlink" title="jenkins中通过execute shell启动的进程会被杀死的问题"></a>jenkins中通过execute shell启动的进程会被杀死的问题</h2><p>[摘要：正在jenkins中设置装备摆设主动更新安排项目时，若是采用用execute shell启动/封闭tomcat，会发明能够举行封闭tomcat，然则没法启动tomcat，固然构建会表现履行乐成，然则检察过程，tomcat是出有启动的]<br>在jenkins中配置自动更新部署项目时，如果采取用execute shell启动/关闭tomcat，会发现可以进行关闭tomcat，但是无法启动tomcat，虽然构建会显示执行成功，但是查看进程，tomcat是没有启动的。这是因为Jenkins默认会在Build结束后Kill掉所有的衍生进程。需要进行以下配置，才能避免此类情况发生:</p>
+<ol>
+<li>重设环境变量build_id<br>在execute shell输入框中加入BUILD_ID=DONTKILLME,即可防止jenkins杀死启动的tomcat进程</li>
+<li>在启动jenkins 的时候禁止jenkins杀死衍生进程<br> 修改/etc/sysconfig/jenkins配置，在JENKINS_JAVA_OPTIONS中加入-Dhudson.util.ProcessTree.disable=true。需要重启jenkins生效<br> 此方法配置一次后，所有的job都无需设置BUILD_ID，就能够防止jenkins杀死启动的tomcat进程</li>
+</ol>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/正则表达式/" class="archive-article-date">
+      <a href="/2016/11/09/工具使用/jenkins/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/正则表达式/">正则表达式</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jenkins/">jenkins</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
 	</div>
 
       
 	<div class="article-category tagcloud">
 	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/技术学习/">技术学习</a>
+	<a class="article-category-link" href="/categories/工具使用/">工具使用</a>
 	</div>
 
 
@@ -482,7 +445,7 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-工具使用/vim" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -492,7 +455,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/hello-world/">Hello world</a>
+      <a class="article-title" href="/2016/11/09/工具使用/vim/">vim</a>
     </h1>
   
 
@@ -500,33 +463,92 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <p>vim设置粘贴可以500行</p>
+<pre><code>1. :set viminfo=&apos;1000,&lt;500  
+</code></pre><p>整体下移：ctrl + e<br>整体上移 : ctrl + y</p>
+<p>显示行号：set nu</p>
+<p>vim配置文件：/etc/vim/vimrc</p>
+<p>查找字符串 ?内容    N下一个   n上一个</p>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/hello-world/" class="archive-article-date">
+      <a href="/2016/11/09/工具使用/vim/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/测试/">测试</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
 	</div>
 
       
 	<div class="article-category tagcloud">
 	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+	<a class="article-category-link" href="/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/nginx" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/09/工具使用/nginx/">nginx</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>nginx </p>
+<h2 id="重启"><a href="#重启" class="headerlink" title="重启"></a>重启</h2><p>nginx -s reload</p>
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><p>nginx -s stop</p>
+<h2 id="修改端口"><a href="#修改端口" class="headerlink" title="修改端口"></a>修改端口</h2><p>/etc/nginx/conf/nginx.conf</p>
+<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><p>lsof -i tcp:80<br>lsof -i tcp:8999</p>
+<h2 id="检测配置文件是否正确，可以查看配置文件位置"><a href="#检测配置文件是否正确，可以查看配置文件位置" class="headerlink" title="检测配置文件是否正确，可以查看配置文件位置"></a>检测配置文件是否正确，可以查看配置文件位置</h2><p>sudo nginx -t</p>
+<h2 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h2><p>sudo nginx -V</p>
+<h2 id="配置文件说明"><a href="#配置文件说明" class="headerlink" title="配置文件说明"></a>配置文件说明</h2><p>server_namn : 域名;</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/2016/11/09/工具使用/nginx/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/categories/工具使用/">工具使用</a>
 	</div>
 
 
@@ -660,7 +682,7 @@
 
 
   
-    <article id="post-工具使用/git" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-技术学习/kafka" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <input type="hidden" class="isFancy" />
@@ -670,7 +692,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/工具使用/git/">git</a>
+      <a class="article-title" href="/2016/11/09/技术学习/kafka/">kafka</a>
     </h1>
   
 
@@ -678,110 +700,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="git-push-origin-master报错"><a href="#git-push-origin-master报错" class="headerlink" title="git push origin master报错"></a>git push origin master报错</h2><p>fatal: could not read Username for ‘<a href="https://github.com" target="_blank" rel="external">https://github.com</a>‘: No such file or directo<br>原因使用https方式的时候 在git remote add origin 的https url 里面没有用户名和密码<br>修改为如下：<br>git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a><br><a href="https://github.com/kemayo/sublime-text-git/issues/176" target="_blank" rel="external">https://github.com/kemayo/sublime-text-git/issues/176</a><br>或者直接修改 .git/config 隐藏文件 为git remote add origin <a href="https://{username}:{password}@github.com/{username}/project.git" target="_blank" rel="external">https://{username}:{password}@github.com/{username}/project.git</a> 格式</p>
-<h2 id="显示当前分支"><a href="#显示当前分支" class="headerlink" title="显示当前分支"></a>显示当前分支</h2><p>git branch</p>
-<h2 id="显示远程信息"><a href="#显示远程信息" class="headerlink" title="显示远程信息"></a>显示远程信息</h2><p>git remote -v</p>
-<h2 id="强制回退到master分支"><a href="#强制回退到master分支" class="headerlink" title="强制回退到master分支"></a>强制回退到master分支</h2><p>取回远程主机某个分支的更新，再与本地的指定分支合并<br>git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;<br>git pull origin master:master -f</p>
-<h2 id="显示git状态"><a href="#显示git状态" class="headerlink" title="显示git状态"></a>显示git状态</h2><p>git status</p>
-<p>git branch * master</p>
-<h2 id="将master分支合并到当前分支"><a href="#将master分支合并到当前分支" class="headerlink" title="将master分支合并到当前分支"></a>将master分支合并到当前分支</h2><p>git merge master</p>
-<h2 id="将远程master的修改合并到本地mbl分支。"><a href="#将远程master的修改合并到本地mbl分支。" class="headerlink" title="将远程master的修改合并到本地mbl分支。"></a>将远程master的修改合并到本地mbl分支。</h2><p>git pull origin master:master -f<br>git add .<br> git commit -m “test”<br>git pull origin master:master -f<br>git branch * master<br>git checkout mbl<br>git pull<br>git merge master<br> git push</p>
-<h2 id="取消commit-和-pull"><a href="#取消commit-和-pull" class="headerlink" title="取消commit 和 pull"></a>取消commit 和 pull</h2><p>git reset –hard <commit_id><br>git push origin HEAD –force</commit_id></p>
-<h2 id="git-更换仓库"><a href="#git-更换仓库" class="headerlink" title="git 更换仓库"></a>git 更换仓库</h2><ol>
-<li>从原地址克隆一份裸版本库，比如原本托管于 GitHub<br>git clone –bare git://github.com/username/project.git</li>
-<li>然后到新的 Git 服务器上创建一个新项目，比如 GitCafe。</li>
-<li><p>以镜像推送的方式上传代码到 GitCafe 服务器上。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd project.git</div><div class="line">git push --mirror git@gitcafe.com/username/newproject.git</div></pre></td></tr></table></figure>
-</li>
-<li><p>先查看remote的名字</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -r</div></pre></td></tr></table></figure>
-</li>
-<li><p>假设你的remote是origin，用git remote set_url 更换地址</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote set-url origin remote_git_address</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit -am &quot;提交说明&quot;</div></pre></td></tr></table></figure>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/2016/11/09/工具使用/git/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具使用/">工具使用</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/categories/工具使用/">工具使用</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-技术学习/linux/centos" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/技术学习/linux/centos/">CENTOS笔记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="CENTOS笔记"><a href="#CENTOS笔记" class="headerlink" title="CENTOS笔记"></a>CENTOS笔记</h1><p>[TOC]</p>
-<p>##连接无线网</p>
-<h3 id="ip-addr"><a href="#ip-addr" class="headerlink" title="ip addr"></a>ip addr</h3><p>找到自己的无线网接口 （ps:本人的是wlp5s0）</p>
-<h3 id="ip-link-set-wlp5s0-up"><a href="#ip-link-set-wlp5s0-up" class="headerlink" title="ip link set wlp5s0 up"></a>ip link set wlp5s0 up</h3><p>打开无线网的驱动</p>
-<h3 id="ip-link-show-wlp5s0"><a href="#ip-link-show-wlp5s0" class="headerlink" title="ip link show wlp5s0"></a>ip link show wlp5s0</h3><p>查看该网络接口的状态</p>
-<h3 id="连接无线网"><a href="#连接无线网" class="headerlink" title="连接无线网"></a>连接无线网</h3><p>wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase “ssid” “psk”) (连接无线网ssid，密码psk)</p>
-<h3 id="dhcp分配ip"><a href="#dhcp分配ip" class="headerlink" title="dhcp分配ip"></a>dhcp分配ip</h3><p>dhclient wlp5s0(为wlp5s0分配ip地址)</p>
-<h2 id="软件源"><a href="#软件源" class="headerlink" title="软件源"></a>软件源</h2><h3 id="下载源"><a href="#下载源" class="headerlink" title="下载源"></a>下载源</h3><p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="external">http://mirrors.aliyun.com/repo/Centos-7.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="external">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></p>
-<p>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.sohu.com/help/CentOS-Base-sohu.repo" target="_blank" rel="external">http://mirrors.sohu.com/help/CentOS-Base-sohu.repo</a><br>wget -O /etc/yum.repos.d/CentOS-Base.repo <a href="http://centos.ustc.edu.cn/CentOS-Base.repo" target="_blank" rel="external">http://centos.ustc.edu.cn/CentOS-Base.repo</a></p>
-<h3 id="安装源"><a href="#安装源" class="headerlink" title="安装源"></a>安装源</h3><p>yum clean all<br>yum makecache</p>
-<h2 id="ssh修改端口号"><a href="#ssh修改端口号" class="headerlink" title="ssh修改端口号"></a>ssh修改端口号</h2><h3 id="step1-修改-etc-ssh-sshd-config"><a href="#step1-修改-etc-ssh-sshd-config" class="headerlink" title="step1 修改/etc/ssh/sshd_config"></a>step1 修改/etc/ssh/sshd_config</h3><p>vi /etc/ssh/sshd_config<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#Port 22         //这行去掉#号</div><div class="line">Port 20000      //下面添加这一行</div></pre></td></tr></table></figure></p>
-<h3 id="step2-修改SELinux"><a href="#step2-修改SELinux" class="headerlink" title="step2 修改SELinux"></a>step2 修改SELinux</h3><p>yum -y install policycoreutils-python</p>
-<p>使用以下命令查看当前SElinux 允许的ssh端口：<br>semanage port -l | grep ssh</p>
-<p>添加20000端口到 SELinux<br>semanage port -a -t ssh_port_t -p tcp 20000</p>
-<p>然后确认一下是否添加进去<br>semanage port -l | grep ssh<br>如果成功会输出<br>ssh_port_t                    tcp    20000, 22</p>
-<h3 id="step3-重启ssh"><a href="#step3-重启ssh" class="headerlink" title="step3 重启ssh"></a>step3 重启ssh</h3><p>systemctl restart sshd.service</p>
+        <h2 id="启动zookeeper"><a href="#启动zookeeper" class="headerlink" title="启动zookeeper"></a>启动zookeeper</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/zookeeper-server-start.sh config/zookeeper.properties &amp;</div></pre></td></tr></table></figure>
+<h2 id="启动KAFKA"><a href="#启动KAFKA" class="headerlink" title="启动KAFKA"></a>启动KAFKA</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-server-start.sh config/server.properties &amp;</div></pre></td></tr></table></figure>
+<h2 id="模拟consumer"><a href="#模拟consumer" class="headerlink" title="模拟consumer"></a>模拟consumer</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bin/kafka-console-consumer.sh --zookeeper 127.0.0.1:2181 --from-beginning --topic self_healing</div></pre></td></tr></table></figure>
 
       
     </div>
     <div class="article-info article-info-index">
       
-      <a href="/2016/11/09/技术学习/linux/centos/" class="archive-article-date">
+      <a href="/2016/11/09/技术学习/kafka/" class="archive-article-date">
   	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
 </a>
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分布式/">分布式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术学习/">技术学习</a></li></ul>
 	</div>
 
       
@@ -871,7 +804,7 @@
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
+    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 11.67px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
     			</div>
     	</section>
     

@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://maobaolong.github.io/2016/11/09/技术学习/linux/linux 常用命令/index.html">
 <meta property="og:site_name" content="maobaolong">
 <meta property="og:description" content="介绍linux软件安装，配置">
-<meta property="og:updated_time" content="2016-11-24T01:01:40.517Z">
+<meta property="og:updated_time" content="2016-12-01T03:04:13.871Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="linux命令">
 <meta name="twitter:description" content="介绍linux软件安装，配置">
@@ -205,6 +205,11 @@
 <p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
 <h2 id="改变用户组和用户"><a href="#改变用户组和用户" class="headerlink" title="改变用户组和用户"></a>改变用户组和用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">基本语法：</div><div class="line">chown [-R] 账号名称 文件或目录</div><div class="line">chown [-R] 账号名称:用户组名称 文件或目录</div><div class="line">参数：</div><div class="line">-R : 进行递归( recursive )的持续更改，即连同子目录下的所有文件、目录</div><div class="line">都更新成为这个用户组。常常用在更改某一目录的情况。</div><div class="line">示例1：</div><div class="line">[root@localhost home]# touch testfile //由 root 用户创建文件</div><div class="line">[root@localhost home]# ls testfile –l</div></pre></td></tr></table></figure>
 <h2 id="查看文件夹下容量"><a href="#查看文件夹下容量" class="headerlink" title="查看文件夹下容量"></a>查看文件夹下容量</h2><p>du -ah –max-depth=1</p>
+<h2 id="配置ssh-超时空闲时间"><a href="#配置ssh-超时空闲时间" class="headerlink" title="配置ssh 超时空闲时间"></a>配置ssh 超时空闲时间</h2><p>服务器配置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/etc/profile 中的配置，增加一个参数TMOUT=6000       //100分钟，应该够用了</div><div class="line">echo &quot;TMOUT=6000 &quot; &gt;&gt;/etc/profile</div><div class="line">source /etc/profile   //立即生效</div></pre></td></tr></table></figure></p>
+<p>客户端配置:<br>方法很简单，只需在客户端电脑上编辑（需要root权限）/etc/ssh/ssh_config，并添加如下一行：<br><code>ServerAliveInterval 60</code></p>
+<p>服务器端设置:</p>
+<p>如果有相应的权限，也可以在服务器端设置，即编辑/etc/ssh/sshd_config，并添加：<br><code>ClientAliveInterval 60</code></p>
+<p>重启SSH服务器后该项设置会生效。每一个连接到此服务器上的客户端都会受其影响。应注意启用该功能后，安全性会有一定下降（比如忘记登出时……）</p>
 
       
     </div>
@@ -234,18 +239,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2016/11/09/技术学习/linux/centos/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/11/09/技术学习/数据库/mongodb/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          CENTOS笔记
+          mongodb
         
       </div>
     </a>
   
   
-    <a href="/2016/11/09/技术学习/linux/shell脚本/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">shell脚本</div>
+    <a href="/2016/11/09/技术学习/linux/ubuntu/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ubuntu</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -358,7 +363,7 @@
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
+    				<a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/tags/html/" style="font-size: 11.67px;">html</a> <a href="/tags/idea/" style="font-size: 10px;">idea</a> <a href="/tags/java/" style="font-size: 11.67px;">java</a> <a href="/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/tags/sql/" style="font-size: 10px;">sql</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/tags/velocity/" style="font-size: 10px;">velocity</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/tags/容器/" style="font-size: 10px;">容器</a> <a href="/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/tags/树莓派/" style="font-size: 13.33px;">树莓派</a> <a href="/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/育儿经/" style="font-size: 10px;">育儿经</a>
     			</div>
     	</section>
     
