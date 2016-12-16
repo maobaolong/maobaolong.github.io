@@ -5,12 +5,12 @@
   
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <link rel="dns-prefetch" href="https://maobaolong.github.io">
+  <link rel="dns-prefetch" href="https://maobaolong.github.io/github_blog">
   <title>maobaolong</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="maobaolong">
-<meta property="og:url" content="https://maobaolong.github.io/index.html">
+<meta property="og:url" content="https://maobaolong.github.io/github_blog/index.html">
 <meta property="og:site_name" content="maobaolong">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="maobaolong">
@@ -180,140 +180,6 @@
       
       <a href="/github_blog/2016/12/16/技术学习/bigdata/saltstack-minion/" class="archive-article-date">
   	<time datetime="2016-12-16T03:24:15.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-16</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-技术学习/树莓派/树莓派接人体感应传感器" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/github_blog/2016/12/15/技术学习/树莓派/树莓派接人体感应传感器/">树莓派接人体感应传感器</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="HC-SR501-感应模块简介"><a href="#HC-SR501-感应模块简介" class="headerlink" title="HC-SR501 感应模块简介"></a>HC-SR501 感应模块简介</h1><p><img src="http://bbs.pediy.com/attachment.php?attachmentid=107366&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://bbs.pediy.com/attachment.php?attachmentid=107367&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://bbs.pediy.com/attachment.php?attachmentid=107368&amp;thumb=1&amp;d=1474898982" alt=""></p>
-<p><img src="http://bbs.pediy.com/attachment.php?attachmentid=107369&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://img.blog.csdn.net/20160927164752759" alt=""></p>
-<p>对照前面的参数以及电路图，找到下面的左右针脚正负极，中间的PIN为感应输出，感应到人体时，输出3.3V高电平，检测不到信号时输出0。同时还要求工作电压在4.5V-20V之间。恰好树莓派的P1编号中第2，4号PIN都是5V的电压，满足要求，所以这次我们要接5V的电压。</p>
-<p>  参数调节旋钮是用来扭动控制一些参数的。比如探测的延时时间，灵敏度等等。具体可以参看 HC -SR501的说明书。这里我们都使用默认值。</p>
-<p>  但是有一个关键的L H模式调节阀门要介绍一下，右上角有三个针脚，按照我实物照片，假定从上到下为123 。还有一个黄色的套接头，图中套接头接通了2 3号，代表了H模式，这个套接头是可以拔下来的，然后插到上面来，接通1 2号，代表了L模式。<br>  L模式是不可重复触发，当探测到一次人体时，输出一次高电平，保持一段时间恢复低电平，在此期间如果还是检测到了人体也不再延长这个高电平的时间。等到低电平的封锁时间（前面默认是2.5S）过了以后才又开始检测。<br>  H模式是可以重复触发，如果一直感应到人体时，会一直输出高电平，直到探测不到人体后保持小段时间然后恢复低电平。</p>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/github_blog/2016/12/15/技术学习/树莓派/树莓派接人体感应传感器/" class="archive-article-date">
-  	<time datetime="2016-12-15T15:24:29.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-15</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/树莓派/">树莓派</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-技术学习/bigdata/alluxio" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/github_blog/2016/12/13/技术学习/bigdata/alluxio/">alluxio介绍与安装</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><ul>
-<li>概念：是一个开源的基于内存的分布式存储系统，现在成为开源社区中成长最快的大数据开源项目之一。</li>
-</ul>
-<h2 id="公司简介"><a href="#公司简介" class="headerlink" title="公司简介"></a>公司简介</h2><ul>
-<li>由项目的创建者李浩源以及来自UC Berkeley, Google, CMU, Palantir, Stanford, Yahoo等不同公司和学校的项目核心开发者组成。</li>
-<li>完成750万 dollars 的A轮融资，由Andreessen Horowitz投资（硅谷最著名的VC之一，主要成员为网景公司创始人之一）。</li>
-</ul>
-<p>作者：Mingche Su<br>链接：<a href="https://zhuanlan.zhihu.com/p/20624086" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/20624086</a><br>来源：知乎<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><ul>
-<li>Amazon AWS ：亚马逊AWS 云服务-中国领先的可扩展云计算平台</li>
-<li>Amazon S3 ：是一种在Internet 上的云存储服务。 要上传数据（照片、视频、文档等），请首先在一个AWS 区域中创建存储桶。 然后，您可以将任何数量的对象上传到该存储桶。</li>
-</ul>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
-<li><p>解压</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ tar -xzf alluxio-1.3.0-bin.tar.gz</div><div class="line">$ cd alluxio-1.3.0</div></pre></td></tr></table></figure>
-</li>
-<li><p>生成配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio bootstrapConf localhost</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio format</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/github_blog/2016/12/13/技术学习/bigdata/alluxio/" class="archive-article-date">
-  	<time datetime="2016-12-13T01:23:00.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-13</time>
 </a>
       
 	<div class="article-tag tagcloud">
@@ -707,63 +573,6 @@
 
 
   
-    <article id="post-技术学习/web/playframework" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/github_blog/2016/11/09/技术学习/web/playframework/">playframework</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>目录结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">web_app                         根目录               </div><div class="line">|   sbt                         SBT Unix 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt.bat                     SBT Windows 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt-launch.jar              SBT 启动的Java可执行类库</div><div class="line">|</div><div class="line">+---app                         Play Web 应用全部代码所在目录</div><div class="line">|   |</div><div class="line">|   +---models                  模型代码所在目录</div><div class="line">|   |       Message.scala       留言板例程模型代码</div><div class="line">|   |</div><div class="line">|   +---controllers             控制器代码所在目录</div><div class="line">|   |       Application.scala   默认控制器代码</div><div class="line">|   |</div><div class="line">|   \---views                   视图（Play Scala HTML模板） 代码所在目录</div><div class="line">|           main.scala.html     主模板文件</div><div class="line">|           index.scala.html    首页模板文件</div><div class="line">|           msgboard.scala.html 留言板例程模板文件</div><div class="line">|</div><div class="line">+---conf                        Play 配置文件所在目录</div><div class="line">|       application.conf        应用配置文件</div><div class="line">|       routes                  应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理</div><div class="line">|</div><div class="line">+---logs                        日志目录</div><div class="line">|       application.log         应用运行日志</div><div class="line">|</div><div class="line">+---project                     SBT工程文件</div><div class="line">|       build.properties        保存所需的SBT版本信息，通常无需更改</div><div class="line">|       Build.scala             主要的工程配置文件</div><div class="line">|       plugins.sbt             告知SBT本工程所需要的插件以及下载位置</div><div class="line">|</div><div class="line">+---public                      存储一切直接发送给浏览器的资源文件</div><div class="line">|   |</div><div class="line">|   +---images                  图像文件，如JPEG、PNG、GIF等</div><div class="line">|   |</div><div class="line">|   +---javascripts             JavaScript脚本文件</div><div class="line">|   |</div><div class="line">|   \---stylesheets             CSS样式表文件</div><div class="line">|</div><div class="line">\---target                      存放编译后的可执行代码和编译时的中间代码</div></pre></td></tr></table></figure></p>
-<p><img src="https://www.playframework.com/documentation/1.1.1/images/diagrams_path" alt=""></p>
-<p>执行play,进入play命令行后，执行:<br>idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程； </p>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/github_blog/2016/11/09/技术学习/web/playframework/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/playframework/">playframework</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/框架/">框架</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
     <article id="post-技术学习/linux/linux 常用命令" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -918,6 +727,232 @@
 
 
   
+    <article id="post-技术学习/web/playframework" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/web/playframework/">playframework</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>目录结构<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">web_app                         根目录               </div><div class="line">|   sbt                         SBT Unix 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt.bat                     SBT Windows 批处理脚本用于启动sbt-launch.jar </div><div class="line">|   sbt-launch.jar              SBT 启动的Java可执行类库</div><div class="line">|</div><div class="line">+---app                         Play Web 应用全部代码所在目录</div><div class="line">|   |</div><div class="line">|   +---models                  模型代码所在目录</div><div class="line">|   |       Message.scala       留言板例程模型代码</div><div class="line">|   |</div><div class="line">|   +---controllers             控制器代码所在目录</div><div class="line">|   |       Application.scala   默认控制器代码</div><div class="line">|   |</div><div class="line">|   \---views                   视图（Play Scala HTML模板） 代码所在目录</div><div class="line">|           main.scala.html     主模板文件</div><div class="line">|           index.scala.html    首页模板文件</div><div class="line">|           msgboard.scala.html 留言板例程模板文件</div><div class="line">|</div><div class="line">+---conf                        Play 配置文件所在目录</div><div class="line">|       application.conf        应用配置文件</div><div class="line">|       routes                  应用入口路由文件，所有的HTTP请求将通过该文件转发到指定的Scala对象处理</div><div class="line">|</div><div class="line">+---logs                        日志目录</div><div class="line">|       application.log         应用运行日志</div><div class="line">|</div><div class="line">+---project                     SBT工程文件</div><div class="line">|       build.properties        保存所需的SBT版本信息，通常无需更改</div><div class="line">|       Build.scala             主要的工程配置文件</div><div class="line">|       plugins.sbt             告知SBT本工程所需要的插件以及下载位置</div><div class="line">|</div><div class="line">+---public                      存储一切直接发送给浏览器的资源文件</div><div class="line">|   |</div><div class="line">|   +---images                  图像文件，如JPEG、PNG、GIF等</div><div class="line">|   |</div><div class="line">|   +---javascripts             JavaScript脚本文件</div><div class="line">|   |</div><div class="line">|   \---stylesheets             CSS样式表文件</div><div class="line">|</div><div class="line">\---target                      存放编译后的可执行代码和编译时的中间代码</div></pre></td></tr></table></figure></p>
+<p><img src="https://www.playframework.com/documentation/1.1.1/images/diagrams_path" alt=""></p>
+<p>执行play,进入play命令行后，执行:<br>idea with-sources=yes 或者 eclipse with-source=true.生成对应的工程文件，之后，可以用eclipse或idea导入工程； </p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/web/playframework/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/playframework/">playframework</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/框架/">框架</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/web/xss攻击_跨域攻击" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/web/xss攻击_跨域攻击/">xss攻击</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/web/xss攻击_跨域攻击/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/xss/">xss</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/bigdata/hadoop/hadoop_rest" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/">hadoop_rest</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
+<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/bigdata/hadoop/hadoop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop/">hadoop 命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="显示log"><a href="#显示log" class="headerlink" title="显示log"></a>显示log</h2><p>hadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086</p>
+<h2 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h2><p>hadoop fs -mkdir /user/admin/aaron/newDir</p>
+<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>hadoop fs –put /home/admin/newFile /user/admin/aaron/</p>
+<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile</p>
+<h2 id="显示所有job"><a href="#显示所有job" class="headerlink" title="显示所有job"></a>显示所有job</h2><p>hadoop job -list</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
     <article id="post-技术学习/bigdata/hadoop/yarn/fair-scheduler" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1009,66 +1044,6 @@ Fair Scheduler允许用户将队列信息专门放到一个配置文件（默认
 
 
   
-    <article id="post-技术学习/bigdata/hadoop/hadoop_rest" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/">hadoop_rest</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
-<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/" class="archive-article-date">
-  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
-</a>
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-	<i class="icon-price-tags"></i>
-	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
-	</div>
-
-
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/github_blog/page/2/">2</a><a class="extend next" rel="next" href="/github_blog/page/2/">Next &raquo;</a>
-    </nav>
   
 
 
@@ -1130,7 +1105,7 @@ Fair Scheduler允许用户将队列信息专门放到一个配置文件（默认
     
     	<section class="tools-section tools-section-tag">
     			<div class="widget tagcloud" id="js-tagcloud">
-    				<a href="/github_blog/tags/bigdata/" style="font-size: 12.5px;">bigdata</a> <a href="/github_blog/tags/centos/" style="font-size: 12.5px;">centos</a> <a href="/github_blog/tags/hadoop/" style="font-size: 15px;">hadoop</a> <a href="/github_blog/tags/jquery/" style="font-size: 10px;">jquery</a> <a href="/github_blog/tags/linux/" style="font-size: 17.5px;">linux</a> <a href="/github_blog/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/github_blog/tags/web/" style="font-size: 15px;">web</a> <a href="/github_blog/tags/xss/" style="font-size: 10px;">xss</a> <a href="/github_blog/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/github_blog/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/github_blog/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/github_blog/tags/框架/" style="font-size: 10px;">框架</a>
+    				<a href="/github_blog/tags/bigdata/" style="font-size: 10px;">bigdata</a> <a href="/github_blog/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/github_blog/tags/hadoop/" style="font-size: 16.67px;">hadoop</a> <a href="/github_blog/tags/jquery/" style="font-size: 10px;">jquery</a> <a href="/github_blog/tags/linux/" style="font-size: 16.67px;">linux</a> <a href="/github_blog/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/github_blog/tags/web/" style="font-size: 16.67px;">web</a> <a href="/github_blog/tags/xss/" style="font-size: 10px;">xss</a> <a href="/github_blog/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/github_blog/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/github_blog/tags/框架/" style="font-size: 10px;">框架</a>
     			</div>
     	</section>
     
