@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   
-    
-    <entry>
-      <title><![CDATA[haproxy]]></title>
-      <url>%2Fgithub_blog%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Fhaproxy%2F</url>
-      <content type="text"><![CDATA[编译1uname -a 查看linux版本vim -R README ，查找 ?linux ，N查找下一个，找到linux版本对应targetmake TARGET=linux2628 ubuntu apt-get install haproxy安装即可centos 用yum安装即可yum haproxy -yhaproxy x86_64 1.5.14-3.el7 base 833 k]]></content>
-    </entry>
-
-    
-    <entry>
-      <title><![CDATA[tomcat]]></title>
-      <url>%2Fgithub_blog%2F2016%2F11%2F09%2F%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%2Ftomcat%2F</url>
-      <content type="text"><![CDATA[远程调试Linxu系统: apach/bin/startup.sh开始处中增加如下内容： 1. declare -x CATALINA_OPTS=&quot;-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788&quot; .Windows系统: apach/bin/startup.bat开始处中增加如下内容： 1. SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788 tomcat 配置域名到多个工程目录配置tomcat server.xml host appbase]]></content>
-    </entry>
-
+  
     
   
   
