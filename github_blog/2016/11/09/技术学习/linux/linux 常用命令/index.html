@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="https://maobaolong.github.io/github_blog">
+  <title>linux命令 | maobaolong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="介绍linux软件安装，配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux命令">
+<meta property="og:url" content="https://maobaolong.github.io/github_blog/2016/11/09/技术学习/linux/linux 常用命令/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta property="og:description" content="介绍linux软件安装，配置">
+<meta property="og:updated_time" content="2016-12-16T06:42:18.332Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux命令">
+<meta name="twitter:description" content="介绍linux软件安装，配置">
+  
+    <link rel="alternative" href="/atom.xml" title="maobaolong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/github_blog/main.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="/github_blog/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">maobaolong</a></h1>
+		</hgroup>
+
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/github_blog/">主页</a></li>
+	        
+				<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+	        
+				<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+	        
+				<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a class="js-smart-menu" data-idx="0" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="1" href="javascript:void(0)">标签</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="2" href="javascript:void(0)">友链</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="3" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss">rss</a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-list"></i></div>
+  		<h1 class="header-author js-mobile-header hide">maobaolong</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="/github_blog/avatar.jpg" class="js-avatar">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">maobaolong</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/github_blog/">主页</a></li>
+		        
+					<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+		        
+					<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+		        
+					<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+		        
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap">
+        <article id="post-技术学习/linux/linux 常用命令" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      linux命令
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#linux 常用命令</p>
+<pre><code>* history |grep scp
+* tail -f log/UGDAP.log
+* 只显示文件名：
+</code></pre><p>ls -l | grep ^[^d] | awk ‘{print $8}’<br>只显示文件夹名：<br>ls -l |grep ^d | awk ‘{print $8}’ 或者是 ls -d */</p>
+<h2 id="恢复rm删除的文件"><a href="#恢复rm删除的文件" class="headerlink" title="恢复rm删除的文件"></a>恢复rm删除的文件</h2><h3 id="显示所删除的文件所在的分区"><a href="#显示所删除的文件所在的分区" class="headerlink" title="显示所删除的文件所在的分区"></a>显示所删除的文件所在的分区</h3><p>df -T /home</p>
+<h3 id="用debugFS查找被删除文件的inode号"><a href="#用debugFS查找被删除文件的inode号" class="headerlink" title="用debugFS查找被删除文件的inode号"></a>用debugFS查找被删除文件的inode号</h3><p>sudo debugfs<br>debugfs&gt;open /dev/sda5<br>debugfs&gt;ls -d /home/mbl/study<br>尖括号中的是inode</p>
+<h3 id="恢复inode"><a href="#恢复inode" class="headerlink" title="恢复inode"></a>恢复inode</h3><p>extundelete ${dev_describer} –restore-inode ${inode} </p>
+<h3 id="如果知道被删除文件的完整的路径，直接恢复"><a href="#如果知道被删除文件的完整的路径，直接恢复" class="headerlink" title="如果知道被删除文件的完整的路径，直接恢复"></a>如果知道被删除文件的完整的路径，直接恢复</h3><p>extundelete ${deb_describer} –restore-file ${path}  </p>
+<h2 id="shell脚本常用变量"><a href="#shell脚本常用变量" class="headerlink" title="shell脚本常用变量"></a>shell脚本常用变量</h2><p>$0: shell或shell脚本的名字<br>$*:以一对双引号给出参数列表<br>$@:将各个参数分别加双引号返回<br>$#:参数的个数<br>$_:代表上一个命令的最后一个参数<br>$$:代表所在命令的PID<br>$!:代表最后执行的后台命令的PID<br>$?:代表上一个命令执行后的退出状态</p>
+<h2 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h2><p> curl -x 172.22.91.78:80 <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64273|python</a> -m json.tool&gt;job_1470405196301_64273.json</p>
+<h2 id="显示当前版本"><a href="#显示当前版本" class="headerlink" title="显示当前版本"></a>显示当前版本</h2><p>cat /proc/version<br>uname -a<br>cat /etc/<em>release</em></p>
+<h2 id="显示ip"><a href="#显示ip" class="headerlink" title="显示ip"></a>显示ip</h2><p>hostname -i<br>ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”<br>ifconfig enp0s25|grep inet|grep -v 127.0.0.1|grep -v inet6 | awk ‘{print $2}’ | tr -d “addr:”</p>
+<h2 id="测试端口是否通"><a href="#测试端口是否通" class="headerlink" title="测试端口是否通"></a>测试端口是否通</h2><p>telnet 172.22.91.34 8087</p>
+<h2 id="查看端口是否被占用"><a href="#查看端口是否被占用" class="headerlink" title="查看端口是否被占用"></a>查看端口是否被占用</h2><p>netstat -tunlp |grep 80<br>lsof -i 80</p>
+<p>/bin/bash^M: 解释器错误: 没有那个文件或目录<br>sed -i ‘s/\r$//‘ check_tool.sh</p>
+<h2 id="后台启动进程，重定向输出到文件"><a href="#后台启动进程，重定向输出到文件" class="headerlink" title="后台启动进程，重定向输出到文件"></a>后台启动进程，重定向输出到文件</h2><p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;</p>
+<h2 id="杀进程"><a href="#杀进程" class="headerlink" title="杀进程"></a>杀进程</h2><p>ps -ef | grep tomcat | awk ‘{print $2}’ | xargs kill -9<br>或<br>kill <code>ps -ef | grep [j]enkins.war | awk &#39;{ print $2 }&#39;</code><br>虽然提示没有找到进程pid，但已经杀掉了</p>
+<h2 id="开机自动挂载分区"><a href="#开机自动挂载分区" class="headerlink" title="开机自动挂载分区"></a>开机自动挂载分区</h2><p>用blkid列出分区uuid和type<br>sudo  blkid<br>接下来修改自动挂载的配置文件：<br>sudo vim /etc/fstab<br>增加一行<br>UUID=11263962-9715-473f-9421-0b604e895aaa /data       ext4    defaults 0     1</p>
+<h2 id="zip解压中文乱码"><a href="#zip解压中文乱码" class="headerlink" title="zip解压中文乱码"></a>zip解压中文乱码</h2><p>ubuntu下  unzip -O CP936  xxx.zip -d exdir</p>
+<h2 id="权限"><a href="#权限" class="headerlink" title="权限"></a>权限</h2><p>home目录不能有其它用户写权限<br>/root  </p>
+<p>.ssh 只能是 700</p>
+<p>linux权限<br>777 rwxrwxrwx  （所有者，本组用户，其它用户）rwx=读，写，执行</p>
+<h2 id="ssh-copy-id"><a href="#ssh-copy-id" class="headerlink" title="ssh-copy-id"></a>ssh-copy-id</h2><h2 id="设置root密码"><a href="#设置root密码" class="headerlink" title="设置root密码"></a>设置root密码</h2><p>sudo passwd root</p>
+<h2 id="在任务栏显示网速"><a href="#在任务栏显示网速" class="headerlink" title="在任务栏显示网速"></a>在任务栏显示网速</h2><p>sudo add-apt-repository ppa:nilarimogard/webupd8<br>sudo apt-get update<br>sudo apt-get install indicator-netspeed</p>
+<h2 id="设置显示桌面快捷键"><a href="#设置显示桌面快捷键" class="headerlink" title="设置显示桌面快捷键"></a>设置显示桌面快捷键</h2><p>sudo apt-get install compizconfig-settings-manager<br>ccsm</p>
+<h2 id="KWPlayer-酷我音乐盒"><a href="#KWPlayer-酷我音乐盒" class="headerlink" title="KWPlayer 酷我音乐盒"></a>KWPlayer 酷我音乐盒</h2><h2 id="Iptux-—-局域网聊天工具-飞鸽Linux版"><a href="#Iptux-—-局域网聊天工具-飞鸽Linux版" class="headerlink" title="Iptux — 局域网聊天工具(飞鸽Linux版)"></a>Iptux — 局域网聊天工具(飞鸽Linux版)</h2><p>sudo apt-get install iptux</p>
+<h2 id="System-Load-Indicator-系统状态指示器）"><a href="#System-Load-Indicator-系统状态指示器）" class="headerlink" title="System Load Indicator ( 系统状态指示器）"></a>System Load Indicator ( 系统状态指示器）</h2><p>sudo add-apt-repository ppa:indicator-multiload/stable-daily<br>sudo apt-get update<br>sudo apt-get install indicator-multiload</p>
+<h2 id="XBMC（媒体中心）"><a href="#XBMC（媒体中心）" class="headerlink" title="XBMC（媒体中心）"></a>XBMC（媒体中心）</h2><p>XBMC（媒体中心）<br>sudo add-apt-repository ppa:team-xbmc/ppa<br>sudo apt-get update<br>sudo apt-get install xbmc</p>
+<h2 id="VMware-Workstation"><a href="#VMware-Workstation" class="headerlink" title="VMware Workstation"></a>VMware Workstation</h2><p>安装方法（包含下载、安装、激活、序列号）<br><a href="http://www.kashu.org/1024.html" target="_blank" rel="external">http://www.kashu.org/1024.html</a></p>
+<h2 id="wireshark"><a href="#wireshark" class="headerlink" title="wireshark"></a>wireshark</h2><p><a href="http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/" target="_blank" rel="external">http://ppa.launchpad.net/wireshark-dev/stable/ubuntu/pool/main/w/wireshark/</a><br>ppa:wireshark-dev/stable</p>
+<p>.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz<br>.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2</p>
+<h2 id="查看linux版本"><a href="#查看linux版本" class="headerlink" title="查看linux版本"></a>查看linux版本</h2><p>rpm -qa|grep kernel</p>
+<p>中文Linux 常用的locale是zh_CN.gb2312，zh_CN.gbk，zh_CN.gb18030 和 zh_CN.UTF-8 。通过如下命令可以查询系统的locale：#echo $LANG</p>
+<p>fdisk -l </p>
+<p>mkdir /mnt/usb<br>mount命令格式：mount [-参数] [设备名称] [挂载点] [其他参数]<br>mount /dev/sdb1 /mnt/usb<br>umount /dev/sdb1</p>
+<h2 id="改变用户组和用户"><a href="#改变用户组和用户" class="headerlink" title="改变用户组和用户"></a>改变用户组和用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">基本语法：</div><div class="line">chown [-R] 账号名称 文件或目录</div><div class="line">chown [-R] 账号名称:用户组名称 文件或目录</div><div class="line">参数：</div><div class="line">-R : 进行递归( recursive )的持续更改，即连同子目录下的所有文件、目录</div><div class="line">都更新成为这个用户组。常常用在更改某一目录的情况。</div><div class="line">示例1：</div><div class="line">[root@localhost home]# touch testfile //由 root 用户创建文件</div><div class="line">[root@localhost home]# ls testfile –l</div></pre></td></tr></table></figure>
+<h2 id="查看文件夹下容量"><a href="#查看文件夹下容量" class="headerlink" title="查看文件夹下容量"></a>查看文件夹下容量</h2><p>du -ah –max-depth=1</p>
+<h2 id="配置ssh-超时空闲时间"><a href="#配置ssh-超时空闲时间" class="headerlink" title="配置ssh 超时空闲时间"></a>配置ssh 超时空闲时间</h2><p>服务器配置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/etc/profile 中的配置，增加一个参数TMOUT=6000       //100分钟，应该够用了</div><div class="line">echo &quot;TMOUT=6000 &quot; &gt;&gt;/etc/profile</div><div class="line">source /etc/profile   //立即生效</div></pre></td></tr></table></figure></p>
+<p>客户端配置:<br>方法很简单，只需在客户端电脑上编辑（需要root权限）/etc/ssh/ssh_config，并添加如下一行：<br><code>ServerAliveInterval 60</code></p>
+<p>服务器端设置:</p>
+<p>如果有相应的权限，也可以在服务器端设置，即编辑/etc/ssh/sshd_config，并添加：<br><code>ClientAliveInterval 60</code></p>
+<p>重启SSH服务器后该项设置会生效。每一个连接到此服务器上的客户端都会受其影响。应注意启用该功能后，安全性会有一定下降（比如忘记登出时……）</p>
+<h2 id="Linux常见问题解答–如何修复”tar：由于前一个错误导致于失败状态中退出”"><a href="#Linux常见问题解答–如何修复”tar：由于前一个错误导致于失败状态中退出”" class="headerlink" title="Linux常见问题解答–如何修复”tar：由于前一个错误导致于失败状态中退出”"></a>Linux常见问题解答–如何修复”tar：由于前一个错误导致于失败状态中退出”</h2><p>Exiting with failure status due to previous errors<br>去掉v，只看错误流</p>
+<h2 id="百度网盘公开链接wget下载"><a href="#百度网盘公开链接wget下载" class="headerlink" title="百度网盘公开链接wget下载"></a>百度网盘公开链接wget下载</h2><p>wget -c  –referer=公开链接地址  -O 输出文件名 “直接下载地址”    ，其中-c表示断点续传<br>wget -c –referer=<a href="http://pan.baidu.com/s/1pL0IUxH" target="_blank" rel="external">http://pan.baidu.com/s/1pL0IUxH</a>  -O a.zip “<a href="http://61.179.228.93/d1.baidupcs.com/file/4b43140bd6212b333237b391961932a4?bkt=p3-0000eea78a1d47d0402b131c2736fe70a488&amp;xcode=c0a39d5fa7dcff84c1a1bca47e82ddfb123eeb8f4d2e9e54ded0b7c77404c736&amp;fid=50867796-250528-751846568268583&amp;time=1481855378&amp;sign=FDTAXGERLBH-DCb740ccc5511e5e8fedcff06b081203-mq8GWRwB7zY3FSpQOglOpVoSn8I%3D&amp;to=lc&amp;fm=Qin,B,U,nc&amp;sta_dx=137584648&amp;sta_cs=2496&amp;sta_ft=7z&amp;sta_ct=7&amp;sta_mt=7&amp;fm2=Qingdao,B,U,nc&amp;newver=1&amp;newfm=1&amp;secfm=1&amp;flow_ver=3&amp;pkey=14005e8f94567db20cb9f1c95efbd7a8a7b7c50dcb1a000008336008&amp;sl=75956300&amp;expires=8h&amp;rt=sh&amp;r=739923821&amp;mlogid=8127629174281954396&amp;vuk=-&amp;vbdid=2201694974&amp;fin=FIFA.2002.Green.Edition-ALI213.7z&amp;fn=FIFA.2002.Green.Edition-ALI213.7z&amp;slt=pm&amp;uta=0&amp;rtype=1&amp;iv=0&amp;isw=0&amp;dp-logid=8127629174281954396&amp;dp-callid=0.1.1&amp;csl=600&amp;csign=RJ%2BYoZ6FqCL1OLeGHSbtuImu3ys%3D&amp;wshc_tag=0&amp;wsts_tag=58535192&amp;wsid_tag=6fccf309&amp;wsiphost=ipdbm" target="_blank" rel="external">http://61.179.228.93/d1.baidupcs.com/file/4b43140bd6212b333237b391961932a4?bkt=p3-0000eea78a1d47d0402b131c2736fe70a488&amp;xcode=c0a39d5fa7dcff84c1a1bca47e82ddfb123eeb8f4d2e9e54ded0b7c77404c736&amp;fid=50867796-250528-751846568268583&amp;time=1481855378&amp;sign=FDTAXGERLBH-DCb740ccc5511e5e8fedcff06b081203-mq8GWRwB7zY3FSpQOglOpVoSn8I%3D&amp;to=lc&amp;fm=Qin,B,U,nc&amp;sta_dx=137584648&amp;sta_cs=2496&amp;sta_ft=7z&amp;sta_ct=7&amp;sta_mt=7&amp;fm2=Qingdao,B,U,nc&amp;newver=1&amp;newfm=1&amp;secfm=1&amp;flow_ver=3&amp;pkey=14005e8f94567db20cb9f1c95efbd7a8a7b7c50dcb1a000008336008&amp;sl=75956300&amp;expires=8h&amp;rt=sh&amp;r=739923821&amp;mlogid=8127629174281954396&amp;vuk=-&amp;vbdid=2201694974&amp;fin=FIFA.2002.Green.Edition-ALI213.7z&amp;fn=FIFA.2002.Green.Edition-ALI213.7z&amp;slt=pm&amp;uta=0&amp;rtype=1&amp;iv=0&amp;isw=0&amp;dp-logid=8127629174281954396&amp;dp-callid=0.1.1&amp;csl=600&amp;csign=RJ%2BYoZ6FqCL1OLeGHSbtuImu3ys%3D&amp;wshc_tag=0&amp;wsts_tag=58535192&amp;wsid_tag=6fccf309&amp;wsiphost=ipdbm</a>“</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/linux/linux 常用命令/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/github_blog/2016/11/09/工具使用/nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          nginx
+        
+      </div>
+    </a>
+  
+  
+    <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">hadoop 命令</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+	    <a class="jiathis_button_twitter"></a>
+	    <a class="jiathis_button_plus"></a> 
+	    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="技术学习/linux/linux 常用命令" data-title="linux命令" data-url="https://maobaolong.github.io/github_blog/github_blog/2016/11/09/技术学习/linux/linux 常用命令/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 maobaolong
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: false,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/github_blog/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/github_blog/./main.js"></script>
+
+
+    
+<div class="tools-col">
+  <ul class="btn-wrap">
+    
+      <li class="chose" data-hook="tools-section-all"><span class="text">全部</span><i class="icon-book"></i></li>
+    
+    
+      <li data-hook="tools-section-tag"><span class="text">标签</span><i class="icon-price-tags"></i></li>
+    
+    
+      <li data-hook="tools-section-friends"><span class="text">友链</span><i class="icon-link"></i></li>
+    
+    
+      <li data-hook="tools-section-me"><span class="text">我</span><i class="icon-smile"></i></li>
+    
+  </ul>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all chose">
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-tag">
+    			<div class="widget tagcloud" id="js-tagcloud">
+    				<a href="/github_blog/tags/bigdata/" style="font-size: 11.67px;">bigdata</a> <a href="/github_blog/tags/centos/" style="font-size: 13.33px;">centos</a> <a href="/github_blog/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/github_blog/tags/git/" style="font-size: 10px;">git</a> <a href="/github_blog/tags/hadoop/" style="font-size: 13.33px;">hadoop</a> <a href="/github_blog/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/github_blog/tags/html/" style="font-size: 10px;">html</a> <a href="/github_blog/tags/idea/" style="font-size: 10px;">idea</a> <a href="/github_blog/tags/java/" style="font-size: 11.67px;">java</a> <a href="/github_blog/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/github_blog/tags/jquery/" style="font-size: 11.67px;">jquery</a> <a href="/github_blog/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/github_blog/tags/linux/" style="font-size: 18.33px;">linux</a> <a href="/github_blog/tags/maven/" style="font-size: 10px;">maven</a> <a href="/github_blog/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/github_blog/tags/mysql/" style="font-size: 11.67px;">mysql</a> <a href="/github_blog/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/github_blog/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/github_blog/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/github_blog/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/github_blog/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/github_blog/tags/sql/" style="font-size: 10px;">sql</a> <a href="/github_blog/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/github_blog/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/github_blog/tags/velocity/" style="font-size: 11.67px;">velocity</a> <a href="/github_blog/tags/vim/" style="font-size: 10px;">vim</a> <a href="/github_blog/tags/web/" style="font-size: 16.67px;">web</a> <a href="/github_blog/tags/xss/" style="font-size: 10px;">xss</a> <a href="/github_blog/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/github_blog/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/github_blog/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/github_blog/tags/分布式/" style="font-size: 13.33px;">分布式</a> <a href="/github_blog/tags/容器/" style="font-size: 10px;">容器</a> <a href="/github_blog/tags/工具使用/" style="font-size: 18.33px;">工具使用</a> <a href="/github_blog/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/github_blog/tags/数据库/" style="font-size: 13.33px;">数据库</a> <a href="/github_blog/tags/树莓派/" style="font-size: 15px;">树莓派</a> <a href="/github_blog/tags/框架/" style="font-size: 11.67px;">框架</a> <a href="/github_blog/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/github_blog/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/github_blog/tags/育儿经/" style="font-size: 10px;">育儿经</a>
+    			</div>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends">
+  		
+  			<div class="friends-wrap" id="js-friends">
+  			
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/seafile">seafile</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.gicp.net:9999">herHome</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/blog">个人博客</a>
+  	        
+  	        </div>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">多学多记&lt;br&gt;&lt;br&gt;多分享&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
