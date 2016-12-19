@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="https://maobaolong.github.io/github_blog">
+  <title>maobaolong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="实现功能修改/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/controller/PrestoController.java中函数queryServerUrl4ClientNoPassword中，实现对cluster的分流，把1/10访问分派到另一台master中。         设置static">
+<meta property="og:type" content="website">
+<meta property="og:title" content="maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/github_blog/工作任务/分流9比1.html">
+<meta property="og:site_name" content="maobaolong">
+<meta property="og:description" content="实现功能修改/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/controller/PrestoController.java中函数queryServerUrl4ClientNoPassword中，实现对cluster的分流，把1/10访问分派到另一台master中。         设置static">
+<meta property="og:updated_time" content="2016-10-31T02:13:42.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="maobaolong">
+<meta name="twitter:description" content="实现功能修改/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/controller/PrestoController.java中函数queryServerUrl4ClientNoPassword中，实现对cluster的分流，把1/10访问分派到另一台master中。         设置static">
+  
+    <link rel="alternative" href="/atom.xml" title="maobaolong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/github_blog/main.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="/github_blog/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">maobaolong</a></h1>
+		</hgroup>
+
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/github_blog/">主页</a></li>
+	        
+				<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+	        
+				<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+	        
+				<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a class="js-smart-menu" data-idx="0" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="1" href="javascript:void(0)">标签</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="2" href="javascript:void(0)">友链</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="3" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss">rss</a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-list"></i></div>
+  		<h1 class="header-author js-mobile-header hide">maobaolong</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="/github_blog/avatar.jpg" class="js-avatar">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">maobaolong</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/github_blog/">主页</a></li>
+		        
+					<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+		        
+					<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+		        
+					<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+		        
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap">
+        <article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><p>修改/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/controller/PrestoController.java中函数<br>queryServerUrl4ClientNoPassword中，实现对cluster的分流，把1/10访问分派到另一台master中。<br>         设置static data，当访问发生，查询并使得static data的值增加，每增加10，进行分流。但增加到10000要进行清零。</p>
+<h2 id="jre要替换成公司打两个jar包，否则erp登录会有问题"><a href="#jre要替换成公司打两个jar包，否则erp登录会有问题" class="headerlink" title="jre要替换成公司打两个jar包，否则erp登录会有问题"></a>jre要替换成公司打两个jar包，否则erp登录会有问题</h2><p><a href="http://cf.jd.com/pages/viewpage.action?pageId=46365097" target="_blank" rel="external">http://cf.jd.com/pages/viewpage.action?pageId=46365097</a><br>Java接入单点登录前，请根据您使用的JRE版本替换JCE包</p>
+<h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h2><p><a href="http://bit.jd.com/zhangmang/PowerServer，创建分支mbl，提交到分支中。" target="_blank" rel="external">http://bit.jd.com/zhangmang/PowerServer，创建分支mbl，提交到分支中。</a></p>
+<h2 id="测试服务器"><a href="#测试服务器" class="headerlink" title="测试服务器"></a>测试服务器</h2><p>ssh root@192.168.200.213，密码1qaz@WSX。<br>登入mysql，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">select * from t_user_cluster_relation limit 2;</div><div class="line">| id | user_name | password | catalog | schema_name | cluster_name | state | modify_date | ext1 | ext2 | ext3 | ext4 | ext5 |</div><div class="line">+----+-----------+----------+---------------+-------------+--------------+-------+---------------------+------+------+------+------+------+</div><div class="line">| 1 | zhangmang | 12345678 | elasticsearch | * | zm11 | 1 | 2016-03-08 14:08:04 | NULL | NULL | NULL | NULL | NULL |</div><div class="line"></div><div class="line"></div><div class="line">select * from t_static_data limit 2;</div><div class="line">| id | query_key | param_key | param_value | param_description | ext1 | ext2 | ext3 | state | sort | create_date |</div><div class="line">+----+------------------------------+-----------------------+-------------+-------------------+------+------+------+-------+------+---------------------+</div><div class="line">| 1 | PRESTO_MASTER_CLUSTER_NAME | WEB_WATCH_ADD_CLUSTER | presto | NULL | NULL | NULL | NULL | 1 | 1 | 2016-03-06 14:58:05 |</div><div class="line">| 2 | ZOOKEEPER_NODE_MASTER_PREFIX | /presto/master/ | | NULL | NULL | NULL | NULL | 1 | 1 | 2016-03-06 17:42:34 |</div></pre></td></tr></table></figure></p>
+<h2 id="修改log地址"><a href="#修改log地址" class="headerlink" title="修改log地址"></a>修改log地址</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/resources/log4j.xml，</p>
+<param name="File" value="/home/mbl/UserData/log/PowerServer.log">
+
+
+<h2 id="修改测试数据库"><a href="#修改测试数据库" class="headerlink" title="修改测试数据库"></a>修改测试数据库</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/resources/jdbc.properties<br>druid.url=jdbc:mysql://192.168.200.213:3306/PowerServer?useUnicode=true&amp;characterEncoding=utf-8<br>druid.username=salt<br>druid.password=salt</p>
+<h2 id="拦截访问"><a href="#拦截访问" class="headerlink" title="拦截访问"></a>拦截访问</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/resources/springMVC-context.xml中</p>
+<p><mvc:interceptors><br>    <!-- 本地使用的拦截器 --><br>    <mvc:interceptor><br>        <mvc:mapping path="/**"><br>        <mvc:exclude-mapping path="/presto/**"><br>        <mvc:exclude-mapping path="/prestoConfig/**"><br>        <mvc:exclude-mapping path="/cache/**"><br>        <bean class="com.jd.bdp.powerserver.util.PowerServerUserInterceptor"><br>    </bean></mvc:exclude-mapping></mvc:exclude-mapping></mvc:exclude-mapping></mvc:mapping></mvc:interceptor></mvc:interceptors></p>
+<pre><code>&lt;mvc:interceptor&gt;
+    &lt;mvc:mapping path=&quot;/**/**.html&quot;/&gt;
+    &lt;bean class=&quot;com.jd.bdp.powerserver.util.MenuInterceptor&quot;/&gt;
+&lt;/mvc:interceptor&gt;
+</code></pre><p><br>只有presto、prestoConfig和cache下的不被拦截，其他访问被拦截需要鉴证权限。</p>
+<h2 id="static-data公共静态数据"><a href="#static-data公共静态数据" class="headerlink" title="static data公共静态数据"></a>static data公共静态数据</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/util/StaticDataUtil.java<br>中queryParamByKey和queryParamListByKey通过query_key查询静态数据<br>        获取数据库表PowerServer.t_static_data [MySQL - PowerServer@192.168.200.213]，通过query_key匹配记录或若干个记录的list。param_key可以填写值或者对应param_value的key名称。</p>
+<h2 id="给定clusterName，返回zookeeper上的包含host、port的MasterInfo打Json对象"><a href="#给定clusterName，返回zookeeper上的包含host、port的MasterInfo打Json对象" class="headerlink" title="给定clusterName，返回zookeeper上的包含host、port的MasterInfo打Json对象"></a>给定clusterName，返回zookeeper上的包含host、port的MasterInfo打Json对象</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/task/ZookeeperWatchTask.java的<br>public static JSONObject getMasterInfoByClusterName(String clusterName)</p>
+<h2 id="测试-POST"><a href="#测试-POST" class="headerlink" title="测试 POST"></a>测试 POST</h2><p>curl -XPOST <a href="http://powerserver.jd.com:8888/presto/client/zhangmang/zm11/elasticsearch/*/zhangmang/" target="_blank" rel="external">http://powerserver.jd.com:8888/presto/client/zhangmang/zm11/elasticsearch/*/zhangmang/</a> -d ddd=’33’ -d bbb=’44’</p>
+<h1 id="使用-amp-串接多個參數"><a href="#使用-amp-串接多個參數" class="headerlink" title="使用&amp;串接多個參數"></a>使用<code>&amp;</code>串接多個參數</h1><p>curl -X POST -d “param1=value1&amp;param2=value2”# 也可使用多個<code>-d</code>，效果同上<br>curl -X POST -d “param1=value1”-d “param2=value2”<br>curl -X POST -d “param1=a 0space”# “a space” url encode後空白字元會編碼成’%20’為”a%20space”，編碼後的參數可以直接使用<br>curl -X POST -d “param1=a%20space”<br>curl -X POST <a href="http://powerserver.jd.com:8888/presto/client/zhangmang/zm11/elasticsearch/*/zhangmang/" target="_blank" rel="external">http://powerserver.jd.com:8888/presto/client/zhangmang/zm11/elasticsearch/*/zhangmang/</a></p>
+<h2 id="功能实现"><a href="#功能实现" class="headerlink" title="功能实现"></a>功能实现</h2><p>/home/mbl/IdeaProjects3/PowerServer/src/main/java/com/jd/bdp/powerserver/controller/PrestoConfigController.java增加计数成员 private int accessCount = 0;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">if(list != null &amp;&amp; list.size() &gt; 0)&#123;</div><div class="line">    //获取是否有clusterName对应的chuntClusterName记录</div><div class="line">    String chuntClusterName = &quot;&quot;;</div><div class="line">    List&lt;JSONObject&gt; shuntMapList = StaticDataUtil.queryParamListByKey(&quot;SHUNT_MAP&quot;);</div><div class="line">    if(shuntMapList != null &amp;&amp; shuntMapList.size() &gt; 0)&#123;</div><div class="line">        for(JSONObject jsonObj : shuntMapList)&#123;</div><div class="line">            if(clusterName.equals(jsonObj.get(&quot;param_key&quot;)))&#123;</div><div class="line">                chuntClusterName = jsonObj.getString(&quot;param_value&quot;);</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    //查看是否需要计数,进行分流计算</div><div class="line">    if(StringUtils.isNotBlank(chuntClusterName))&#123;</div><div class="line">        //static data</div><div class="line">        JSONObject info = StaticDataUtil.queryParamByKey(&quot;SHUNT_PERCENT&quot;);</div><div class="line">        String percent = info.getString(&quot;param_key&quot;);</div><div class="line">        if(StringUtils.isNumeric(percent)) &#123;</div><div class="line">            int precentInt = Integer.parseInt(percent);</div><div class="line">            //计数值增加</div><div class="line">            accessCount++;</div><div class="line">            //满10000次进行对计数清零</div><div class="line">            if (accessCount &gt; 10000) &#123;</div><div class="line">                accessCount = 1;</div><div class="line">            &#125;</div><div class="line">            System.out.print(&quot;accessCount = &quot; + accessCount);</div><div class="line">            //进行分流</div><div class="line">            if ((accessCount - 1) % 100 &gt; ((100 - precentInt) - 1)) &#123;</div><div class="line">                String logInfo = String.format(&quot;进行分流-[count =%d]:clusterName = %s, chuntClusterName = %s \n&quot;, accessCount, clusterName, chuntClusterName);</div><div class="line">                logger.info(logInfo);</div><div class="line">                clusterName = chuntClusterName;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    JSONObject masterInfo = ZookeeperWatchTask.getMasterInfoByClusterName(clusterName);</div><div class="line">    if (masterInfo != null) &#123;</div><div class="line">        String host = masterInfo.getString(&quot;host&quot;);</div><div class="line">        int port = masterInfo.getIntValue(&quot;port&quot;);</div><div class="line">        logger.info(&quot;客户端Client查询Master地址校验ERP For IDE : 集群[&quot;+clusterName+&quot;]获取到的连接信息为[&quot;+host+&quot;][&quot;+port+&quot;]&quot;);</div><div class="line">        if (StringUtils.isNotBlank(host) &amp;&amp; port &gt; 0) &#123;</div><div class="line">            Socket socket = new Socket(host, port);</div><div class="line">            socket.close();</div><div class="line">            String address = host +&quot;:&quot;+ port;</div><div class="line">            logger.info(&quot;查询Presto JDBC 连接串: 获取JDBC连接串为:&quot; + address);</div><div class="line">            response.put(&quot;success&quot;, true);</div><div class="line">            response.put(&quot;message&quot;, address);</div><div class="line">            return response.toJSONString();</div><div class="line">        &#125;else &#123;</div><div class="line">            logger.error(&quot;客户端Client查询Master地址校验ERP For IDE : 根据集群[&quot;+clusterName+&quot;]获取到的主机地址和端口信息异常[&quot;+host+&quot;][&quot;+port+&quot;]&quot;);</div><div class="line">            response.put(&quot;success&quot;, false);</div><div class="line">            response.put(&quot;message&quot;, &quot;客户端Client查询Master地址失败,相关集群没有可用的连接,请稍后再试&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;else&#123;</div><div class="line">        logger.error(&quot;客户端Client查询Master地址校验ERP For IDE : 根据集群名称[&quot;+ clusterName +&quot;]没有找到可以访问的地址...&quot;);</div><div class="line">        response.put(&quot;success&quot;, false);</div><div class="line">        response.put(&quot;message&quot;, &quot;客户端Client查询Master地址失败,相关集群没有可用的连接,请稍后再试&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>数据库表PowerServer.t_static_data [MySQL - PowerServer@192.168.200.213]增加配置<br>SHUNT_MAP testClusterMaster chuntClusterMaster<br>SHUNT_MAP zm11 chuntClusterMaster2<br>SHUNT_PERCENT 10</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/工作任务/分流9比1.html" class="archive-article-date">
+  	<time datetime="2016-10-31T02:13:42.727Z" itemprop="datePublished"><i class="icon-clock"></i>2016-10-31</time>
+</a>
+      
+      
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+	    <a class="jiathis_button_twitter"></a>
+	    <a class="jiathis_button_plus"></a> 
+	    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="undefined" data-title="" data-url="https://maobaolong.github.io/github_blog/github_blog/工作任务/分流9比1.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 maobaolong
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: false,
+		animate: true,
+		isHome: false,
+		isPost: false,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/github_blog/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/github_blog/./main.js"></script>
+
+
+    
+<div class="tools-col">
+  <ul class="btn-wrap">
+    
+      <li class="chose" data-hook="tools-section-all"><span class="text">全部</span><i class="icon-book"></i></li>
+    
+    
+      <li data-hook="tools-section-tag"><span class="text">标签</span><i class="icon-price-tags"></i></li>
+    
+    
+      <li data-hook="tools-section-friends"><span class="text">友链</span><i class="icon-link"></i></li>
+    
+    
+      <li data-hook="tools-section-me"><span class="text">我</span><i class="icon-smile"></i></li>
+    
+  </ul>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all chose">
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-tag">
+    			<div class="widget tagcloud" id="js-tagcloud">
+    				
+    			</div>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends">
+  		
+  			<div class="friends-wrap" id="js-friends">
+  			
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/seafile">seafile</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.gicp.net:9999">herHome</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/blog">个人博客</a>
+  	        
+  	        </div>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">多学多记&lt;br&gt;&lt;br&gt;多分享&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
