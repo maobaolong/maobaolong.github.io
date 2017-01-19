@@ -13,7 +13,8 @@ script:
   - hexo g
 
 after_script:
-  - echo 0304${GH_TOKEN}7563
+  - mkdir "public/github_blog"
+  - mv -f public/*  public/github_blog/
   - cd ./public
   - git init
   - git config user.name "maobaolong"
