@@ -13,7 +13,7 @@ script:
   - hexo g
 
 after_script:
-  - echo ${GH_TOKEN}
+  - echo 0304${GH_TOKEN}7563
   - cd ./public
   - git init
   - git config user.name "maobaolong"
