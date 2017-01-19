@@ -1,0 +1,13 @@
+Alluxio提供定位策略，用于确定应该选择哪个Worker来存储文件数据块。用户可以在CreateFileOptions中设置该策略以用于写文件，也可在OpenFileOptions中设置该策略用于向Alluxio中读文件。Alluxio支持自定义定位策略，内置策略包括：
+
+1. LocalFirstPolicy
+首先返回本地主机，如果本地Worker没有足够的容量容纳一个数据块，那么就会从有效的Worker列表中随机选择一个Worker。这也是默认策略。
+
+2. MostAvailableFirstPolicy
+返回拥有最多可用容量的Worker。
+
+3. RoundRobinPolicy
+以循环的方式选取存储下一个数据块的Worker，如果该Worker没有足够的容量，就将其跳过。
+
+返回指定主机名的Worker。该策略不能被设置为默认策略。
+4. SpecificHostPolicy
