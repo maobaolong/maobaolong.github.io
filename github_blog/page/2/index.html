@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="https://maobaolong.github.io/github_blog">
+  <title>maobaolong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/github_blog/page/2/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="maobaolong">
+  
+    <link rel="alternative" href="/atom.xml" title="maobaolong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/github_blog/main.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="/github_blog/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">maobaolong</a></h1>
+		</hgroup>
+
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/github_blog/">主页</a></li>
+	        
+				<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+	        
+				<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+	        
+				<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a class="js-smart-menu" data-idx="0" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="1" href="javascript:void(0)">标签</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="2" href="javascript:void(0)">友链</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="3" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss">rss</a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-list"></i></div>
+  		<h1 class="header-author js-mobile-header hide">maobaolong</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="/github_blog/avatar.jpg" class="js-avatar">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">maobaolong</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/github_blog/">主页</a></li>
+		        
+					<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+		        
+					<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+		        
+					<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+		        
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap">
+        
+  
+    <article id="post-技术学习/bigdata/spark/spark" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/12/16/技术学习/bigdata/spark/spark/">hive命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="spark-SQL"><a href="#spark-SQL" class="headerlink" title="spark SQL"></a>spark SQL</h2><p>val sqlContext = new org.apache.spark.sql.SQLContext(sc)</p>
+<h2 id="spark-中执行hiveSQL"><a href="#spark-中执行hiveSQL" class="headerlink" title="spark 中执行hiveSQL"></a>spark 中执行hiveSQL</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> sqlContext2 = <span class="keyword">new</span> org.apache.spark.sql.hive.<span class="type">HiveContext</span>(sc)</div><div class="line">sqlContext2.sql(<span class="string">"use databases"</span>).collect;</div><div class="line">sqlContext2.sql(<span class="string">"use default"</span>);</div><div class="line">sqlContext2.sql(<span class="string">"select * from mbltest order by id desc"</span>).collect</div></pre></td></tr></table></figure>
+<h2 id="读取文件内容"><a href="#读取文件内容" class="headerlink" title="读取文件内容"></a>读取文件内容</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> textFile = sc.textFile(<span class="string">"/usr/maobaolong/mbltest/mbltest.txt"</span>)</div><div class="line">textFile.first()</div><div class="line">textfile.count()</div></pre></td></tr></table></figure>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/12/16/技术学习/bigdata/spark/spark/" class="archive-article-date">
+  	<time datetime="2016-12-16T03:24:15.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-16</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/spark/">spark</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/树莓派/树莓派接人体感应传感器" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/12/15/技术学习/树莓派/树莓派接人体感应传感器/">树莓派接人体感应传感器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="HC-SR501-感应模块简介"><a href="#HC-SR501-感应模块简介" class="headerlink" title="HC-SR501 感应模块简介"></a>HC-SR501 感应模块简介</h1><p><img src="http://bbs.pediy.com/attachment.php?attachmentid=107366&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://bbs.pediy.com/attachment.php?attachmentid=107367&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://bbs.pediy.com/attachment.php?attachmentid=107368&amp;thumb=1&amp;d=1474898982" alt=""></p>
+<p><img src="http://bbs.pediy.com/attachment.php?attachmentid=107369&amp;thumb=1&amp;d=1474898982" alt=""><br><img src="http://img.blog.csdn.net/20160927164752759" alt=""></p>
+<p>对照前面的参数以及电路图，找到下面的左右针脚正负极，中间的PIN为感应输出，感应到人体时，输出3.3V高电平，检测不到信号时输出0。同时还要求工作电压在4.5V-20V之间。恰好树莓派的P1编号中第2，4号PIN都是5V的电压，满足要求，所以这次我们要接5V的电压。</p>
+<p>  参数调节旋钮是用来扭动控制一些参数的。比如探测的延时时间，灵敏度等等。具体可以参看 HC -SR501的说明书。这里我们都使用默认值。</p>
+<p>  但是有一个关键的L H模式调节阀门要介绍一下，右上角有三个针脚，按照我实物照片，假定从上到下为123 。还有一个黄色的套接头，图中套接头接通了2 3号，代表了H模式，这个套接头是可以拔下来的，然后插到上面来，接通1 2号，代表了L模式。<br>  L模式是不可重复触发，当探测到一次人体时，输出一次高电平，保持一段时间恢复低电平，在此期间如果还是检测到了人体也不再延长这个高电平的时间。等到低电平的封锁时间（前面默认是2.5S）过了以后才又开始检测。<br>  H模式是可以重复触发，如果一直感应到人体时，会一直输出高电平，直到探测不到人体后保持小段时间然后恢复低电平。</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/12/15/技术学习/树莓派/树莓派接人体感应传感器/" class="archive-article-date">
+  	<time datetime="2016-12-15T15:24:29.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-15</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/树莓派/">树莓派</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/bigdata/alluxio/alluxio" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/12/13/技术学习/bigdata/alluxio/alluxio/">alluxio介绍与安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><ul>
+<li>概念：是一个开源的基于内存的分布式存储系统，现在成为开源社区中成长最快的大数据开源项目之一。</li>
+</ul>
+<h2 id="公司简介"><a href="#公司简介" class="headerlink" title="公司简介"></a>公司简介</h2><ul>
+<li>由项目的创建者李浩源以及来自UC Berkeley, Google, CMU, Palantir, Stanford, Yahoo等不同公司和学校的项目核心开发者组成。</li>
+<li>完成750万 dollars 的A轮融资，由Andreessen Horowitz投资（硅谷最著名的VC之一，主要成员为网景公司创始人之一）。</li>
+</ul>
+<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><ul>
+<li>Amazon AWS ：亚马逊AWS 云服务-中国领先的可扩展云计算平台</li>
+<li>Amazon S3 ：是一种在Internet 上的云存储服务。 要上传数据（照片、视频、文档等），请首先在一个AWS 区域中创建存储桶。 然后，您可以将任何数量的对象上传到该存储桶。</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><p>解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ tar -xzf alluxio-1.3.0-bin.tar.gz</div><div class="line">$ <span class="built_in">cd</span> alluxio-1.3.0</div></pre></td></tr></table></figure>
+</li>
+<li><p>生成配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio bootstrapConf localhost</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="格式化Alluxio"><a href="#格式化Alluxio" class="headerlink" title="格式化Alluxio"></a>格式化Alluxio</h2><p>我们格式化Alluxio为启动Alluxio做准备。如下命令会格式化Alluxio的日志和worker存储目录，以便接下来启动master和worker。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio format</div></pre></td></tr></table></figure></p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>我们启动Alluxio！Alluxio默认配置成在localhost启动master和worker。我们可以用如下命令在localhost启动Alluxio：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio-start.sh <span class="built_in">local</span></div></pre></td></tr></table></figure></p>
+<p>如果希望启动worker，则在配置文件workers中配置所有worker的hostname或ip，回车分割<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio-start.sh all</div></pre></td></tr></table></figure></p>
+<p>恭喜！Alluxio已经启动并运行了！你可以访问<a href="http://localhost:19999查看Alluxio" target="_blank" rel="external">http://localhost:19999查看Alluxio</a> master的运行状态，访问<a href="http://localhost:30000查看Alluxio" target="_blank" rel="external">http://localhost:30000查看Alluxio</a> worker的运行状态。</p>
+<h2 id="使用Alluxio-Shell"><a href="#使用Alluxio-Shell" class="headerlink" title="使用Alluxio Shell"></a>使用Alluxio Shell</h2><ul>
+<li><p>列出文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio fs ls /</div></pre></td></tr></table></figure>
+</li>
+<li><p>上传文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio fs copyFromLocal LICENSE /LICENSE</div></pre></td></tr></table></figure>
+</li>
+<li><p>查看文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio fs cat /LICENSE</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./bin/alluxio-stop.sh all</div></pre></td></tr></table></figure>
+<h2 id="Alluxio后端存储（HDFS）"><a href="#Alluxio后端存储（HDFS）" class="headerlink" title="Alluxio后端存储（HDFS）"></a>Alluxio后端存储（HDFS）</h2><ul>
+<li><p>修改配置文件./conf/alluxio-env.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ALLUXIO_MASTER_HOSTNAME=$&#123;ALLUXIO_MASTER_HOSTNAME:-&quot;BJYFF3-Basketball-170132&quot;&#125;</div><div class="line">ALLUXIO_WORKER_MEMORY_SIZE=$&#123;ALLUXIO_WORKER_MEMORY_SIZE:-&quot;85688MB&quot;&#125;</div><div class="line">ALLUXIO_RAM_FOLDER=$&#123;ALLUXIO_RAM_FOLDER:-&quot;/mnt/ramdisk&quot;&#125;</div><div class="line">ALLUXIO_UNDERFS_ADDRESS=hdfs://ns2/user/maobaolong/mbl</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改配置文件./conf/alluxio-c</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">alluxio.underfs.hdfs.configuration=/home/maobaolong/hadoop_conf/hdfs-site.xml</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="所有配置"><a href="#所有配置" class="headerlink" title="所有配置"></a>所有配置</h2><p><a href="http://www.alluxio.org/docs/1.3/cn/Configuration-Settings.html" target="_blank" rel="external">1.3版本所有配置</a></p>
+<h2 id="mount"><a href="#mount" class="headerlink" title="mount"></a>mount</h2><p>bin/alluxio fs mount -readonly /test /software/temp/test/</p>
+<h2 id="alluxio使用非root用户启动集群的问题分析"><a href="#alluxio使用非root用户启动集群的问题分析" class="headerlink" title="alluxio使用非root用户启动集群的问题分析"></a>alluxio使用非root用户启动集群的问题分析</h2><p>mount -t ramfs -o size=100G ramfs /home/appadmin/ramdisk<br>chown appadmin:appadmin /home/appadmin/ramdisk<br>alluxio-start all NoMount</p>
+<h2 id="mvn-install"><a href="#mvn-install" class="headerlink" title="mvn install"></a>mvn install</h2><p>mvn clean install -Dhadoop.version=2.7.1 -Pyarn,spark -DskipTests -Dfindbugs.skip -Dmaven.javadoc.skip -Dcheckstyle.skip</p>
+<h2 id="ReadType"><a href="#ReadType" class="headerlink" title="ReadType"></a>ReadType</h2><ul>
+<li><p>读类型</p>
+<ul>
+<li>CACHE_PROMOTE:<br>如果读取的数据在Worker上时，该数据被移动到Worker的最高层。如果该数据不在本地Worker的Alluxio存储中，那么就将一个副本添加到本地Alluxio Worker中，用于每次完整地读取数据快。这是默认的读类型。</li>
+<li>CACHE:<br>如果该数据不在本地Worker的Alluxio存储中，那么就将一个副本添加到本地Alluxio Worker中，用于每次完整地读取数据快。</li>
+<li>NO_CACHE:<br>不会创建副本。</li>
+</ul>
+</li>
+<li><p>写类型</p>
+<ul>
+<li>CACHE_THROUGH<br>数据被同步地写入到Alluxio的Worker和底层存储系统。</li>
+<li>MUST_CACHE<br>数据被同步地写入到Alluxio的Worker。但不会被写入到底层存储系统。这是默认写类型。</li>
+<li>THROUGH<br>数据被同步地写入到底层存储系统。但不会被写入到Alluxio的Worker。</li>
+<li>ASYNC_THROUGH<br>数据被同步地写入到Alluxio的Worker，并异步地写入到底层存储系统。处于实验阶段。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/12/13/技术学习/bigdata/alluxio/alluxio/" class="archive-article-date">
+  	<time datetime="2016-12-13T01:23:00.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-13</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/bigdata/">bigdata</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/linux/Linux下文件类型及表示颜色" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/12/01/技术学习/linux/Linux下文件类型及表示颜色/">Linux下文件类型及表示颜色</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Linux下文件类型及表示颜色"><a href="#Linux下文件类型及表示颜色" class="headerlink" title="Linux下文件类型及表示颜色:"></a>Linux下文件类型及表示颜色:</h1><p>　　白色：普通文件 (用-表示)</p>
+<p>　　n 红色：压缩文件</p>
+<p>　　n 蓝色：目录文件 (用d表示)</p>
+<p>　　n 青蓝色：链接文件 (用l表示)</p>
+<p>　　n 黄色：设备文件(/dev目录下)(用b或c表示)</p>
+<p>　　b表示的是物理设备;c表示的是字符终端设备.</p>
+<p>　　n 青绿色：可执行文件(/bin、/sbin目录下)</p>
+<p>　　n 粉红色：图片文件或是socket文件(用s表示)</p>
+<p>　　n 青黄色：管道文件 (用p表示)</p>
+<p>　　Linux下用字符表示的文件类型</p>
+<p>　　-：普通文件</p>
+<p>　　d：目录文件</p>
+<p>　　l：链接文件</p>
+<p>　　b：块设备文件</p>
+<p>　　c：字符设备文件</p>
+<p>　　p：管道文件</p>
+<p>　　Linux文件系统配置文件</p>
+<p>　　/proc—–内核提供的一个接口，主要用来存储系统统计信息;</p>
+<p>　　/etc/mtab——–随着/proc/mount的变化而变化，文件系统的安装和卸载都会在这个文件中反映出来;</p>
+<p>　　/etc/fstab——-列出当前系统在启动时自动安装的所有文件系统，也可以使用mount -a 这个命令来手动的安</p>
+<p>　　装这个文件中列出的所有文件系统;另外也可以通过修改这个配置文件，使系统在启动时自动安装我们所需要</p>
+<p>　　的其他的文件系统;</p>
+<p>　　/etc/mtools.conf———dos文件系统上的操作的配置文件</p>
+<p>　　Linux系统管理配置文件</p>
+<p>　　/etc/group———-列出有效的组名称以及组中的用户信息;</p>
+<p>　　/etc/passwd———帐号的密码文件;</p>
+<p>　　帐号—-密码——用户号(UID)—–用户组号(GID)—-所属组—–用户主目录—用户所使用的shell类型</p>
+<p>　　/etc/shadow——–包含加密后的帐号信息;</p>
+<p>　　/etc/shells——-包含系统的可以使用的shell的列表;</p>
+<p>　　/etc/motd———每日的信息，root管理员向系统中所有用户传达信息时使用</p>
+<p>　　Linux系统命令配置文件</p>
+<p>　　/etc/lilo.conf 包含系统的缺省引导命令行参数，还有启动时使用的不同映象。您在 LILO 引导提示的时候按</p>
+<p>　　Tab 键就可以看到这个列表。</p>
+<p>　　/etc/logrotate.conf 维护 /var/log 目录中的日志文件。</p>
+<p>　　/etc/identd.conf identd是一个超级服务器，这个文件对于的是它的配置文件。</p>
+<p>　　/etc/ld.so.conf “动态链接程序”(Dynamic Linker)的配置。</p>
+<p>　　/etc/inittab 按年代来讲，这是 UNIX 中第一个配置文件。在一台 UNIX 机器打开之后启动的第一个程序是</p>
+<p>　　init，它知道该启动什么，这是由于 inittab 的存在。在运行级别改变时，init 读取 inittab，然后控制主进程的启动</p>
+<p>　　Linux主机配置文件</p>
+<p>　　/etc/host.conf———告诉域名服务器如何查找主机名</p>
+<p>　　/etc/hosts———网络中已发现的主机的名称列表，用于解析主机名</p>
+<p>　　/etc/sysconfig/network 主机名和网关的信息  </p>
+<p>文件</p>
+<p>　　Linux连网配置文件</p>
+<p>　　/etc/gated.conf gated 的配置。只能被 gated 守护进程所使用。</p>
+<p>　　/etc/networks 列举从机器所连接的网络可以访问的网络名和网络地址。通过路由命令使用。允许使用网络</p>
+<p>　　名称。</p>
+<p>　　/etc/protocols 列举当前可用的协议。</p>
+<p>　　/etc/resolv.conf 在程序请求“解析”一个 IP 地址时告诉内核应该查询哪个名称服务器。</p>
+<p>　　/etc/rpc 包含 RPC 指令/规则，这些指令/规则可以在 NFS 调用、远程文件系统安装等中使用。</p>
+<p>　　/etc/exports 要导出的文件系统(NFS)和对它的权限。</p>
+<p>　　/etc/services 将网络服务名转换为端口号/协议。由 inetd、telnet、tcpdump 和一些其它程序读取。有一些C访问例程。</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/12/01/技术学习/linux/Linux下文件类型及表示颜色/" class="archive-article-date">
+  	<time datetime="2016-12-01T01:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-12-01</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-育儿经/元宝" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/25/育儿经/元宝/">元宝</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="出生信息"><a href="#出生信息" class="headerlink" title="出生信息"></a>出生信息</h2><p>日期: 2016-4-30 12:03<br>重量: 3770g   3580g  3620g  3670g<br>身长: 52cm</p>
+<h2 id="会翻身"><a href="#会翻身" class="headerlink" title="会翻身"></a>会翻身</h2><p>3个月</p>
+<h2 id="会坐"><a href="#会坐" class="headerlink" title="会坐"></a>会坐</h2><p>日期: 2016-11-5  六个月</p>
+<h2 id="出牙"><a href="#出牙" class="headerlink" title="出牙"></a>出牙</h2><p>日期: 2016-11-4 六个月</p>
+<h2 id="会爬"><a href="#会爬" class="headerlink" title="会爬"></a>会爬</h2><p>日期: 2016-01-05 八个月</p>
+<h2 id="第一次挨摔"><a href="#第一次挨摔" class="headerlink" title="第一次挨摔"></a>第一次挨摔</h2>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/25/育儿经/元宝/" class="archive-article-date">
+  	<time datetime="2016-11-25T13:35:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-25</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/元宝/">元宝</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/育儿经/">育儿经</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/育儿经/">育儿经</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/树莓派/ownCloud安装" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/25/技术学习/树莓派/ownCloud安装/">树莓派上ownCloud的安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="树莓派上ownCloud的安装"><a href="#树莓派上ownCloud的安装" class="headerlink" title="树莓派上ownCloud的安装"></a>树莓派上ownCloud的安装</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">sudo apt-get install apache2 php5 php5-gd php-xml-parser php5-intl php5-sqlite php5-mysql smbclient curl libcurl3 php5-curl mysql-server</div></pre></td></tr></table></figure>
+<h2 id="安装apache"><a href="#安装apache" class="headerlink" title="安装apache"></a>安装apache</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install apache2</div></pre></td></tr></table></figure>
+<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><h2 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h2><h2 id="安装owncloud"><a href="#安装owncloud" class="headerlink" title="安装owncloud"></a>安装owncloud</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ tar xjf owncloud-4.5.6.tar.bz2</div><div class="line">$ cp -r -v owncloud/ /var/www/owncloud/</div></pre></td></tr></table></figure>
+<h2 id="安装ownCloud客户端"><a href="#安装ownCloud客户端" class="headerlink" title="安装ownCloud客户端"></a>安装ownCloud客户端</h2><p>sudo apt-get install owncloud-client</p>
+<p>/etc/init.d/apache2 restart</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/25/技术学习/树莓派/ownCloud安装/" class="archive-article-date">
+  	<time datetime="2016-11-25T10:10:14.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-25</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/树莓派/">树莓派</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/web/jquery中attr和prop的区别" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/24/技术学习/web/jquery中attr和prop的区别/">jquery中attr和prop的区别（转）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="jquery中attr和prop的区别"><a href="#jquery中attr和prop的区别" class="headerlink" title="jquery中attr和prop的区别"></a>jquery中attr和prop的区别</h1><h2 id="转自〖芈老头〗的技术空间"><a href="#转自〖芈老头〗的技术空间" class="headerlink" title="转自〖芈老头〗的技术空间"></a>转自<a href="http://www.cnblogs.com/Showshare/p/different-between-attr-and-prop.html" title="〖芈老头〗的技术空间" target="_blank" rel="external">〖芈老头〗的技术空间</a></h2><p>在高版本的jquery引入prop方法后，什么时候该用prop？什么时候用attr？它们两个之间有什么区别？这些问题就出现了。</p>
+<p>关于它们两个的区别，网上的答案很多。这里谈谈我的心得，我的心得很简单：</p>
+<ul>
+<li>对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。</li>
+<li>对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。</li>
+</ul>
+<p>上面的描述也许有点模糊，举几个例子就知道了。</p>
+<p> 这个例子里<code>&lt;a&gt;</code>元素的DOM属性有href、target和class，这些属性就是<code>&lt;a&gt;</code>元素本身就带有的属性，也是W3C标准里就包含有这几个属性，或者说在IDE里能够智能提示出的属性，这些就叫做固有属性。处理这些属性时，建议使用prop方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href=&quot;#&quot; id=&quot;link1&quot; action=&quot;delete&quot;&gt;删除&lt;/a&gt;</div></pre></td></tr></table></figure>
+<p>这个例子里<code>&lt;a&gt;</code>元素的DOM属性有“href、id和action”，很明显，前两个是固有属性，而后面一个“action”属性是我们自己自定义上去的，<code>&lt;a&gt;</code>元素本身是没有这个属性的。这种就是自定义的DOM属性。处理这些属性时，建议使用attr方法。使用prop方法取值和设置属性值时，都会返回undefined值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a href=&quot;http://www.baidu.com&quot; target=&quot;_self&quot; class=&quot;btn&quot;&gt;百度&lt;/a&gt;</div></pre></td></tr></table></figure>
+<p>再举一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;input id=&quot;chk1&quot; type=&quot;checkbox&quot; /&gt;是否可见</div><div class="line">&lt;input id=&quot;chk2&quot; type=&quot;checkbox&quot; checked=&quot;checked&quot; /&gt;是否可见</div></pre></td></tr></table></figure>
+<p>像checkbox，radio和select这样的元素，选中属性对应“checked”和“selected”，这些也属于固有属性，因此需要使用prop方法去操作才能获得正确的结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$(&quot;#chk1&quot;).prop(&quot;checked&quot;) == false</div><div class="line">$(&quot;#chk2&quot;).prop(&quot;checked&quot;) == true</div></pre></td></tr></table></figure>
+<p>如果上面使用attr方法，则会出现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$(&quot;#chk1&quot;).attr(&quot;checked&quot;) == undefined</div><div class="line">$(&quot;#chk2&quot;).attr(&quot;checked&quot;) == &quot;checked&quot;</div></pre></td></tr></table></figure>
+<p>全文完。</p>
+<p>以下是官方建议attr(),prop()的使用：</p>
+<table>
+<thead>
+<tr>
+<th>Attribute/Property</th>
+<th>.attr()</th>
+<th>.prop()</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>accesskey</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>align</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>async</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>autofocus</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>checked</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>class</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>contenteditable</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>draggable</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>href</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>id</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>label</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>location ( i.e. window.location )</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>multiple</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>readOnly</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>rel</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>selected</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>src</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>tabindex</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>title</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>type</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td>width ( if needed over .width() )</td>
+<td>√</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="转自mylove"><a href="#转自mylove" class="headerlink" title="转自mylove"></a>转自<a href="http://aijuans.iteye.com/blog/1954744" title="mylove" target="_blank" rel="external">mylove</a></h2><p>attribute和property都可以翻译为属性，为了以示区别，通常把这两个单词翻译为属性与特性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;div id=&quot;test&quot;&gt;Click Here&lt;/div&gt;</div></pre></td></tr></table></figure>
+<p>上面这段HTML语句中有三个节点，分别是Element “div”、attribute “id”、Text “click here”，我们最常见的attribute正式指的attribute类型节点，在JavaScript有专门处理attribute的函数 .getAttribute(name) / setAttribute(name,value)。当然attribute不只是我们能够在HTML文档上看到的这几个，我们可以自定义attributed加到DOM节点中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;div id=&quot;test&quot;&gt;123&lt;/div&gt;</div><div class="line">    &lt;script type=&quot;text/javascript&quot;&gt;</div><div class="line">        var t=document.getElementById(&apos;test&apos;);</div><div class="line">        t.setAttribute(&apos;class&apos;,&apos;active&apos;);</div><div class="line">        t.setAttribute(&apos;customizedAttr&apos;,&apos;customized&apos;);</div><div class="line">    &lt;/script&gt;</div></pre></td></tr></table></figure>
+<p>这样可以div被修改为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;div id=&quot;test&quot; class=&quot;active&quot; customizedattr=&quot;customized&quot;&gt;123&lt;/div&gt;</div></pre></td></tr></table></figure>
+<p>通过方法 setAttribute设置的attribute最终都会反映到元素的attribute类型的节点中</p>
+<p>property是DOM对象的字段，跟我们平常使用的一些对象一样，包含很多字段，这些字段就是property，取值或者设置值和普通字段一样通过”对象.字段“的方式。</p>
+<p>看起来attribute和property应该没有什么关系才对，怎么会。。。attribute和property容易混倄是因为很多attribute节点还有一个相对应的property属性，比如上面div的”id“ attribute 同样可以用t.id取到（实际上绝大部分人都是这样获取的），通过property更改id后，用getAttibute获取的id是更新后的id。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">t.id=&apos;test1&apos;;</div><div class="line">console.log(t.getAttribute(&apos;id&apos;));//test1</div></pre></td></tr></table></figure>
+<p>同样我们也可以自定义property</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">t.customizedProp=&apos;customized prop&apos;;</div></pre></td></tr></table></figure>
+<p>==区别==</p>
+<ol>
+<li>于build-in属性，attribute和property共享数据，attribute更改了会对property造成影响，反之亦然，但是两者的自定义属性是独立的数据，即使name一样，也互不影响，看起来是下面这张图，但是IE6、7没有作区分，依然共享自定义属性数据<br><img src="http://images.cnitblog.com/blog/349217/201309/14160245-d2d2e19297c94935a1ad388be27ba869.png" alt=""></li>
+<li>并不是所有的attribute与对应的property名字都一致，比如刚才使用的attribute 的class属性，使用property操作的时候应该是这样className</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;input id=&quot;test3&quot; type=&quot;checkbox&quot;/&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var t=document.getElementById(&apos;test3&apos;);</div><div class="line">        console.log(t.getAttribute(&apos;checked&apos;));//null</div><div class="line">        console.log(t.checked);//false;</div><div class="line">        </div><div class="line">        t.setAttribute(&apos;checked&apos;,&apos;checked&apos;);</div><div class="line">        console.log(t.getAttribute(&apos;checked&apos;));//checked</div><div class="line">        console.log(t.checked);//true</div><div class="line">        </div><div class="line">        t.checked=false;</div><div class="line">        console.log(t.getAttribute(&apos;checked&apos;));//checked</div><div class="line">        console.log(t.checked);//false</div></pre></td></tr></table></figure>
+<ol>
+<li>对于一些和路径相关的属性，两者取得值也不尽相同，但是同样attribute取得是字面量，property取得是计算后的完整路径</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a id=&quot;test4&quot; href=&quot;#&quot;&gt;Click&lt;/a&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var t=document.getElementById(&apos;test4&apos;);</div><div class="line">        console.log(t.getAttribute(&apos;href&apos;));//#</div><div class="line">        console.log(t.href);//file:///C:/Users/bsun/Desktop/ss/anonymous.html#</div></pre></td></tr></table></figure>
+<p>关于浏览器（IE）造成的兼容性问题可以看看IE 混淆了 DOM 对象属性（property）及 HTML 标签属性（attribute），造成了对 setAttribute、getAttribute 的不正确实现</p>
+<p>==<strong>attr和prop</strong>==<br>相信看完上面内容，大家就明白为什么jQuery要添加prop方法了，在jQuery API中也有专门解释<br><strong>Attributes VS. Properties</strong><br>在一些特殊的情况下，attributes和properties的区别非常大。在jQuery1.6之前，.attr()方法在获取一些attributes的时候使用了property值，这样会导致一些不一致的行为。在jQuery1.6中，.prop()方法提供了一中明确的获取property值得方式，这样.attr()方法仅返回attributes。</p>
+<p>比如，selectedIndex, tagName, nodeName, nodeType, ownerDocument, defaultChecked, 和defaultSelected应该使用.prop()方法获取/设置值。 在jQuery1.6之前这些不属于attribute的property需要用.attr()方法获取。这几个并没有相应的attibute，只有property。</p>
+<p>关于布尔类型 attributes，比如一个这样的HTML标签，它在JavaScript中变量名为elem</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;input type=&quot;checkbox&quot; checked=&quot;checked&quot; /&gt;</div></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elem.checked</td>
+<td>true (Boolean) Will change with checkbox state</td>
+</tr>
+<tr>
+<td>$( elem ).prop( “checked” )</td>
+<td>true (Boolean) Will change with checkbox state</td>
+</tr>
+<tr>
+<td>elem.getAttribute( “checked” )</td>
+<td>“checked” (String) Initial state of the checkbox; does not change</td>
+</tr>
+<tr>
+<td>$( elem ).attr( “checked” ) (1.6)</td>
+<td>“checked” (String) Initial state of the checkbox; does not change</td>
+</tr>
+<tr>
+<td>$( elem ).attr( “checked” ) (1.6.1+)</td>
+<td>“checked” (String) Will change with checkbox state</td>
+</tr>
+<tr>
+<td>$( elem ).attr( “checked” ) (pre-1.6)</td>
+<td>true (Boolean) Changed with checkbox state</td>
+</tr>
+</tbody>
+</table>
+<p>根据W3C forms specification，checked属性是一个布尔值，这就意味着只要checked属性在HTML中表现出来了，那么相应的property就应该是true，即使checked没有值，这点儿对其它布尔类型的属性一样适用。</p>
+<p>然而关于checked 属性需要记住的最重要的一点是：它和checked property并不是一致的。实际上这个attribute和defaultChecked property一致，而且只应该用来设置checkbox的初始值。checked attribute并不随着checkedbox的状态而改变，但是checked property却跟着变。因此浏览器兼容的判断checkebox是否被选中应该使用property</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if ( elem.checked )</div><div class="line">if ( $( elem ).prop( &quot;checked&quot; ) )</div><div class="line">if ( $( elem ).is( &quot;:checked&quot; ) )</div></pre></td></tr></table></figure>
+<p>这对其它一些类似于selected、value这样的动态attribute也适用。</p>
+<p>在IE9之前版本中，如果property没有在DOM元素被移除之前删除，使用.prop()方法设置DOM元素property（简单类型除外：number、string、boolean）的值会导致内存泄露。为了安全的设置DOM对象的值，避免内存泄露，可以使用.data()方法。</p>
+<p><img src="http://images.cnitblog.com/blog/349217/201310/01161410-90dde52753e040f3a09b83c418e94026.png" alt=""></p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/24/技术学习/web/jquery中attr和prop的区别/" class="archive-article-date">
+  	<time datetime="2016-11-24T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-24</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/jquery/">jquery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/idea" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/21/工具使用/idea/">idea</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="maven-helper"><a href="#maven-helper" class="headerlink" title="maven helper"></a>maven helper</h2><p>maven依赖冲突解决利器</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/21/工具使用/idea/" class="archive-article-date">
+  	<time datetime="2016-11-21T01:30:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-21</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/idea/">idea</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/maven" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/16/工具使用/maven/">maven</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="maven-安装本地库"><a href="#maven-安装本地库" class="headerlink" title="maven 安装本地库"></a>maven 安装本地库</h2><p>mvn install:install-file -DgroupId=com.facebook.presto -DartifactId=presto-jdbc -Dversion=0.132-SNAPSHOT -Dpackaging=jar -Dfile=presto-jdbc-0.132-SNAPSHOT.jar</p>
+<h2 id="打包jar"><a href="#打包jar" class="headerlink" title="打包jar"></a>打包jar</h2><h3 id="依赖包独立存在"><a href="#依赖包独立存在" class="headerlink" title="依赖包独立存在"></a>依赖包独立存在</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">pom中加入</div><div class="line">&lt;plugin&gt;</div><div class="line">                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</div><div class="line">                &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;</div><div class="line">                &lt;configuration&gt;</div><div class="line">                    &lt;archive&gt;</div><div class="line">                        &lt;manifest&gt;</div><div class="line">                            &lt;addClasspath&gt;true&lt;/addClasspath&gt;</div><div class="line">                            &lt;mainClass&gt;youmainclasspath&lt;/mainClass&gt;</div><div class="line">                        &lt;/manifest&gt;</div><div class="line">                    &lt;/archive&gt;</div><div class="line">                &lt;/configuration&gt;</div><div class="line">            &lt;/plugin&gt;</div><div class="line">执行 mvn dependency:copy-dependencies -DoutputDirectory=lib package</div><div class="line">然后把lib里的所有jar放到你工程的jar包所在的目录</div><div class="line">运行java -jar youjar.jar</div></pre></td></tr></table></figure>
+<h2 id="Maven中-DskipTests和-Dmaven-test-skip-true的区别"><a href="#Maven中-DskipTests和-Dmaven-test-skip-true的区别" class="headerlink" title="Maven中-DskipTests和-Dmaven.test.skip=true的区别"></a>Maven中-DskipTests和-Dmaven.test.skip=true的区别</h2><p>在使用mvn package进行编译、打包时，Maven会执行src/test/java中的JUnit测试用例，有时为了跳过测试，会使用参数-DskipTests和-Dmaven.test.skip=true，这两个参数的主要区别是：</p>
+<p>-DskipTests，不执行测试用例，但编译测试用例类生成相应的class文件至target/test-classes下。</p>
+<p>-Dmaven.test.skip=true，不执行测试用例，也不编译测试用例类。</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/16/工具使用/maven/" class="archive-article-date">
+  	<time datetime="2016-11-16T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-16</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/maven/">maven</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/数据库/mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/数据库/mysql/">mysql</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>[TOC]</p>
+<h2 id="mysql启动服务"><a href="#mysql启动服务" class="headerlink" title="mysql启动服务"></a>mysql启动服务</h2><h3 id="启动mysql："><a href="#启动mysql：" class="headerlink" title="启动mysql："></a>启动mysql：</h3><p>方式一：sudo /etc/init.d/mysql start<br>方式二：sudo start mysql<br>方式三：sudo service mysql start</p>
+<h3 id="停止mysql："><a href="#停止mysql：" class="headerlink" title="停止mysql："></a>停止mysql：</h3><p>方式一：sudo /etc/init.d/mysql stop<br>方式二：sudo stop mysql<br>方式san：sudo service mysql stop</p>
+<h3 id="重启mysql："><a href="#重启mysql：" class="headerlink" title="重启mysql："></a>重启mysql：</h3><p>方式一：sudo/etc/init.d/mysql restart<br>方式二：sudo restart mysql<br>方式三：sudo service mysql restart</p>
+<pre><code>* 以root用户登入
+</code></pre><p>mysql -u root -p</p>
+<h3 id="创建普通用户"><a href="#创建普通用户" class="headerlink" title="创建普通用户"></a>创建普通用户</h3><p>create user ‘salt’@’localhost’;<br>set password for ‘salt’@’localhost’ = password(‘salt’); </p>
+<h3 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h3><p>create database UGDAP;</p>
+<h3 id="显示所有数据库"><a href="#显示所有数据库" class="headerlink" title="显示所有数据库"></a>显示所有数据库</h3><p>show databases;</p>
+<h3 id="为用户salt授予数据库UGDAP下所有表打所有权限"><a href="#为用户salt授予数据库UGDAP下所有表打所有权限" class="headerlink" title="为用户salt授予数据库UGDAP下所有表打所有权限"></a>为用户salt授予数据库UGDAP下所有表打所有权限</h3><p>grant all privileges on UGDAP.* to salt@localhost identified by ‘salt’;<br>flush privileges;</p>
+<h3 id="以salt用户登入（远程登入）"><a href="#以salt用户登入（远程登入）" class="headerlink" title="以salt用户登入（远程登入）"></a>以salt用户登入（远程登入）</h3><p>mysql -u salt -psalt<br>mysql -h 192.168.200.213 -P 3306 -usalt -psalt</p>
+<h3 id="使用指定数据库"><a href="#使用指定数据库" class="headerlink" title="使用指定数据库"></a>使用指定数据库</h3><p>use UGDAP;</p>
+<h3 id="查看所有表"><a href="#查看所有表" class="headerlink" title="查看所有表"></a>查看所有表</h3><p>show tables; </p>
+<h3 id="删除库和表"><a href="#删除库和表" class="headerlink" title="删除库和表"></a>删除库和表</h3><p>drop database 库名;<br>drop table 表名； </p>
+<h3 id="将表中记录清空"><a href="#将表中记录清空" class="headerlink" title="将表中记录清空"></a>将表中记录清空</h3><p>delete from 表名; </p>
+<h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h3><p>create table tb_emp1<br>(<br> id  INT(11),<br> name VARCHAR(25),<br> deptid  INT (11),<br> salary FLOAT<br>);</p>
+<h3 id="显示表结构"><a href="#显示表结构" class="headerlink" title="显示表结构"></a>显示表结构</h3><p>describe tb_emp1;</p>
+<h3 id="导入sql-执行sql脚本（shell中以及mysql中）"><a href="#导入sql-执行sql脚本（shell中以及mysql中）" class="headerlink" title="导入sql/执行sql脚本（shell中以及mysql中）"></a>导入sql/执行sql脚本（shell中以及mysql中）</h3><p>mysql db_name &lt; text_file<br>mysql db_name -u username -p &lt; text_file  </p>
+<p>mysql&gt; source file_name<br>mysql&gt; . file_name</p>
+<h3 id="导出数据库"><a href="#导出数据库" class="headerlink" title="导出数据库"></a>导出数据库</h3><p>mysqldump -h 192.168.200.213 -P 3306 -usalt -psalt –default-character-set=utf8 UGDAP&gt;./UGDAP.sql</p>
+<h3 id="卸载mysql"><a href="#卸载mysql" class="headerlink" title="卸载mysql"></a>卸载mysql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">sudo rm /var/lib/mysql/ -R</div><div class="line"></div><div class="line">//删除mysql的数据文件</div><div class="line"></div><div class="line"></div><div class="line">sudo rm /etc/mysql/ -R</div><div class="line"></div><div class="line">//删除mqsql的配置文件</div><div class="line"></div><div class="line">sudo apt-get autoremove mysql* --purge</div><div class="line"></div><div class="line">sudo apt-get remove apparmor</div><div class="line"></div><div class="line">sudo apt-get autoremove</div><div class="line">1 sudo apt-get autoremove --purge mysql-server-5.0</div><div class="line">2 sudo apt-get remove mysql-server</div><div class="line">3 sudo apt-get autoremove mysql-server</div><div class="line">4 sudo apt-get remove mysql-common (非常重要)</div><div class="line"></div><div class="line">dpkg -l |grep ^rc|awk &apos;&#123;print $2&#125;&apos; |sudo xargs dpkg -P</div></pre></td></tr></table></figure>
+<pre><code>* 安装 mysql
+</code></pre><p>1 sudo apt-get install mysql-server<br>2 sudo apt-get install mysql-client<br>3 sudo apt-get install php5-mysql(安装php5-mysql 是将php和mysql连接起来 ) </p>
+<p>一旦安装完成，MySQL 服务器应该自动启动。您可以在终端提示符后运行以下命令来检查 MySQL 服务器是否正在运行：<br>1 sudo netstat -tap | grep mysql</p>
+<p>当您运行该命令时，您可以看到类似下面的行：<br>tcp 0 0 localhost.localdomain:mysql <em>:</em> LISTEN -如果服务器不能正常运行，您可以通过下列命令启动它：</p>
+<p>1 sudo /etc/init.d/mysql restart</p>
+<h2 id="修改root用户密码"><a href="#修改root用户密码" class="headerlink" title="修改root用户密码"></a>修改root用户密码</h2><p>###第一步：修改Mysql配置文件<br>[root@liama01 ~]# vi /etc/my.cnf<br>在mysqld下，加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">skip-grant-tables</div><div class="line">skip-networking</div></pre></td></tr></table></figure></p>
+<p>###第二步：重启Mysql后使用mysql -uroot -p 命令登入Mysql并修改密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">service mysqld restart</div><div class="line">mysql -uroot -p 回车</div><div class="line"></div><div class="line">mysql&gt; use mysql</div><div class="line">mysql&gt; update user set password=PASSWORD(&apos;root&apos;) WHERE user=&quot;root&quot;;</div><div class="line">mysql&gt; flush privileges;</div></pre></td></tr></table></figure></p>
+<p>###第三步：去掉跳过，并重启服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vi /etc/my.cnf</div><div class="line">去掉skip-grant-tables和skip-networking</div><div class="line">service mysqld restart</div></pre></td></tr></table></figure>
+<p>###第四步：重置密码<br>如果不重置会报错</p>
+<p>ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.<br>执行重新设置密码<br>mysql&gt; ALTER USER ‘root’@’localhost’ IDENTIFIED BY ‘<strong><em>**</em></strong>‘</p>
+<h2 id="一条命令登录mysql-执行sql语句，然后退出"><a href="#一条命令登录mysql-执行sql语句，然后退出" class="headerlink" title="一条命令登录mysql 执行sql语句，然后退出"></a>一条命令登录mysql 执行sql语句，然后退出</h2><p>mysql -h ip -uuser -ppwd -e”select * from bdpops.t_static_data limit 1”</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/数据库/mysql/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/mysql/">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/数据库/">数据库</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/github_blog/">&laquo; Prev</a><a class="page-number" href="/github_blog/">1</a><span class="page-number current">2</span><a class="page-number" href="/github_blog/page/3/">3</a><a class="page-number" href="/github_blog/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/github_blog/page/6/">6</a><a class="extend next" rel="next" href="/github_blog/page/3/">Next &raquo;</a>
+    </nav>
+  
+
+
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 maobaolong
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: false,
+		animate: true,
+		isHome: true,
+		isPost: false,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/github_blog/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/github_blog/./main.js"></script>
+
+
+    
+<div class="tools-col">
+  <ul class="btn-wrap">
+    
+      <li class="chose" data-hook="tools-section-all"><span class="text">全部</span><i class="icon-book"></i></li>
+    
+    
+      <li data-hook="tools-section-tag"><span class="text">标签</span><i class="icon-price-tags"></i></li>
+    
+    
+      <li data-hook="tools-section-friends"><span class="text">友链</span><i class="icon-link"></i></li>
+    
+    
+      <li data-hook="tools-section-me"><span class="text">我</span><i class="icon-smile"></i></li>
+    
+  </ul>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all chose">
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-tag">
+    			<div class="widget tagcloud" id="js-tagcloud">
+    				<a href="/github_blog/tags/alluxio/" style="font-size: 11.43px;">alluxio</a> <a href="/github_blog/tags/bigdata/" style="font-size: 15.71px;">bigdata</a> <a href="/github_blog/tags/centos/" style="font-size: 12.86px;">centos</a> <a href="/github_blog/tags/en/" style="font-size: 10px;">en</a> <a href="/github_blog/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/github_blog/tags/git/" style="font-size: 10px;">git</a> <a href="/github_blog/tags/hadoop/" style="font-size: 12.86px;">hadoop</a> <a href="/github_blog/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/github_blog/tags/hive/" style="font-size: 10px;">hive</a> <a href="/github_blog/tags/html/" style="font-size: 10px;">html</a> <a href="/github_blog/tags/idea/" style="font-size: 10px;">idea</a> <a href="/github_blog/tags/java/" style="font-size: 11.43px;">java</a> <a href="/github_blog/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/github_blog/tags/jquery/" style="font-size: 11.43px;">jquery</a> <a href="/github_blog/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/github_blog/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/github_blog/tags/maven/" style="font-size: 10px;">maven</a> <a href="/github_blog/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/github_blog/tags/mysql/" style="font-size: 11.43px;">mysql</a> <a href="/github_blog/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/github_blog/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/github_blog/tags/rpc/" style="font-size: 10px;">rpc</a> <a href="/github_blog/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/github_blog/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/github_blog/tags/spark/" style="font-size: 10px;">spark</a> <a href="/github_blog/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/github_blog/tags/sql/" style="font-size: 10px;">sql</a> <a href="/github_blog/tags/thrift/" style="font-size: 10px;">thrift</a> <a href="/github_blog/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/github_blog/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/github_blog/tags/velocity/" style="font-size: 11.43px;">velocity</a> <a href="/github_blog/tags/vim/" style="font-size: 10px;">vim</a> <a href="/github_blog/tags/web/" style="font-size: 17.14px;">web</a> <a href="/github_blog/tags/xss/" style="font-size: 10px;">xss</a> <a href="/github_blog/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/github_blog/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/github_blog/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/github_blog/tags/分布式/" style="font-size: 12.86px;">分布式</a> <a href="/github_blog/tags/容器/" style="font-size: 10px;">容器</a> <a href="/github_blog/tags/工具使用/" style="font-size: 18.57px;">工具使用</a> <a href="/github_blog/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/github_blog/tags/数据库/" style="font-size: 12.86px;">数据库</a> <a href="/github_blog/tags/树莓派/" style="font-size: 14.29px;">树莓派</a> <a href="/github_blog/tags/框架/" style="font-size: 11.43px;">框架</a> <a href="/github_blog/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/github_blog/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/github_blog/tags/育儿经/" style="font-size: 10px;">育儿经</a>
+    			</div>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends">
+  		
+  			<div class="friends-wrap" id="js-friends">
+  			
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/seafile">seafile</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.gicp.net:9999">herHome</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/blog">个人博客</a>
+  	        
+  	        </div>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">多学多记&lt;br&gt;&lt;br&gt;多分享&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>

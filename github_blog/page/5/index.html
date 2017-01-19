@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="https://maobaolong.github.io/github_blog">
+  <title>maobaolong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="maobaolong">
+<meta property="og:url" content="https://maobaolong.github.io/github_blog/page/5/index.html">
+<meta property="og:site_name" content="maobaolong">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="maobaolong">
+  
+    <link rel="alternative" href="/atom.xml" title="maobaolong" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/github_blog/main.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="/github_blog/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">maobaolong</a></h1>
+		</hgroup>
+
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/github_blog/">主页</a></li>
+	        
+				<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+	        
+				<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+	        
+				<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a class="js-smart-menu" data-idx="0" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="1" href="javascript:void(0)">标签</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="2" href="javascript:void(0)">友链</a>
+    			
+    			
+            
+    			
+    			<a class="js-smart-menu" data-idx="3" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss">rss</a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-list"></i></div>
+  		<h1 class="header-author js-mobile-header hide">maobaolong</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="/github_blog/avatar.jpg" class="js-avatar">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">maobaolong</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/github_blog/">主页</a></li>
+		        
+					<li><a href="/github_blog/tags/工具使用">工具使用</a></li>
+		        
+					<li><a href="/github_blog/tags/技术学习">技术学习</a></li>
+		        
+					<li><a href="/github_blog/tags/育儿经">育儿经</a></li>
+		        
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap">
+        
+  
+    <article id="post-技术学习/正则表达式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/正则表达式/">正则表达式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h2><p>(?:  pattern)是非捕获型括号  匹配pattern，但不捕获匹配结果。<br>(pattern )是捕获型括号。  匹配pattern，匹配pattern并捕获结果,自动获取组号<br>(?<name> pattern )  匹配pattern，  匹配pattern并捕获结果，设置name为组名<br>    使用小括号指定一个子表达式后，匹配这个子表达式的文本(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个捕获组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。<br>    如果正则表达式中同时存在普通捕获组和命名捕获组，那么捕获组的编号就要特别注意，编号的规则是先对普通捕获组进行编号，再对命名捕获组进行编号。<br>     为了避免括号太多使编号混乱，也为了避免无用的捕获提高效率，在不需要捕获只需要指定分组的地方就可以使用非捕获型括号。问题里的非捕获型括号就是为此使用的。</name></p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/正则表达式/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/正则表达式/">正则表达式</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/bigdata/hadoop/hadoop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop/">hadoop 命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="显示log"><a href="#显示log" class="headerlink" title="显示log"></a>显示log</h2><p>hadoop fs -cat /tmp/app-logs/prestotest/logs/application_1460457323828_0044/BJHC-Client-77104.hadoop.jd.local_50086</p>
+<h2 id="创建文件夹"><a href="#创建文件夹" class="headerlink" title="创建文件夹"></a>创建文件夹</h2><p>hadoop fs -mkdir /user/admin/aaron/newDir</p>
+<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>hadoop fs –put /home/admin/newFile /user/admin/aaron/</p>
+<h2 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h2><p>hadoop fs –get /user/admin/aaron/newFile /home/admin/newFile</p>
+<h2 id="显示所有job"><a href="#显示所有job" class="headerlink" title="显示所有job"></a>显示所有job</h2><p>hadoop job -list</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/zookeeper" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/zookeeper/">zookeeper</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>zkCli.sh -server IP:port</p>
+<p>ls(查看当前节点数据),<br>ls2(查看当前节点数据并能看到更新次数等数据) ,<br>create(创建一个节点) ,<br>get(得到一个节点，包含数据和更新次数等数据),<br>set(修改节点)<br>delete(删除一个节点)</p>
+<p>四字命令，nc 服务器地址 端口号<br>nc 192.168.193.84 2181</p>
+<table>
+<thead>
+<tr>
+<th>ZooKeeper 四字命令</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conf</td>
+<td>输出相关服务配置的详细信息。</td>
+</tr>
+<tr>
+<td>cons</td>
+<td>列出所有连接到服务器的客户端的完全的连接 / 会话的详细信息。包括“接受 / 发送”的包数量、会话 id 、操作延迟、最后的操作执行等等信息。</td>
+</tr>
+<tr>
+<td>dump</td>
+<td>列出未经处理的会话和临时节点。</td>
+</tr>
+<tr>
+<td>envi</td>
+<td>输出关于服务环境的详细信息（区别于 conf 命令）。</td>
+</tr>
+<tr>
+<td>reqs</td>
+<td>列出未经处理的请求</td>
+</tr>
+<tr>
+<td>ruok</td>
+<td>测试服务是否处于正确状态。如果确实如此，那么服务返回“ imok”，否则不做任何相应。</td>
+</tr>
+<tr>
+<td>stat</td>
+<td>输出关于性能和连接的客户端的列表。</td>
+</tr>
+<tr>
+<td>wchs</td>
+<td>列出服务器 watch 的详细信息。</td>
+</tr>
+<tr>
+<td>wchc</td>
+<td>通过 session 列出服务器 watch 的详细信息，它的输出是一个与watch 相关的会话的列表。</td>
+</tr>
+<tr>
+<td>wchp</td>
+<td>通过路径列出服务器 watch 的详细信息。它输出一个与 session 相关的路径。</td>
+</tr>
+<tr>
+<td>mntr</td>
+<td>显示zk信息</td>
+</tr>
+</tbody>
+</table>
+<h2 id="获取当前zk服务器的serverId"><a href="#获取当前zk服务器的serverId" class="headerlink" title="获取当前zk服务器的serverId"></a>获取当前zk服务器的serverId</h2><p>echo conf|nc 192.168.193.83 2181</p>
+<h2 id="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"><a href="#获取当前zk服务器的角色，如果为leader，则可以获得follower个数" class="headerlink" title="获取当前zk服务器的角色，如果为leader，则可以获得follower个数"></a>获取当前zk服务器的角色，如果为leader，则可以获得follower个数</h2><p>echo mntr|nc 192.168.193.85 2181</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/zookeeper/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/zookeeper/">zookeeper</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/分布式/">分布式</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/jenkins" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/工具使用/jenkins/">jenkins</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="jenkins"><a href="#jenkins" class="headerlink" title="jenkins"></a>jenkins</h1><p>[TOC]</p>
+<h2 id="启动jenkins指定端口"><a href="#启动jenkins指定端口" class="headerlink" title="启动jenkins指定端口"></a>启动jenkins指定端口</h2><p>java -jar jenkins.war –httpPort=9010</p>
+<font color="red"><strong>后台启动的方法</strong></font>
+
+<p>nohup command &gt; myout.file 2&gt;&amp;1 &amp;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kill `ps -ef | grep [j]enkins.war | awk &apos;&#123; print $2 &#125;&apos;`</div></pre></td></tr></table></figure></p>
+<h2 id="jenkins中通过execute-shell启动的进程会被杀死的问题"><a href="#jenkins中通过execute-shell启动的进程会被杀死的问题" class="headerlink" title="jenkins中通过execute shell启动的进程会被杀死的问题"></a>jenkins中通过execute shell启动的进程会被杀死的问题</h2><p>[摘要：正在jenkins中设置装备摆设主动更新安排项目时，若是采用用execute shell启动/封闭tomcat，会发明能够举行封闭tomcat，然则没法启动tomcat，固然构建会表现履行乐成，然则检察过程，tomcat是出有启动的]<br>在jenkins中配置自动更新部署项目时，如果采取用execute shell启动/关闭tomcat，会发现可以进行关闭tomcat，但是无法启动tomcat，虽然构建会显示执行成功，但是查看进程，tomcat是没有启动的。这是因为Jenkins默认会在Build结束后Kill掉所有的衍生进程。需要进行以下配置，才能避免此类情况发生:</p>
+<ol>
+<li>重设环境变量build_id<br>在execute shell输入框中加入BUILD_ID=DONTKILLME,即可防止jenkins杀死启动的tomcat进程</li>
+<li>在启动jenkins 的时候禁止jenkins杀死衍生进程<br> 修改/etc/sysconfig/jenkins配置，在JENKINS_JAVA_OPTIONS中加入-Dhudson.util.ProcessTree.disable=true。需要重启jenkins生效<br> 此方法配置一次后，所有的job都无需设置BUILD_ID，就能够防止jenkins杀死启动的tomcat进程</li>
+</ol>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/工具使用/jenkins/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/jenkins/">jenkins</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/nginx" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/工具使用/nginx/">nginx</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>nginx </p>
+<h2 id="重启"><a href="#重启" class="headerlink" title="重启"></a>重启</h2><p>nginx -s reload</p>
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><p>nginx -s stop</p>
+<h2 id="修改端口"><a href="#修改端口" class="headerlink" title="修改端口"></a>修改端口</h2><p>/etc/nginx/conf/nginx.conf</p>
+<h2 id="查看端口占用"><a href="#查看端口占用" class="headerlink" title="查看端口占用"></a>查看端口占用</h2><p>lsof -i tcp:80<br>lsof -i tcp:8999</p>
+<h2 id="检测配置文件是否正确，可以查看配置文件位置"><a href="#检测配置文件是否正确，可以查看配置文件位置" class="headerlink" title="检测配置文件是否正确，可以查看配置文件位置"></a>检测配置文件是否正确，可以查看配置文件位置</h2><p>sudo nginx -t</p>
+<h2 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h2><p>sudo nginx -V</p>
+<h2 id="配置文件说明"><a href="#配置文件说明" class="headerlink" title="配置文件说明"></a>配置文件说明</h2><p>server_namn : 域名;</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/工具使用/nginx/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/tomcat" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/工具使用/tomcat/">tomcat</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><p>Linxu系统: apach/bin/startup.sh开始处中增加如下内容： </p>
+<pre><code>1. declare -x CATALINA_OPTS=&quot;-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788&quot;   
+</code></pre><p>.Windows系统: apach/bin/startup.bat开始处中增加如下内容： </p>
+<pre><code>1. SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8788  
+</code></pre><h2 id="tomcat-配置域名到多个工程目录配置"><a href="#tomcat-配置域名到多个工程目录配置" class="headerlink" title="tomcat 配置域名到多个工程目录配置"></a>tomcat 配置域名到多个工程目录配置</h2><p>tomcat server.xml host appbase</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/工具使用/tomcat/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/tomcat/">tomcat</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/web/">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/容器/">容器</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/bigdata/hadoop/hadoop_rest" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/">hadoop_rest</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/xml” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396</a></p>
+<p>curl -x 172.22.91.78:80 -X GET -H “Accept:application/json” <a href="http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python" target="_blank" rel="external">http://172.16.172.95:19888/ws/v1/history/mapreduce/jobs/job_1470405196301_64396|python</a> -m json.tool</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/bigdata/hadoop/hadoop_rest/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/hadoop/">hadoop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/scrt" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/工具使用/scrt/">scrt 破解和使用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="scrt"><a href="#scrt" class="headerlink" title="scrt"></a>scrt</h1><h2 id="linux下破解"><a href="#linux下破解" class="headerlink" title="linux下破解"></a>linux下破解</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Name: xiaobo_l</div><div class="line">Company:www.boll.me</div><div class="line">Serial Number:03-61-166978</div><div class="line">License Key:ABC89D UFDU94 C94CBU 7V17SU ABTUS5 QXX9E5 PF12H6 R62SHC</div><div class="line">Issue Date:12-22-2013</div></pre></td></tr></table></figure>
+<h2 id="设置反空闲"><a href="#设置反空闲" class="headerlink" title="设置反空闲"></a>设置反空闲</h2><p>会话选项 –&gt; 终端 –&gt; 反空闲   –&gt; 发送字符串 可以设置，比如发送 \n 、null或其他信息过去，后面可以设置每隔多少秒发送，比如可以3000秒一次，这样可以保证不会掉线</p>
+<h2 id="全局会话设置"><a href="#全局会话设置" class="headerlink" title="全局会话设置"></a>全局会话设置</h2><p>如果想应用于所有会话的话，选择全局选项-&gt;默认会话-&gt;编辑默认设置.做上述修改修改就可以全局使用了.</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/工具使用/scrt/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/scrt/">scrt</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-工具使用/seafile" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/工具使用/seafile/">seafile</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="seafile"><a href="#seafile" class="headerlink" title="seafile"></a>seafile</h1><h2 id="启动停止服务"><a href="#启动停止服务" class="headerlink" title="启动停止服务"></a>启动停止服务</h2><p>/opt/seafile/seafile-server-6.0.5/seafile.sh stop<br>/opt/seafile/seafile-server-6.0.5/seahub.sh stop</p>
+<p>/opt/seafile/seafile-server-6.0.5/seafile.sh start<br>/opt/seafile/seafile-server-6.0.5/seahub.sh start 8123</p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/工具使用/seafile/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/seafile/">seafile</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/工具使用/">工具使用</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/工具使用/">工具使用</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-技术学习/linux/shell脚本" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/github_blog/2016/11/09/技术学习/linux/shell脚本/">shell脚本</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>cd <code>dirname $0</code></p>
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      <a href="/github_blog/2016/11/09/技术学习/linux/shell脚本/" class="archive-article-date">
+  	<time datetime="2016-11-09T07:13:48.000Z" itemprop="datePublished"><i class="icon-clock"></i>2016-11-09</time>
+</a>
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags"></i>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/centos/">centos</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/github_blog/tags/技术学习/">技术学习</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<i class="icon-price-tags"></i>
+	<a class="article-category-link" href="/github_blog/categories/技术学习/">技术学习</a>
+	</div>
+
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/github_blog/page/4/">&laquo; Prev</a><a class="page-number" href="/github_blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/github_blog/page/3/">3</a><a class="page-number" href="/github_blog/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/github_blog/page/6/">6</a><a class="extend next" rel="next" href="/github_blog/page/6/">Next &raquo;</a>
+    </nav>
+  
+
+
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 maobaolong
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: false,
+		animate: true,
+		isHome: true,
+		isPost: false,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/github_blog/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/github_blog/./main.js"></script>
+
+
+    
+<div class="tools-col">
+  <ul class="btn-wrap">
+    
+      <li class="chose" data-hook="tools-section-all"><span class="text">全部</span><i class="icon-book"></i></li>
+    
+    
+      <li data-hook="tools-section-tag"><span class="text">标签</span><i class="icon-price-tags"></i></li>
+    
+    
+      <li data-hook="tools-section-friends"><span class="text">友链</span><i class="icon-link"></i></li>
+    
+    
+      <li data-hook="tools-section-me"><span class="text">我</span><i class="icon-smile"></i></li>
+    
+  </ul>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all chose">
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-tag">
+    			<div class="widget tagcloud" id="js-tagcloud">
+    				<a href="/github_blog/tags/alluxio/" style="font-size: 11.43px;">alluxio</a> <a href="/github_blog/tags/bigdata/" style="font-size: 15.71px;">bigdata</a> <a href="/github_blog/tags/centos/" style="font-size: 12.86px;">centos</a> <a href="/github_blog/tags/en/" style="font-size: 10px;">en</a> <a href="/github_blog/tags/etcd/" style="font-size: 10px;">etcd</a> <a href="/github_blog/tags/git/" style="font-size: 10px;">git</a> <a href="/github_blog/tags/hadoop/" style="font-size: 12.86px;">hadoop</a> <a href="/github_blog/tags/haproxy/" style="font-size: 10px;">haproxy</a> <a href="/github_blog/tags/hive/" style="font-size: 10px;">hive</a> <a href="/github_blog/tags/html/" style="font-size: 10px;">html</a> <a href="/github_blog/tags/idea/" style="font-size: 10px;">idea</a> <a href="/github_blog/tags/java/" style="font-size: 11.43px;">java</a> <a href="/github_blog/tags/jenkins/" style="font-size: 10px;">jenkins</a> <a href="/github_blog/tags/jquery/" style="font-size: 11.43px;">jquery</a> <a href="/github_blog/tags/kafka/" style="font-size: 10px;">kafka</a> <a href="/github_blog/tags/linux/" style="font-size: 18.57px;">linux</a> <a href="/github_blog/tags/maven/" style="font-size: 10px;">maven</a> <a href="/github_blog/tags/mongodb/" style="font-size: 10px;">mongodb</a> <a href="/github_blog/tags/mysql/" style="font-size: 11.43px;">mysql</a> <a href="/github_blog/tags/nginx/" style="font-size: 10px;">nginx</a> <a href="/github_blog/tags/playframework/" style="font-size: 10px;">playframework</a> <a href="/github_blog/tags/rpc/" style="font-size: 10px;">rpc</a> <a href="/github_blog/tags/scrt/" style="font-size: 10px;">scrt</a> <a href="/github_blog/tags/seafile/" style="font-size: 10px;">seafile</a> <a href="/github_blog/tags/spark/" style="font-size: 10px;">spark</a> <a href="/github_blog/tags/springMVC/" style="font-size: 10px;">springMVC</a> <a href="/github_blog/tags/sql/" style="font-size: 10px;">sql</a> <a href="/github_blog/tags/thrift/" style="font-size: 10px;">thrift</a> <a href="/github_blog/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/github_blog/tags/ubuntu/" style="font-size: 10px;">ubuntu</a> <a href="/github_blog/tags/velocity/" style="font-size: 11.43px;">velocity</a> <a href="/github_blog/tags/vim/" style="font-size: 10px;">vim</a> <a href="/github_blog/tags/web/" style="font-size: 17.14px;">web</a> <a href="/github_blog/tags/xss/" style="font-size: 10px;">xss</a> <a href="/github_blog/tags/yarn/" style="font-size: 10px;">yarn</a> <a href="/github_blog/tags/zookeeper/" style="font-size: 10px;">zookeeper</a> <a href="/github_blog/tags/元宝/" style="font-size: 10px;">元宝</a> <a href="/github_blog/tags/分布式/" style="font-size: 12.86px;">分布式</a> <a href="/github_blog/tags/容器/" style="font-size: 10px;">容器</a> <a href="/github_blog/tags/工具使用/" style="font-size: 18.57px;">工具使用</a> <a href="/github_blog/tags/技术学习/" style="font-size: 20px;">技术学习</a> <a href="/github_blog/tags/数据库/" style="font-size: 12.86px;">数据库</a> <a href="/github_blog/tags/树莓派/" style="font-size: 14.29px;">树莓派</a> <a href="/github_blog/tags/框架/" style="font-size: 11.43px;">框架</a> <a href="/github_blog/tags/模板引擎/" style="font-size: 10px;">模板引擎</a> <a href="/github_blog/tags/正则表达式/" style="font-size: 10px;">正则表达式</a> <a href="/github_blog/tags/育儿经/" style="font-size: 10px;">育儿经</a>
+    			</div>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends">
+  		
+  			<div class="friends-wrap" id="js-friends">
+  			
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/seafile">seafile</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net:9999">home</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.gicp.net:9999">herHome</a>
+  	        
+  	          <a target="_blank" class="main-nav-link switch-friends-link" href="http://maobaolong.f3322.net/blog">个人博客</a>
+  	        
+  	        </div>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">多学多记&lt;br&gt;&lt;br&gt;多分享&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
