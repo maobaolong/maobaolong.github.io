@@ -3,24 +3,23 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 神龙的博客
-subtitle:   
-description: 关注移动开发，大数据，云计算，软件架构
-author: 神龙
-email: maobaolong@139.com
-language: zh-Hans
+title: maobaolong
+subtitle:
+description:
+author: maobaolong
+language:
 timezone:
-avatar: http://tp4.sinaimg.cn/1662907603/180/5755316418/1
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://maobaolong.github.io
-root: /
+url: https://maobaolong.github.io/github_blog
+root: /github_blog/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
 # Directory
 source_dir: source
+# source_dir: ../../../../../seafile/seafile_rpi/Seafile/note/
 public_dir: public
 tag_dir: tags
 archive_dir: archives
@@ -65,78 +64,21 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
-#heme: yilia
-
+theme: yilia
+# yilia
+# landscape
+# pacman
 # Deployment
+# maupassant
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/maobaolong/maobaolong.github.io.git
-  branch: master
+  repo: https://github.com/maobaolong/maobaolong.github.io.git
 
-# 多说
 duoshuo_shortname: maobaolong
 
-# 百度统计
-baidu_analytics: 48746acb55f702790215ece2fb3a3be5
+#search:
+#  path: search.xml
+#  field: all
 
-# yilia configuration -------------2016-06-19 22:01:33
-# Header
-# menu:
-#   主页: /
-#   所有文章: /archives
-#   # 随笔: /tags/随笔
 
-# # SubNav
-# subnav:
-#   github: "#"
-#   weibo: "#"
-#   rss: "#"
-#   zhihu: "#"
-#   #douban: "#"
-#   #mail: "#"
-#   #facebook: "#"
-#   #google: "#"
-#   #twitter: "#"
-#   #linkedin: "#"
-
-# rss: /atom.xml
-
-# # Content
-# excerpt_link: more
-# fancybox: true
-# mathjax: true
-
-# # Miscellaneous
-# google_analytics: ''
-# favicon: /favicon.png
-
-# #你的头像url
-# #avatar: "http://tp4.sinaimg.cn/1662907603/180/5755316418/1"
-# #是否开启分享
-# share: true
-# #是否开启多说评论，填写你在多说申请的项目名称 duoshuo: duoshuo-key
-# #若使用disqus，请在博客config文件中填写disqus_shortname，并关闭多说评论
-# duoshuo: true
-# #是否开启云标签
-# tagcloud: true
-
-# #是否开启友情链接
-# #不开启——
-# #friends: false
-# #开启——
-# friends:
-#   奥巴马的博客: http://localhost:4000/
-#   卡卡的美丽传说: http://localhost:4000/
-#   本泽马的博客: http://localhost:4000/
-#   吉格斯的博客: http://localhost:4000/
-#   习大大大不同: http://localhost:4000/
-#   托蒂的博客: http://localhost:4000/
-
-# #是否开启“关于我”。
-# #不开启——
-# #aboutme: false
-# #开启——
-# aboutme: 我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…
-#\-------------2016-06-19 22:01:33
