@@ -99,7 +99,7 @@ class GitHubThreadWidget {
 
   async init() {
     this.session = await getActiveSession();
-    await this.reload();
+    await this.reload({ bustCache: true });
   }
 
   setNotice(message, type = "info") {
@@ -112,16 +112,28 @@ class GitHubThreadWidget {
     this.noticeType = "info";
   }
 
-  async reload() {
+  async reload(options = {}) {
     try {
       this.loadError = "";
-      const issueUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues/${this.config.issueNumber}`;
-      const commentsUrl = `${issueUrl}/comments?per_page=100`;
-      this.issue = await githubJson(issueUrl, {
-        accept: "application/vnd.github.full+json"
+      const issueUrl = new URL(
+        `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues/${this.config.issueNumber}`
+      );
+      const commentsUrl = new URL(`${issueUrl.toString()}/comments`);
+      commentsUrl.searchParams.set("per_page", "100");
+
+      if (options.bustCache) {
+        const cacheBust = Date.now().toString();
+        issueUrl.searchParams.set("_", cacheBust);
+        commentsUrl.searchParams.set("_", cacheBust);
+      }
+
+      this.issue = await githubJson(issueUrl.toString(), {
+        accept: "application/vnd.github.full+json",
+        cache: "no-store"
       });
-      this.comments = await githubJson(commentsUrl, {
-        accept: "application/vnd.github.full+json"
+      this.comments = await githubJson(commentsUrl.toString(), {
+        accept: "application/vnd.github.full+json",
+        cache: "no-store"
       });
       this.render();
     } catch (error) {
@@ -234,7 +246,7 @@ class GitHubThreadWidget {
 
     this.container.querySelector(".thread-refresh")?.addEventListener("click", async () => {
       this.session = await getActiveSession();
-      await this.reload();
+      await this.reload({ bustCache: true });
     });
 
     this.container.querySelector(".thread-submit")?.addEventListener("click", async () => {
@@ -298,7 +310,7 @@ class GitHubThreadWidget {
       if (input) {
         input.value = "";
       }
-      await this.reload();
+      await this.reload({ bustCache: true });
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");
       this.render();
@@ -314,22 +326,26 @@ class GitHubThreadWidget {
         throw new Error("请输入评论内容。");
       }
 
-      await githubJson(
+      const createdComment = await githubJson(
         `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues/${this.config.issueNumber}/comments`,
         {
           method: "POST",
           token: this.session.accessToken,
-          accept: "application/vnd.github+json",
+          accept: "application/vnd.github.full+json",
           body: { body }
         }
       );
 
       textarea.value = "";
+      this.comments = [...this.comments, createdComment];
       this.setNotice(
         this.config.kind === "guestbook" ? "留言已发布。" : "评论已发布。",
         "info"
       );
-      await this.reload();
+      this.render();
+      window.setTimeout(() => {
+        this.reload({ bustCache: true }).catch(() => {});
+      }, 1500);
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");
       this.render();
@@ -349,7 +365,7 @@ class GitHubThreadWidget {
         }
       );
       this.setNotice("点赞已提交。", "info");
-      await this.reload();
+      await this.reload({ bustCache: true });
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");
       this.render();
@@ -369,7 +385,7 @@ class GitHubThreadWidget {
         }
       );
       this.setNotice("评论点赞已提交。", "info");
-      await this.reload();
+      await this.reload({ bustCache: true });
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");
       this.render();
