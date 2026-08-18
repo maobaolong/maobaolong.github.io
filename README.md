@@ -12,7 +12,7 @@
 ## 技术栈
 
 - Astro: 静态内容站点
-- GitHub OAuth Web Flow + Vercel Auth Service: GitHub 登录后台
+- GitHub OAuth Device Flow + Vercel Auth Service: GitHub 登录后台
 - GitHub Issues + Reactions: 评论、留言、点赞
 - GitHub Actions: 自动部署到 GitHub Pages
 
@@ -44,13 +44,14 @@ pnpm dev
 
 ## GitHub 登录后台
 
-这个版本使用 GitHub OAuth Web Flow 登录，但由于 GitHub Pages 是纯静态托管，OAuth code 交换需要一个很薄的授权中转服务。当前代码把这层放在 `auth-service/`，部署到 Vercel 后供 `/admin/` 和评论组件共用。
+这个版本使用 GitHub OAuth Device Flow 登录。由于 GitHub Pages 是纯静态托管，而 GitHub 登录接口又不能直接给前端跨域调用，所以当前代码把“申请 device code / 轮询 access token”这层轻量代理放在 `auth-service/`，部署到 Vercel 后供 `/admin/` 和评论组件共用。
 
 ### 已有配置
 
 - OAuth App 名称：`Maobaolong Engineering Admin`
 - Client ID 写在 `src/config/site.json`
 - `authBaseUrl` 也写在 `src/config/site.json`
+- 当前生产授权服务地址：`https://maobaolong-auth-maobaolongs-projects.vercel.app`
 - `/admin/` 登录后可直接：
   - 新建 / 编辑 / 删除博客文章
   - 自动创建文章对应评论线程
@@ -61,8 +62,8 @@ pnpm dev
 - 登录后会向 GitHub 请求 `public_repo read:user`
 - 需要先把 `auth-service/` 部署到 Vercel，并配置：
   - `GITHUB_CLIENT_ID`
-  - `GITHUB_CLIENT_SECRET`
   - `ALLOWED_ORIGINS=https://maobaolong.github.io,http://127.0.0.1:4321`
+- 如果使用 Vercel API 直接上传 `auth-service/`，不要在 `vercel.json` 里手动钉 `@vercel/node` Builder 版本；零配置 Node API 更稳定。
 - 只有对仓库有写权限的账号，才能真正保存改动
 
 ## 评论、留言板、点赞

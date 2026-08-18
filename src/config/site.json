@@ -10,6 +10,6 @@
     "clientId": "Ov23liGG4SJlChrwFAEF",
     "scope": "public_repo read:user",
     "branch": "master",
-    "authBaseUrl": "https://maobaolong-auth.vercel.app"
+    "authBaseUrl": "https://maobaolong-auth-maobaolongs-projects.vercel.app"
   }
 }

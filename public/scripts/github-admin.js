@@ -2,7 +2,7 @@ import {
   clearStoredSession,
   getActiveSession,
   githubJson,
-  startWebFlowLogin
+  startDeviceFlowLogin
 } from "./github-auth.js";
 
 function slugify(value) {
@@ -42,6 +42,19 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function loginHintMarkup(device) {
+  if (!device) {
+    return "";
+  }
+
+  return `
+    <div class="notice">
+      请在新打开的 GitHub 页面完成授权，并输入验证码 <code>${escapeHtml(device.user_code)}</code>。
+      如果没有弹出新页面，可以直接打开 <code>${escapeHtml(device.verification_uri)}</code>。
+    </div>
+  `;
 }
 
 function serializePost(post) {
@@ -138,7 +151,7 @@ class GitHubAdminApp {
     this.configFiles = [];
     this.threadMap = [];
     this.threadMapMeta = null;
-    this.pendingAuth = false;
+    this.pendingDevice = null;
     this.status = "";
     this.error = "";
   }
@@ -182,20 +195,20 @@ class GitHubAdminApp {
 
   async login() {
     try {
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       this.error = "";
       this.render();
-      this.session = await startWebFlowLogin(this.config, {
-        onOpen: () => {
-          this.pendingAuth = true;
+      this.session = await startDeviceFlowLogin(this.config, {
+        onCode: (device) => {
+          this.pendingDevice = device;
           this.render();
         }
       });
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       await this.loadInitialData();
       this.render();
     } catch (error) {
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       this.error = error.message || String(error);
       this.render();
     }
@@ -211,7 +224,7 @@ class GitHubAdminApp {
     this.configFiles = [];
     this.threadMap = [];
     this.threadMapMeta = null;
-    this.pendingAuth = false;
+    this.pendingDevice = null;
     this.status = "";
     this.error = "";
     this.render();
@@ -560,14 +573,6 @@ class GitHubAdminApp {
   }
 
   renderLogin() {
-    const authHint = this.pendingAuth
-      ? `
-        <div class="notice">
-          GitHub 授权窗口已经打开，请在弹窗中确认登录并授权当前站点。
-        </div>
-      `
-      : "";
-
     return `
       <div class="admin-auth">
         <span class="chip">GitHub Login</span>
@@ -576,7 +581,7 @@ class GitHubAdminApp {
         <div class="button-row">
           <button class="button button-primary admin-login">开始登录</button>
         </div>
-        ${authHint}
+        ${loginHintMarkup(this.pendingDevice)}
       </div>
     `;
   }

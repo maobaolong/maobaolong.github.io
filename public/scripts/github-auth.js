@@ -19,64 +19,6 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-function buildPopupFeatures() {
-  const width = 720;
-  const height = 860;
-  const left = Math.max(0, Math.round(window.screenX + (window.outerWidth - width) / 2));
-  const top = Math.max(0, Math.round(window.screenY + (window.outerHeight - height) / 2));
-
-  return `popup=yes,width=${width},height=${height},left=${left},top=${top}`;
-}
-
-function openAuthPopup(url) {
-  const popup = window.open(url, "maobaolong-github-auth", buildPopupFeatures());
-  if (!popup) {
-    throw new Error("浏览器拦截了登录弹窗，请允许弹窗后重试。");
-  }
-
-  popup.focus();
-  return popup;
-}
-
-function waitForPopupMessage(popup, authBaseUrl) {
-  return new Promise((resolve, reject) => {
-    const expectedOrigin = new URL(authBaseUrl).origin;
-    const timer = window.setInterval(() => {
-      if (popup.closed) {
-        cleanup();
-        reject(new Error("GitHub 登录窗口已关闭。"));
-      }
-    }, 500);
-
-    const cleanup = () => {
-      window.clearInterval(timer);
-      window.removeEventListener("message", onMessage);
-    };
-
-    const onMessage = (event) => {
-      if (event.origin !== expectedOrigin) {
-        return;
-      }
-
-      const data = event.data;
-      if (!data || data.source !== "maobaolong-auth") {
-        return;
-      }
-
-      cleanup();
-
-      if (data.type === "github:success") {
-        resolve(data.payload);
-        return;
-      }
-
-      reject(new Error(data.payload?.error || "GitHub 授权失败。"));
-    };
-
-    window.addEventListener("message", onMessage);
-  });
-}
-
 export function getStoredSession() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -100,6 +42,29 @@ export function isSessionExpired(session) {
   }
 
   return Date.now() >= new Date(session.expiresAt).getTime() - 60_000;
+}
+
+async function postJson(url, body) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+
+  const payload = await response.json();
+  if (!response.ok) {
+    const error = new Error(
+      payload.error_description || payload.error || "GitHub 授权请求失败。"
+    );
+    error.code = payload.error || "";
+    error.payload = payload;
+    throw error;
+  }
+
+  return payload;
 }
 
 export async function githubJson(url, options = {}) {
@@ -166,37 +131,104 @@ export async function getActiveSession() {
   return session;
 }
 
-export async function startWebFlowLogin(config, callbacks = {}) {
+export async function startDeviceFlowLogin(config, callbacks = {}) {
   if (!config.authBaseUrl) {
     throw new Error("缺少 GitHub 授权服务地址。");
   }
 
-  const authUrl = new URL("/api/github/auth", config.authBaseUrl);
-  authUrl.searchParams.set("origin", window.location.origin);
-  authUrl.searchParams.set("scope", config.scope || "public_repo read:user");
+  const popup = window.open("https://github.com/login/device", "_blank");
+  const startUrl = new URL("/api/github/device/start", config.authBaseUrl);
+  const device = await postJson(startUrl.toString(), {
+    scope: config.scope || "public_repo read:user"
+  });
 
-  callbacks.onOpen?.();
-  const popup = openAuthPopup(authUrl.toString());
-  const tokenPayload = await waitForPopupMessage(popup, config.authBaseUrl);
-  const accessToken = tokenPayload.accessToken || tokenPayload.access_token;
-  const expiresAt = tokenPayload.expires_in
-    ? new Date(Date.now() + tokenPayload.expires_in * 1000).toISOString()
-    : null;
-  const user = await fetchGitHubUser(accessToken);
-  const tokenDetails = parseJwtPayload(accessToken);
+  callbacks.onCode?.(device);
 
-  const session = {
-    accessToken,
-    scope: tokenPayload.scope || config.scope,
-    tokenType: tokenPayload.token_type || "bearer",
-    expiresAt,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-    user,
-    tokenDetails
-  };
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(device.user_code);
+    }
+  } catch {
+    // Ignore clipboard failures. The code is still visible in the UI.
+  }
 
-  saveStoredSession(session);
-  callbacks.onSuccess?.(session);
-  return session;
+  if (popup) {
+    try {
+      popup.location.href = device.verification_uri;
+    } catch {
+      // Ignore cross-window assignment issues and rely on the initial URL.
+    }
+    popup.focus();
+  }
+
+  const pollUrl = new URL("/api/github/device/poll", config.authBaseUrl);
+  const startedAt = Date.now();
+  let intervalMs = Math.max(5, device.interval || 5) * 1000;
+
+  while (Date.now() - startedAt < device.expires_in * 1000) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+
+    const tokenPayload = await postJson(pollUrl.toString(), {
+      deviceCode: device.device_code
+    }).catch((error) => {
+      const code = String(error.code || error.payload?.error || "");
+      const message = String(error.message || "");
+      if (code === "authorization_pending" || message.includes("authorization request is still pending")) {
+        return { authorization_pending: true };
+      }
+      if (code === "slow_down" || message.includes("slow down")) {
+        intervalMs += 5000;
+        return { slow_down: true };
+      }
+      if (code === "expired_token") {
+        throw new Error("GitHub 验证码已过期，请重新发起登录。");
+      }
+      if (code === "access_denied") {
+        throw new Error("GitHub 授权被取消。");
+      }
+      throw error;
+    });
+
+    if (
+      !tokenPayload ||
+      tokenPayload.authorization_pending ||
+      tokenPayload.slow_down ||
+      tokenPayload.error === "authorization_pending" ||
+      tokenPayload.error === "slow_down"
+    ) {
+      continue;
+    }
+
+    if (tokenPayload.error === "expired_token") {
+      throw new Error("GitHub 验证码已过期，请重新发起登录。");
+    }
+
+    if (tokenPayload.error === "access_denied") {
+      throw new Error("GitHub 授权被取消。");
+    }
+
+    const accessToken = tokenPayload.access_token;
+    const expiresAt = tokenPayload.expires_in
+      ? new Date(Date.now() + tokenPayload.expires_in * 1000).toISOString()
+      : null;
+    const user = await fetchGitHubUser(accessToken);
+    const tokenDetails = parseJwtPayload(accessToken);
+
+    const session = {
+      accessToken,
+      scope: tokenPayload.scope || config.scope,
+      tokenType: tokenPayload.token_type || "bearer",
+      expiresAt,
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+      user,
+      tokenDetails
+    };
+
+    saveStoredSession(session);
+    callbacks.onSuccess?.(session);
+    return session;
+  }
+
+  throw new Error("GitHub 登录超时，请重试。");
 }

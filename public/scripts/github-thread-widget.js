@@ -2,7 +2,7 @@ import {
   clearStoredSession,
   getActiveSession,
   githubJson,
-  startWebFlowLogin
+  startDeviceFlowLogin
 } from "./github-auth.js";
 
 function formatDate(iso) {
@@ -36,14 +36,15 @@ function renderUserBadge(session) {
   `;
 }
 
-function loginHintMarkup(isPending) {
-  if (!isPending) {
+function loginHintMarkup(device) {
+  if (!device) {
     return "";
   }
 
   return `
     <div class="notice">
-      GitHub 授权窗口已经打开，请在弹窗中确认登录并授权当前站点。
+      请在新打开的 GitHub 页面完成授权，并输入验证码 <code>${device.user_code}</code>。
+      如果没有弹出新页面，可以直接打开 <code>${device.verification_uri}</code>。
     </div>
   `;
 }
@@ -64,7 +65,7 @@ class GitHubThreadWidget {
     this.issue = null;
     this.comments = [];
     this.session = null;
-    this.pendingAuth = false;
+    this.pendingDevice = null;
     this.error = "";
   }
 
@@ -153,7 +154,7 @@ class GitHubThreadWidget {
         </div>
       </div>
 
-      ${loginHintMarkup(this.pendingAuth)}
+      ${loginHintMarkup(this.pendingDevice)}
 
       <div class="github-thread__composer">
         <label class="composer-label" for="thread-comment-${this.config.issueNumber}">
@@ -180,7 +181,7 @@ class GitHubThreadWidget {
     this.container.querySelector(".thread-logout")?.addEventListener("click", async () => {
       clearStoredSession();
       this.session = null;
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       this.render();
     });
 
@@ -206,22 +207,22 @@ class GitHubThreadWidget {
   }
 
   async login() {
-    this.pendingAuth = false;
+    this.pendingDevice = null;
     this.error = "";
     this.render();
 
     try {
-      this.session = await startWebFlowLogin(this.config, {
-        onOpen: () => {
-          this.pendingAuth = true;
+      this.session = await startDeviceFlowLogin(this.config, {
+        onCode: (device) => {
+          this.pendingDevice = device;
           this.render();
         }
       });
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       this.error = "";
       this.render();
     } catch (error) {
-      this.pendingAuth = false;
+      this.pendingDevice = null;
       this.error = error.message || String(error);
       this.render();
     }

@@ -1,5 +1,5 @@
-const GITHUB_AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
-const GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token";
+const DEVICE_CODE_URL = "https://github.com/login/device/code";
+const ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token";
 
 export function allowedOrigins() {
   return String(process.env.ALLOWED_ORIGINS || "")
@@ -8,86 +8,90 @@ export function allowedOrigins() {
     .filter(Boolean);
 }
 
-export function isAllowedOrigin(origin) {
-  return allowedOrigins().includes(origin);
+export function corsHeaders(origin) {
+  const headers = {
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin"
+  };
+
+  if (allowedOrigins().includes(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  return headers;
 }
 
 export function assertOrigin(origin) {
-  if (!origin || !isAllowedOrigin(origin)) {
+  if (!origin || !allowedOrigins().includes(origin)) {
     throw new Error("Origin is not allowed.");
   }
 }
 
-export function createState() {
-  return crypto.randomUUID().replace(/-/g, "");
-}
-
-export function setCookie(res, name, value) {
-  const current = res.getHeader("Set-Cookie");
-  const next = `${name}=${value}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`;
-
-  if (!current) {
-    res.setHeader("Set-Cookie", [next]);
-    return;
-  }
-
-  const items = Array.isArray(current) ? current : [current];
-  res.setHeader("Set-Cookie", [...items, next]);
-}
-
-export function getCookie(req, name) {
-  const raw = req.headers.cookie || "";
-  const match = raw.match(new RegExp(`(?:^|; )${name}=([^;]+)`));
-  return match ? match[1] : "";
-}
-
-export function sendJson(res, status, payload) {
+export function sendJson(res, status, payload, origin) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
+
+  for (const [key, value] of Object.entries(corsHeaders(origin))) {
+    res.setHeader(key, value);
+  }
+
   res.end(JSON.stringify(payload, null, 2));
 }
 
-export function sendAuthResult(res, status, payload, origin) {
-  const body = `<!doctype html>
-<html lang="en">
-  <body>
-    <script>
-      (function () {
-        var message = {
-          source: "maobaolong-auth",
-          type: ${JSON.stringify(status === "success" ? "github:success" : "github:error")},
-          payload: ${JSON.stringify(payload)}
-        };
-        if (window.opener) {
-          window.opener.postMessage(message, ${JSON.stringify(origin)});
-        }
-        window.close();
-      })();
-    </script>
-  </body>
-</html>`;
-
-  res.statusCode = status === "success" ? 200 : 401;
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.end(body);
+export function handlePreflight(req, res) {
+  const origin = String(req.headers.origin || "");
+  const headers = corsHeaders(origin);
+  for (const [key, value] of Object.entries(headers)) {
+    res.setHeader(key, value);
+  }
+  res.statusCode = 204;
+  res.end();
 }
 
-export async function exchangeCodeForToken({ clientId, clientSecret, code }) {
-  const response = await fetch(GITHUB_TOKEN_URL, {
+export async function readJsonBody(req) {
+  if (req.body && typeof req.body === "object") {
+    return req.body;
+  }
+
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  const raw = Buffer.concat(chunks).toString("utf-8").trim();
+  return raw ? JSON.parse(raw) : {};
+}
+
+export async function postForm(url, body) {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent": "maobaolong-auth-service"
+      "Content-Type": "application/x-www-form-urlencoded"
     },
-    body: JSON.stringify({
-      client_id: clientId,
-      client_secret: clientSecret,
-      code
-    })
+    body: new URLSearchParams(body).toString()
   });
 
   return response.json();
 }
 
-export { GITHUB_AUTHORIZE_URL };
+export async function startDeviceCode(scope) {
+  return postForm(DEVICE_CODE_URL, {
+    client_id: process.env.GITHUB_CLIENT_ID,
+    scope
+  });
+}
+
+export async function pollAccessToken(deviceCode) {
+  return postForm(ACCESS_TOKEN_URL, {
+    client_id: process.env.GITHUB_CLIENT_ID,
+    device_code: deviceCode,
+    grant_type: "urn:ietf:params:oauth:grant-type:device_code"
+  });
+}
