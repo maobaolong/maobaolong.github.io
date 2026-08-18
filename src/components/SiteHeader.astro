@@ -1,0 +1,49 @@
+---
+import site from "../config/site.json";
+import navigation from "../config/navigation.json";
+import { withBase } from "../utils/with-base";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+
+<header class="header">
+  <div class="container">
+    <div class="header-inner">
+      <a class="brand" href={withBase("/")}>
+        <span class="brand-mark">MB</span>
+        <span class="brand-copy">
+          <strong>{site.siteName}</strong>
+          <span>{site.tagline}</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="主导航">
+        {navigation.items.map((item) => {
+          const href = withBase(item.href);
+          const isCurrent =
+            currentPath === href ||
+            (item.href !== "/" && currentPath.startsWith(href));
+
+          return (
+            <a href={href} aria-current={isCurrent ? "page" : undefined}>
+              {item.label}
+            </a>
+          );
+        })}
+      </nav>
+
+      <div class="button-row">
+        <a class="button button-secondary" href={site.githubProfile} target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+        <a class="button button-primary" href={withBase("/admin/")}>
+          后台管理
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

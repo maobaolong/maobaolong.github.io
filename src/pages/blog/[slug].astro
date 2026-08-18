@@ -1,0 +1,73 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GiscusWidget from "../../components/GiscusWidget.astro";
+import site from "../../config/site.json";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  return posts.filter((post) => !post.data.draft).map((post) => ({
+    params: { slug: post.id },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={`${post.data.title} | ${site.siteName}`} description={post.data.description}>
+  <section class="page-hero">
+    <div class="container article-shell">
+      <article class="article-card glass">
+        <span class="chip">{post.data.category}</span>
+        <h1 class="article-title">{post.data.title}</h1>
+        <p class="section-copy">{post.data.description}</p>
+        <div class="meta" style="margin-top: 1rem;">
+          <span>{post.data.author}</span>
+          <span>{post.data.publishedAt.toLocaleDateString("zh-CN")}</span>
+          {post.data.updatedAt ? (
+            <span>更新于 {post.data.updatedAt.toLocaleDateString("zh-CN")}</span>
+          ) : null}
+          <span>{post.data.readingTime}</span>
+        </div>
+      </article>
+
+      <aside class="article-sidebar">
+        <div class="glass text-card">
+          <h3>标签</h3>
+          <div class="tags">
+            {post.data.tags.map((tag) => (
+              <span class="tag">#{tag}</span>
+            ))}
+          </div>
+        </div>
+        <div class="glass text-card">
+          <h3>互动</h3>
+          <p>文章底部支持评论与点赞，基于 GitHub Discussions。</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="article-card glass prose">
+        <Content />
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Discussion</span>
+          <h2 class="section-heading">评论与点赞</h2>
+        </div>
+      </div>
+      <GiscusWidget />
+    </div>
+  </section>
+</BaseLayout>

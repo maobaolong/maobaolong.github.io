@@ -1,0 +1,30 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import site from "../../config/site.json";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+---
+
+<BaseLayout title={`博客 | ${site.siteName}`} description="技术文章、实践复盘与工程笔记。">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Blog Archive</span>
+      <h1 class="section-heading">博客文章</h1>
+      <p class="section-copy">
+        这里会持续更新 AI Infra、分布式系统、数据库、性能优化和工程实践相关内容。
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container post-list">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

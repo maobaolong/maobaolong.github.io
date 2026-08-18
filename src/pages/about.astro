@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import about from "../config/about.json";
+import site from "../config/site.json";
+---
+
+<BaseLayout title={`关于 | ${site.siteName}`} description={about.intro}>
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">About</span>
+      <h1 class="section-heading">{about.title}</h1>
+      <p class="section-copy">{about.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container three-grid">
+      <article class="about-card glass">
+        <h3>站点定位</h3>
+        <p>{about.paragraphs[0]}</p>
+      </article>
+      <article class="about-card glass">
+        <h3>更新方式</h3>
+        <p>{about.paragraphs[1]}</p>
+      </article>
+      <article class="about-card glass">
+        <h3>互动体系</h3>
+        <p>{about.paragraphs[2]}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="glass article-card">
+        <h2 class="section-heading">我会长期关注这些方向</h2>
+        <div class="tags">
+          {about.focuses.map((focus) => (
+            <span class="tag">{focus}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

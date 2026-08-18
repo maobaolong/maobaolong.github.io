@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GiscusWidget from "../components/GiscusWidget.astro";
+import site from "../config/site.json";
+---
+
+<BaseLayout title={`留言板 | ${site.siteName}`} description="给毛宝龙留言、交流想法、推荐选题。">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Guestbook</span>
+      <h1 class="section-heading">留言板</h1>
+      <p class="section-copy">
+        这里适合提问题、打招呼、推荐文章选题，或者聊聊你最近在做的系统与项目。
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="guestbook-card glass">
+        <h3>怎么用</h3>
+        <p>
+          访客会通过 GitHub 账号参与互动。留言板和文章评论共用 GitHub Discussions，
+          这样不用额外维护账号系统，也能保留点赞与审核能力。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <GiscusWidget mode="specific" term="guestbook" />
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import site from "../config/site.json";
+import { withBase } from "../utils/with-base";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner glass">
+      <div class="footer-copy">
+        <strong>{site.siteName}</strong>
+        <div>{site.tagline} · © {year}</div>
+      </div>
+      <div class="footer-links">
+        <a href={site.githubProfile} target="_blank" rel="noreferrer">GitHub</a>
+        <a href={withBase("/message-board/")}>留言板</a>
+        <a href={withBase("/admin/")}>后台</a>
+      </div>
+    </div>
+  </div>
+</footer>

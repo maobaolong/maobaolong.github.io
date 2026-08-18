@@ -1,0 +1,146 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import home from "../config/home.json";
+import site from "../config/site.json";
+import PostCard from "../components/PostCard.astro";
+import { withBase } from "../utils/with-base";
+
+const posts = (await getCollection("blog"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 2);
+const latestPosts = posts.slice(0, 3);
+---
+
+<BaseLayout title={`${site.siteName} | ${site.tagline}`} description={site.description}>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-panel glass fade-up">
+        <p class="eyebrow">{home.eyebrow}</p>
+        <h1 class="hero-title">{home.heroTitle}</h1>
+        <p class="hero-copy">{home.heroIntro}</p>
+        <div class="button-row">
+          <a class="button button-primary" href={withBase(home.primaryCtaHref)}>
+            {home.primaryCtaLabel}
+          </a>
+          <a class="button button-secondary" href={withBase(home.secondaryCtaHref)}>
+            {home.secondaryCtaLabel}
+          </a>
+        </div>
+      </div>
+
+      <aside class="hero-aside fade-up delay-1">
+        <div class="stack-card glass">
+          <span class="chip">Current Focus</span>
+          <h3>让个人博客变成一套可运营的技术站</h3>
+          <p>
+            一边输出博客，一边展示项目能力，同时把内容管理、评论互动和知识沉淀都接到
+            GitHub 的协作链路里。
+          </p>
+          <ul>
+            <li>技术博客与项目页面共存</li>
+            <li>GitHub 登录管理首页与文章</li>
+            <li>留言、评论、点赞统一沉淀</li>
+          </ul>
+        </div>
+        <div class="stack-card glass">
+          <span class="chip">Content Pipeline</span>
+          <h3>内容仍然属于你的仓库</h3>
+          <p>
+            文章保存在仓库 Markdown 中，后台写作只是替你生成和提交变更，迁移和备份都会更安心。
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container metrics-grid">
+      {home.metrics.map((metric, index) => (
+        <div class={`metric-card glass fade-up delay-${Math.min(index, 2)}`}>
+          <strong>{metric.value}</strong>
+          <h3>{metric.label}</h3>
+          <p>{metric.detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Why This Site</span>
+          <h2 class="section-heading">像一页持续更新的技术发布说明书</h2>
+          <p class="section-copy">
+            参考你给的站点气质，我把它做成了“研究主页 + 技术博客 + 社区互动页”的组合，而不是传统时间流博客。
+          </p>
+        </div>
+      </div>
+      <div class="three-grid">
+        {home.highlights.map((item) => (
+          <article class="text-card glass">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Three Pillars</span>
+          <h2 class="section-heading">站点内容可以围绕三条主线长期展开</h2>
+        </div>
+      </div>
+      <div class="three-grid">
+        {home.pillars.map((pillar) => (
+          <article class="text-card glass">
+            <h3>{pillar.title}</h3>
+            <p>{pillar.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Featured Reading</span>
+          <h2 class="section-heading">精选文章</h2>
+        </div>
+        <a class="button button-ghost" href={withBase("/blog/")}>
+          查看全部文章
+        </a>
+      </div>
+      <div class="post-list">
+        {featuredPosts.length > 0
+          ? featuredPosts.map((post) => <PostCard post={post} />)
+          : latestPosts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Latest Notes</span>
+          <h2 class="section-heading">最近更新</h2>
+        </div>
+      </div>
+      <div class="post-list">
+        {latestPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

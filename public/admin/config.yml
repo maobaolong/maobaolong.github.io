@@ -1,0 +1,119 @@
+backend:
+  name: github
+  repo: maobaolong/maobaolong.github.io
+  branch: master
+  base_url: https://replace-me-with-your-oauth-worker.workers.dev
+  auth_endpoint: auth
+
+site_url: https://maobaolong.github.io
+display_url: https://maobaolong.github.io
+logo_url: /favicon.svg
+locale: zh_Hans
+publish_mode: editorial_workflow
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: posts
+    label: 博客文章
+    label_singular: 文章
+    folder: src/content/blog
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    preview_path: "blog/{{slug}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 描述, name: description, widget: text }
+      - { label: 发布时间, name: publishedAt, widget: datetime }
+      - { label: 更新时间, name: updatedAt, widget: datetime, required: false }
+      - { label: 分类, name: category, widget: string }
+      - label: 标签
+        name: tags
+        widget: list
+        field: { label: 标签, name: tag, widget: string }
+      - { label: 作者, name: author, widget: string, default: 毛宝龙 }
+      - { label: 阅读时长, name: readingTime, widget: string, default: 6 min }
+      - { label: 设为首页精选, name: featured, widget: boolean, default: false }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 正文, name: body, widget: markdown }
+
+  - name: settings
+    label: 站点配置
+    files:
+      - label: 站点信息
+        name: site
+        file: src/config/site.json
+        fields:
+          - { label: 站点名, name: siteName, widget: string }
+          - { label: 副标题, name: tagline, widget: string }
+          - { label: SEO 描述, name: description, widget: text }
+          - { label: 语言, name: locale, widget: string }
+          - { label: GitHub 主页, name: githubProfile, widget: string }
+          - { label: GitHub 仓库, name: githubRepo, widget: string }
+          - { label: 联系邮箱, name: email, widget: string, required: false }
+          - label: giscus
+            name: giscus
+            widget: object
+            fields:
+              - { label: 仓库, name: repo, widget: string }
+              - { label: Repo ID, name: repoId, widget: string }
+              - { label: 分类名, name: category, widget: string }
+              - { label: Category ID, name: categoryId, widget: string }
+              - { label: 语言, name: lang, widget: string, default: zh-CN }
+              - { label: 主题, name: theme, widget: string, default: preferred_color_scheme }
+      - label: 首页内容
+        name: home
+        file: src/config/home.json
+        fields:
+          - { label: 顶部小标题, name: eyebrow, widget: string }
+          - { label: 首页主标题, name: heroTitle, widget: string }
+          - { label: 首页介绍, name: heroIntro, widget: text }
+          - { label: 主按钮文案, name: primaryCtaLabel, widget: string }
+          - { label: 主按钮链接, name: primaryCtaHref, widget: string }
+          - { label: 次按钮文案, name: secondaryCtaLabel, widget: string }
+          - { label: 次按钮链接, name: secondaryCtaHref, widget: string }
+          - label: 指标卡
+            name: metrics
+            widget: list
+            fields:
+              - { label: 数值, name: value, widget: string }
+              - { label: 标题, name: label, widget: string }
+              - { label: 说明, name: detail, widget: string }
+          - label: 亮点
+            name: highlights
+            widget: list
+            fields:
+              - { label: 标题, name: title, widget: string }
+              - { label: 内容, name: body, widget: text }
+          - label: 技术支柱
+            name: pillars
+            widget: list
+            fields:
+              - { label: 标题, name: title, widget: string }
+              - { label: 内容, name: body, widget: text }
+      - label: 导航菜单
+        name: navigation
+        file: src/config/navigation.json
+        fields:
+          - label: 导航项
+            name: items
+            widget: list
+            fields:
+              - { label: 名称, name: label, widget: string }
+              - { label: 链接, name: href, widget: string }
+      - label: 关于页
+        name: about
+        file: src/config/about.json
+        fields:
+          - { label: 标题, name: title, widget: string }
+          - { label: 导语, name: intro, widget: text }
+          - label: 段落
+            name: paragraphs
+            widget: list
+            field: { label: 段落, name: paragraph, widget: text }
+          - label: 专注方向
+            name: focuses
+            widget: list
+            field: { label: 方向, name: focus, widget: string }

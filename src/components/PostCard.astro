@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { withBase } from "../utils/with-base";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="post-card glass">
+  <div class="meta">
+    <span>{post.data.category}</span>
+    <span>{post.data.publishedAt.toLocaleDateString("zh-CN")}</span>
+    <span>{post.data.readingTime}</span>
+  </div>
+  <div>
+    <h3>{post.data.title}</h3>
+    <p>{post.data.description}</p>
+  </div>
+  <div class="tags">
+    {post.data.tags.slice(0, 3).map((tag) => (
+      <span class="tag">#{tag}</span>
+    ))}
+  </div>
+  <a class="post-link" href={withBase(`/blog/${post.id}/`)}>
+    阅读全文
+  </a>
+</article>

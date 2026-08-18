@@ -1,0 +1,17 @@
+{
+  "siteName": "Maobaolong Engineering",
+  "tagline": "系统、性能、AI Infra 与工程实践",
+  "description": "毛宝龙的技术博客，聚焦 AI 基础设施、分布式系统、数据库与高质量工程写作。",
+  "locale": "zh-CN",
+  "githubProfile": "https://github.com/maobaolong",
+  "githubRepo": "maobaolong/maobaolong.github.io",
+  "email": "hello@maobaolong.dev",
+  "giscus": {
+    "repo": "maobaolong/maobaolong.github.io",
+    "repoId": "MDEwOlJlcG9zaXRvcnk3MTk1MjM4Nw==",
+    "category": "Announcements",
+    "categoryId": "DIC_kwDOBEnoA84DDoil",
+    "lang": "zh-CN",
+    "theme": "preferred_color_scheme"
+  }
+}

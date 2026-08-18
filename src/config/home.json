@@ -1,0 +1,59 @@
+{
+  "eyebrow": "MAOBAOLONG / ENGINEERING LOG",
+  "heroTitle": "把工程实践、系统性能和 AI Infra 的真实经验，做成一座能持续更新的技术站点。",
+  "heroIntro": "这是一个面向技术研究、性能优化、系统设计和工程复盘的个人博客。你可以把它当成公开实验室、长期笔记本和对外名片，同时还能直接用 GitHub 登录去管理内容。",
+  "primaryCtaLabel": "开始阅读",
+  "primaryCtaHref": "/blog/",
+  "secondaryCtaLabel": "进入留言板",
+  "secondaryCtaHref": "/message-board/",
+  "metrics": [
+    {
+      "value": "GitHub",
+      "label": "账号直连后台",
+      "detail": "登录后通过可视化后台管理文章与站点内容"
+    },
+    {
+      "value": "Discussions",
+      "label": "评论与点赞",
+      "detail": "每篇文章自动映射评论主题并支持 reactions"
+    },
+    {
+      "value": "Guestbook",
+      "label": "独立留言板",
+      "detail": "访客可以在站内固定页面持续留言互动"
+    },
+    {
+      "value": "Astro",
+      "label": "静态高性能",
+      "detail": "适合技术文章、SEO 和 GitHub Pages 托管"
+    }
+  ],
+  "highlights": [
+    {
+      "title": "像产品页，而不只是传统博客",
+      "body": "首页采用偏研究发布页的结构，把你在做什么、为什么重要、最近写了什么，清楚地同时展示出来。"
+    },
+    {
+      "title": "内容管理不必碰 Git 命令",
+      "body": "你可以继续把内容存在 GitHub 仓库里，但实际新增文章、改首页、改关于页，都能在后台表单里完成。"
+    },
+    {
+      "title": "互动能力直接复用 GitHub 生态",
+      "body": "评论、留言、点赞全部落到 GitHub Discussions，不需要你再维护数据库、审核后台和用户系统。"
+    }
+  ],
+  "pillars": [
+    {
+      "title": "AI Infra / 推理系统",
+      "body": "记录模型服务、缓存、吞吐与时延优化中的真实设计取舍。"
+    },
+    {
+      "title": "分布式系统 / 数据基础设施",
+      "body": "输出架构演进、性能瓶颈分析、故障复盘与容量规划方法。"
+    },
+    {
+      "title": "工程实践 / 写作沉淀",
+      "body": "把踩坑、调试策略、发布流程和最佳实践整理成可复用的知识资产。"
+    }
+  ]
+}
