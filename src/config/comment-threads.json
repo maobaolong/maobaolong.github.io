@@ -1,0 +1,22 @@
+[
+  {
+    "key": "guestbook",
+    "issueNumber": 1,
+    "kind": "guestbook"
+  },
+  {
+    "key": "/blog/ai-infra-notes/",
+    "issueNumber": 2,
+    "kind": "article"
+  },
+  {
+    "key": "/blog/distributed-debugging-checklist/",
+    "issueNumber": 3,
+    "kind": "article"
+  },
+  {
+    "key": "/blog/building-public-technical-writing/",
+    "issueNumber": 4,
+    "kind": "article"
+  }
+]

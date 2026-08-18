@@ -1,7 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import GiscusWidget from "../../components/GiscusWidget.astro";
+import GitHubThreadWidget from "../../components/GitHubThreadWidget.astro";
+import commentThreads from "../../config/comment-threads.json";
 import site from "../../config/site.json";
 
 export async function getStaticPaths() {
@@ -15,6 +16,8 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const threadKey = `/blog/${post.id}/`;
+const thread = commentThreads.find((item) => item.key === threadKey);
 ---
 
 <BaseLayout title={`${post.data.title} | ${site.siteName}`} description={post.data.description}>
@@ -45,7 +48,7 @@ const { Content } = await render(post);
         </div>
         <div class="glass text-card">
           <h3>互动</h3>
-          <p>文章底部支持评论与点赞，基于 GitHub Discussions。</p>
+          <p>文章底部支持评论与点赞，基于 GitHub Issues 与 Reactions。</p>
         </div>
       </aside>
     </div>
@@ -67,7 +70,17 @@ const { Content } = await render(post);
           <h2 class="section-heading">评论与点赞</h2>
         </div>
       </div>
-      <GiscusWidget />
+      {
+        thread ? (
+          <GitHubThreadWidget
+            issueNumber={thread.issueNumber}
+            threadKey={thread.key}
+            kind="article"
+          />
+        ) : (
+          <div class="notice">当前文章的评论线程还没有初始化。</div>
+        )
+      }
     </div>
   </section>
 </BaseLayout>

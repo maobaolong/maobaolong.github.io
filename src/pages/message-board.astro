@@ -1,7 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import GiscusWidget from "../components/GiscusWidget.astro";
+import GitHubThreadWidget from "../components/GitHubThreadWidget.astro";
+import commentThreads from "../config/comment-threads.json";
 import site from "../config/site.json";
+
+const guestbookThread = commentThreads.find((thread) => thread.key === "guestbook");
 ---
 
 <BaseLayout title={`留言板 | ${site.siteName}`} description="给毛宝龙留言、交流想法、推荐选题。">
@@ -20,7 +23,7 @@ import site from "../config/site.json";
       <div class="guestbook-card glass">
         <h3>怎么用</h3>
         <p>
-          访客会通过 GitHub 账号参与互动。留言板和文章评论共用 GitHub Discussions，
+          访客会通过 GitHub 账号参与互动。留言板和文章评论共用 GitHub Issues，
           这样不用额外维护账号系统，也能保留点赞与审核能力。
         </p>
       </div>
@@ -29,7 +32,17 @@ import site from "../config/site.json";
 
   <section class="section">
     <div class="container">
-      <GiscusWidget mode="specific" term="guestbook" />
+      {
+        guestbookThread ? (
+          <GitHubThreadWidget
+            issueNumber={guestbookThread.issueNumber}
+            threadKey={guestbookThread.key}
+            kind="guestbook"
+          />
+        ) : (
+          <div class="notice">留言线程还没有初始化。</div>
+        )
+      }
     </div>
   </section>
 </BaseLayout>

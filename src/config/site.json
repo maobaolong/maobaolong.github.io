@@ -6,12 +6,10 @@
   "githubProfile": "https://github.com/maobaolong",
   "githubRepo": "maobaolong/maobaolong.github.io",
   "email": "hello@maobaolong.dev",
-  "giscus": {
-    "repo": "maobaolong/maobaolong.github.io",
-    "repoId": "MDEwOlJlcG9zaXRvcnk3MTk1MjM4Nw==",
-    "category": "Announcements",
-    "categoryId": "DIC_kwDOBEnoA84DDoil",
-    "lang": "zh-CN",
-    "theme": "preferred_color_scheme"
+  "githubAuth": {
+    "clientId": "Ov23liGG4SJlChrwFAEF",
+    "scope": "public_repo read:user",
+    "branch": "master",
+    "authBaseUrl": "https://maobaolong-auth.vercel.app"
   }
 }

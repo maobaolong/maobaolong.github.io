@@ -1,0 +1,34 @@
+---
+import site from "../config/site.json";
+import { withBase } from "../utils/with-base";
+
+interface Props {
+  issueNumber: number;
+  threadKey: string;
+  kind: "article" | "guestbook";
+}
+
+const { issueNumber, threadKey, kind } = Astro.props;
+const [owner, repo] = site.githubRepo.split("/");
+---
+
+<section
+  class="github-thread glass"
+  data-github-thread
+  data-owner={owner}
+  data-repo={repo}
+  data-client-id={site.githubAuth.clientId}
+  data-scope={site.githubAuth.scope}
+  data-auth-base-url={site.githubAuth.authBaseUrl}
+  data-issue-number={issueNumber}
+  data-thread-key={threadKey}
+  data-kind={kind}
+>
+  <div class="github-thread__loading">
+    <span class="chip">GitHub</span>
+    <h3>{kind === "guestbook" ? "留言板" : "评论与点赞"}</h3>
+    <p>正在加载互动内容...</p>
+  </div>
+</section>
+
+<script type="module" src={withBase("/scripts/github-thread-widget.js")}></script>

@@ -8,4 +8,4 @@
 - This site is prepared for GitHub Pages. Use `SITE_URL=https://<username>.github.io` and:
   - no `BASE_PATH` for a `<username>.github.io` repository
   - `BASE_PATH=/repo-name` for a project site repository
-- Decap CMS GitHub login needs an OAuth handler. Update `public/admin/config.yml` with your deployed worker URL before testing `/admin`.
+- The current production architecture does not use Decap CMS. `/admin/` and the interactive widgets use GitHub OAuth Web Flow through the `auth-service/` Vercel helper, and comments/guestbook use GitHub Issues plus Reactions.

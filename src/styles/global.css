@@ -486,6 +486,215 @@ main {
   color: #f7dfa6;
 }
 
+.notice--danger {
+  border-color: rgba(255, 142, 130, 0.35);
+  background: rgba(255, 142, 130, 0.08);
+  color: #ffd0ca;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(6, 12, 24, 0.72);
+  color: var(--text);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid rgba(92, 225, 230, 0.35);
+  outline-offset: 0;
+  border-color: rgba(92, 225, 230, 0.5);
+}
+
+.github-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.github-user__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  object-fit: cover;
+}
+
+.github-user p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.github-thread {
+  padding: 1.35rem;
+}
+
+.github-thread__header,
+.github-auth-panel,
+.admin-toolbar,
+.admin-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.github-thread__header h3,
+.admin-auth h3,
+.admin-section-head h3 {
+  margin: 0.35rem 0 0.45rem;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.github-thread__header p,
+.github-auth-panel p,
+.admin-auth p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.github-thread__composer,
+.github-auth-panel,
+.github-thread__list,
+.admin-auth,
+.admin-sidebar,
+.admin-post-form,
+.config-file-form {
+  margin-top: 1rem;
+}
+
+.composer-label,
+.admin-field span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.github-thread__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.comment-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.comment-card__meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.comment-body p:first-child {
+  margin-top: 0;
+}
+
+.admin-app {
+  padding: 1.35rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.admin-sidebar {
+  padding: 1rem;
+}
+
+.admin-post-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.admin-post-item {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-post-item strong,
+.admin-post-item span {
+  display: block;
+}
+
+.admin-post-item span {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.admin-post-item.is-active {
+  border-color: rgba(92, 225, 230, 0.5);
+  background: rgba(92, 225, 230, 0.08);
+}
+
+.admin-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-post-form,
+.config-file-form {
+  padding: 1rem;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.admin-field--wide {
+  grid-column: 1 / -1;
+}
+
+.admin-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--muted);
+}
+
+.admin-checkbox input {
+  width: auto;
+}
+
+.admin-config-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-json-editor {
+  min-height: 280px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.92rem;
+}
+
 .footer {
   padding: 2rem 0 0;
 }
@@ -553,6 +762,11 @@ main {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .admin-grid,
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -582,5 +796,13 @@ main {
 
   .button {
     width: 100%;
+  }
+
+  .github-thread__header,
+  .github-auth-panel,
+  .admin-toolbar,
+  .admin-section-head,
+  .comment-card__meta {
+    flex-direction: column;
   }
 }

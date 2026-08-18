@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/github/auth.js": {
+      "runtime": "@vercel/node@5.3.24"
+    },
+    "api/github/callback.js": {
+      "runtime": "@vercel/node@5.3.24"
+    }
+  }
+}

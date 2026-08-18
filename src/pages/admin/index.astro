@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import site from "../../config/site.json";
+import { withBase } from "../../utils/with-base";
+
+const [owner, repo] = site.githubRepo.split("/");
+---
+
+<BaseLayout title={`后台管理 | ${site.siteName}`} description="使用 GitHub 账号登录后管理博客文章和站点配置。">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Admin</span>
+      <h1 class="section-heading">网站后台</h1>
+      <p class="section-copy">
+        这里支持用 GitHub 账号登录后管理文章、留言线程和站点配置。保存后会直接提交到仓库并触发 Pages 重新部署。
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div
+        id="admin-app"
+        class="admin-app glass"
+        data-owner={owner}
+        data-repo={repo}
+        data-branch={site.githubAuth.branch}
+        data-client-id={site.githubAuth.clientId}
+        data-scope={site.githubAuth.scope}
+        data-auth-base-url={site.githubAuth.authBaseUrl}
+      >
+        <div class="admin-app__loading">
+          <span class="chip">GitHub Login</span>
+          <h3>正在加载后台...</h3>
+          <p>如果你还没有登录，页面会引导你完成 GitHub 授权。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src={withBase("/scripts/github-admin.js")}></script>
+</BaseLayout>

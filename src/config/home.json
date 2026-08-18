@@ -13,7 +13,7 @@
       "detail": "登录后通过可视化后台管理文章与站点内容"
     },
     {
-      "value": "Discussions",
+      "value": "Issues + Reactions",
       "label": "评论与点赞",
       "detail": "每篇文章自动映射评论主题并支持 reactions"
     },
@@ -39,7 +39,7 @@
     },
     {
       "title": "互动能力直接复用 GitHub 生态",
-      "body": "评论、留言、点赞全部落到 GitHub Discussions，不需要你再维护数据库、审核后台和用户系统。"
+      "body": "评论、留言、点赞全部落到 GitHub Issues 与 Reactions，不需要你再维护数据库、审核后台和用户系统。"
     }
   ],
   "pillars": [

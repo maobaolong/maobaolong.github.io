@@ -12,17 +12,17 @@
 ## 技术栈
 
 - Astro: 静态内容站点
-- Decap CMS: Git 驱动后台
-- giscus: 基于 GitHub Discussions 的评论、留言、点赞
+- GitHub OAuth Web Flow + Vercel Auth Service: GitHub 登录后台
+- GitHub Issues + Reactions: 评论、留言、点赞
 - GitHub Actions: 自动部署到 GitHub Pages
-- Cloudflare Worker: Decap CMS 的 GitHub OAuth 代理
 
 ## 目录
 
 - `src/content/blog/`: 博客文章
 - `src/config/`: 首页、导航、关于页、站点集成配置
-- `public/admin/`: Decap CMS 后台
-- `oauth-worker/`: GitHub 登录代理
+- `src/pages/admin/`: GitHub 登录后台
+- `public/scripts/`: 登录、评论、后台逻辑
+- `auth-service/`: GitHub OAuth 授权中转服务，部署到 Vercel
 
 ## 本地启动
 
@@ -40,77 +40,52 @@ pnpm dev
    - 在 GitHub Actions 里新增变量 `SITE_URL=https://maobaolong.github.io`
    - 新增变量 `BASE_PATH=/tech-blog`
 4. 打开仓库 `Settings > Pages`，把 Source 设为 `GitHub Actions`。
-5. 推送代码到 `master`，`.github/workflows/deploy.yml` 会自动部署。
+5. 推送代码到 `main`，`.github/workflows/deploy.yml` 会自动部署。
 
-## 配置 GitHub 登录后台
+## GitHub 登录后台
 
-Decap CMS 的 GitHub 后端需要 OAuth 代理，GitHub 登录需要服务端参与认证，外部 OAuth 代理可通过 `backend.base_url` 接入。
+这个版本使用 GitHub OAuth Web Flow 登录，但由于 GitHub Pages 是纯静态托管，OAuth code 交换需要一个很薄的授权中转服务。当前代码把这层放在 `auth-service/`，部署到 Vercel 后供 `/admin/` 和评论组件共用。
 
-### 1. 创建 GitHub OAuth App
+### 已有配置
 
-到 GitHub Developer Settings 新建 OAuth App：
+- OAuth App 名称：`Maobaolong Engineering Admin`
+- Client ID 写在 `src/config/site.json`
+- `authBaseUrl` 也写在 `src/config/site.json`
+- `/admin/` 登录后可直接：
+  - 新建 / 编辑 / 删除博客文章
+  - 自动创建文章对应评论线程
+  - 编辑 `site.json`、`home.json`、`about.json`、`navigation.json`
 
-- Homepage URL: 你的博客线上地址
-- Authorization callback URL: 你的 OAuth Worker 地址 + `/callback`
+### 注意
 
-GitHub 的 OAuth App Web flow 会在服务端用 `client_id`、`client_secret` 与授权码换取访问令牌。
+- 登录后会向 GitHub 请求 `public_repo read:user`
+- 需要先把 `auth-service/` 部署到 Vercel，并配置：
+  - `GITHUB_CLIENT_ID`
+  - `GITHUB_CLIENT_SECRET`
+  - `ALLOWED_ORIGINS=https://maobaolong.github.io,http://127.0.0.1:4321`
+- 只有对仓库有写权限的账号，才能真正保存改动
 
-### 2. 部署 `oauth-worker/`
+## 评论、留言板、点赞
 
-推荐用 Cloudflare Worker。Decap 文档明确给出了用 OAuth Proxy 的方式，并指向 Cloudflare Worker 模板。
+评论系统使用 GitHub Issues 和 Reactions，不依赖 giscus app。
 
-在 `oauth-worker/` 目录执行：
+### 结构
 
-```bash
-pnpm install
-pnpm dlx wrangler secret put GITHUB_CLIENT_ID
-pnpm dlx wrangler secret put GITHUB_CLIENT_SECRET
-pnpm dlx wrangler deploy
-```
+- 每篇文章对应一个 issue 线程
+- 留言板对应一个固定 issue 线程
+- 评论写入 issue comments
+- 点赞写入 GitHub reactions
 
-再设置一个普通变量：
+### 线程映射
 
-- `ALLOWED_ORIGIN=https://你的博客域名`
+线程映射文件在 `src/config/comment-threads.json`。
 
-### 3. 更新后台配置
+当你在 `/admin/` 新建文章并保存时，后台会自动：
 
-编辑 `public/admin/config.yml`：
-
-- `backend.repo`
-- `backend.base_url`
-- `site_url`
-- `display_url`
-
-部署后访问 `/admin/`，就可以用 GitHub 账号登录管理内容。
-
-注意：Decap GitHub 后端要求登录用户对内容仓库有 push 权限。
-
-## 配置评论、留言板、点赞
-
-giscus 把评论和 reactions 存到 GitHub Discussions，不需要单独数据库；仓库需要公开、安装 giscus app，并开启 Discussions。
-
-### 1. 在仓库开启 Discussions
-
-- 仓库设为 public
-- 开启 Discussions
-- 安装 giscus app
-
-### 2. 在 giscus 站点生成配置
-
-去 giscus 配置页拿到下面这些值，写入 `src/config/site.json`：
-
-- `repo`
-- `repoId`
-- `category`
-- `categoryId`
-
-giscus 会根据你选择的映射方式，把页面和 Discussion 关联起来；如果没有匹配 Discussion，会在第一次评论或 reaction 时自动创建。
-
-### 3. 使用方式
-
-- 文章页默认按 `pathname` 建立评论主题
-- `/message-board/` 使用固定 term `guestbook` 作为留言板
-- 点赞由 giscus reaction 提供
+1. 把 Markdown 写入 `src/content/blog/`
+2. 创建对应 issue 评论线程
+3. 更新 `comment-threads.json`
+4. 推送到 `master` 并触发 Pages 重建
 
 ## 通过后台可管理的内容
 
@@ -119,6 +94,7 @@ giscus 会根据你选择的映射方式，把页面和 Discussion 关联起来�
 - 导航菜单
 - 关于页
 - GitHub 与联系信息
+- 评论线程映射
 
 ## 后续你可能会想加
 
