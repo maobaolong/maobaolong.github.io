@@ -1,5 +1,6 @@
 import {
   clearStoredSession,
+  createSessionFromAccessToken,
   getActiveSession,
   githubJson,
   startDeviceFlowLogin
@@ -214,6 +215,27 @@ class GitHubAdminApp {
     }
   }
 
+  async loginWithToken() {
+    try {
+      const input = this.root.querySelector(".admin-token-input");
+      this.pendingDevice = null;
+      this.error = "";
+      this.render();
+      this.session = await createSessionFromAccessToken(
+        input?.value || "",
+        this.config.scope
+      );
+      if (input) {
+        input.value = "";
+      }
+      await this.loadInitialData();
+      this.render();
+    } catch (error) {
+      this.error = error.message || String(error);
+      this.render();
+    }
+  }
+
   logout() {
     clearStoredSession();
     this.session = null;
@@ -330,6 +352,10 @@ class GitHubAdminApp {
   bindCommonActions() {
     this.root.querySelector(".admin-login")?.addEventListener("click", async () => {
       await this.login();
+    });
+
+    this.root.querySelector(".admin-token-login")?.addEventListener("click", async () => {
+      await this.loginWithToken();
     });
 
     this.root.querySelector(".admin-logout")?.addEventListener("click", () => {
@@ -582,6 +608,21 @@ class GitHubAdminApp {
           <button class="button button-primary admin-login">开始登录</button>
         </div>
         ${loginHintMarkup(this.pendingDevice)}
+        <details class="auth-fallback">
+          <summary>设备码登录异常？改用 GitHub Token</summary>
+          <p>请输入有仓库写权限的 GitHub Personal Access Token，后台会直接校验并建立登录态。</p>
+          <label class="composer-label" for="admin-token-login">GitHub access token</label>
+          <input
+            id="admin-token-login"
+            class="admin-token-input"
+            type="password"
+            placeholder="ghp_... / github_pat_..."
+            autocomplete="off"
+          />
+          <div class="button-row">
+            <button class="button button-secondary admin-token-login" type="button">使用 Token 登录</button>
+          </div>
+        </details>
       </div>
     `;
   }

@@ -117,6 +117,30 @@ export async function fetchGitHubUser(accessToken) {
   };
 }
 
+export async function createSessionFromAccessToken(accessToken, scope = "public_repo read:user") {
+  const normalizedToken = String(accessToken || "").trim();
+  if (!normalizedToken) {
+    throw new Error("请输入 GitHub access token。");
+  }
+
+  const user = await fetchGitHubUser(normalizedToken);
+
+  const session = {
+    accessToken: normalizedToken,
+    scope,
+    tokenType: "bearer",
+    expiresAt: null,
+    createdAt: nowIso(),
+    updatedAt: nowIso(),
+    user,
+    tokenDetails: parseJwtPayload(normalizedToken),
+    authMethod: "token"
+  };
+
+  saveStoredSession(session);
+  return session;
+}
+
 export async function getActiveSession() {
   const session = getStoredSession();
   if (!session) {
@@ -208,23 +232,15 @@ export async function startDeviceFlowLogin(config, callbacks = {}) {
     }
 
     const accessToken = tokenPayload.access_token;
-    const expiresAt = tokenPayload.expires_in
+    const session = await createSessionFromAccessToken(
+      accessToken,
+      tokenPayload.scope || config.scope
+    );
+    session.tokenType = tokenPayload.token_type || "bearer";
+    session.expiresAt = tokenPayload.expires_in
       ? new Date(Date.now() + tokenPayload.expires_in * 1000).toISOString()
       : null;
-    const user = await fetchGitHubUser(accessToken);
-    const tokenDetails = parseJwtPayload(accessToken);
-
-    const session = {
-      accessToken,
-      scope: tokenPayload.scope || config.scope,
-      tokenType: tokenPayload.token_type || "bearer",
-      expiresAt,
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
-      user,
-      tokenDetails
-    };
-
+    session.authMethod = "device-flow";
     saveStoredSession(session);
     callbacks.onSuccess?.(session);
     return session;

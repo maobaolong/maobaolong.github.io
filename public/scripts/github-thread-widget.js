@@ -1,5 +1,6 @@
 import {
   clearStoredSession,
+  createSessionFromAccessToken,
   getActiveSession,
   githubJson,
   startDeviceFlowLogin
@@ -46,6 +47,31 @@ function loginHintMarkup(device) {
       请在新打开的 GitHub 页面完成授权，并输入验证码 <code>${device.user_code}</code>。
       如果没有弹出新页面，可以直接打开 <code>${device.verification_uri}</code>。
     </div>
+  `;
+}
+
+function tokenFallbackMarkup(kind) {
+  return `
+    <details class="auth-fallback">
+      <summary>设备码登录异常？改用 GitHub Token</summary>
+      <p>
+        可使用 GitHub Personal Access Token 直接登录。
+        ${kind === "guestbook" ? "留言和点赞至少需要仓库 issue 写权限。" : "评论和点赞至少需要仓库 issue 写权限。"}
+      </p>
+      <label class="composer-label" for="token-login-${kind}">
+        GitHub access token
+      </label>
+      <input
+        id="token-login-${kind}"
+        class="token-input"
+        type="password"
+        placeholder="ghp_... / github_pat_..."
+        autocomplete="off"
+      />
+      <div class="button-row">
+        <button class="button button-secondary token-login" type="button">使用 Token 登录</button>
+      </div>
+    </details>
   `;
 }
 
@@ -155,6 +181,7 @@ class GitHubThreadWidget {
       </div>
 
       ${loginHintMarkup(this.pendingDevice)}
+      ${this.session ? "" : tokenFallbackMarkup(this.config.kind)}
 
       <div class="github-thread__composer">
         <label class="composer-label" for="thread-comment-${this.config.issueNumber}">
@@ -183,6 +210,10 @@ class GitHubThreadWidget {
       this.session = null;
       this.pendingDevice = null;
       this.render();
+    });
+
+    this.container.querySelector(".token-login")?.addEventListener("click", async () => {
+      await this.loginWithToken();
     });
 
     this.container.querySelector(".thread-refresh")?.addEventListener("click", async () => {
@@ -236,6 +267,25 @@ class GitHubThreadWidget {
 
     if (!this.session) {
       throw new Error("需要先登录 GitHub 才能执行此操作。");
+    }
+  }
+
+  async loginWithToken() {
+    try {
+      const input = this.container.querySelector(".token-input");
+      this.error = "";
+      this.pendingDevice = null;
+      this.session = await createSessionFromAccessToken(
+        input?.value || "",
+        this.config.scope
+      );
+      if (input) {
+        input.value = "";
+      }
+      await this.reload();
+    } catch (error) {
+      this.error = error.message || String(error);
+      this.render();
     }
   }
 

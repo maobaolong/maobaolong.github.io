@@ -60,6 +60,7 @@ pnpm dev
 ### 注意
 
 - 登录后会向 GitHub 请求 `public_repo read:user`
+- 如果 GitHub Device Flow 临时异常，评论区和 `/admin/` 都支持直接粘贴 GitHub Personal Access Token 作为备用登录方式
 - 需要先把 `auth-service/` 部署到 Vercel，并配置：
   - `GITHUB_CLIENT_ID`
   - `ALLOWED_ORIGINS=https://maobaolong.github.io,http://127.0.0.1:4321`
