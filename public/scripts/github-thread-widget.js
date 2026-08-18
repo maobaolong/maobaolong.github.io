@@ -92,7 +92,9 @@ class GitHubThreadWidget {
     this.comments = [];
     this.session = null;
     this.pendingDevice = null;
-    this.error = "";
+    this.loadError = "";
+    this.notice = "";
+    this.noticeType = "info";
   }
 
   async init() {
@@ -100,9 +102,19 @@ class GitHubThreadWidget {
     await this.reload();
   }
 
+  setNotice(message, type = "info") {
+    this.notice = message || "";
+    this.noticeType = type;
+  }
+
+  clearNotice() {
+    this.notice = "";
+    this.noticeType = "info";
+  }
+
   async reload() {
     try {
-      this.error = "";
+      this.loadError = "";
       const issueUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues/${this.config.issueNumber}`;
       const commentsUrl = `${issueUrl}/comments?per_page=100`;
       this.issue = await githubJson(issueUrl, {
@@ -113,24 +125,27 @@ class GitHubThreadWidget {
       });
       this.render();
     } catch (error) {
-      this.error = error.message || String(error);
+      this.loadError = error.message || String(error);
       this.render();
     }
   }
 
   render() {
-    if (this.error) {
+    if (this.loadError) {
       this.container.innerHTML = `
         <div class="github-thread__header">
           <span class="chip">GitHub Issues</span>
           <h3>${this.config.kind === "guestbook" ? "留言板" : "评论与点赞"}</h3>
         </div>
-        <div class="notice">互动区加载失败：${this.error}</div>
+        <div class="notice">互动区加载失败：${this.loadError}</div>
       `;
       return;
     }
 
     const issueLikes = this.issue?.reactions?.["+1"] || 0;
+    const noticeMarkup = this.notice
+      ? `<div class="notice${this.noticeType === "danger" ? " notice--danger" : ""}">${this.notice}</div>`
+      : "";
     const commentsMarkup =
       this.comments.length > 0
         ? this.comments
@@ -169,6 +184,7 @@ class GitHubThreadWidget {
         </div>
       </div>
 
+      ${noticeMarkup}
       <div class="github-auth-panel">
         ${renderUserBadge(this.session)}
         <div class="button-row">
@@ -239,7 +255,7 @@ class GitHubThreadWidget {
 
   async login() {
     this.pendingDevice = null;
-    this.error = "";
+    this.clearNotice();
     this.render();
 
     try {
@@ -250,11 +266,11 @@ class GitHubThreadWidget {
         }
       });
       this.pendingDevice = null;
-      this.error = "";
+      this.clearNotice();
       this.render();
     } catch (error) {
       this.pendingDevice = null;
-      this.error = error.message || String(error);
+      this.setNotice(error.message || String(error), "danger");
       this.render();
     }
   }
@@ -273,7 +289,7 @@ class GitHubThreadWidget {
   async loginWithToken() {
     try {
       const input = this.container.querySelector(".token-input");
-      this.error = "";
+      this.clearNotice();
       this.pendingDevice = null;
       this.session = await createSessionFromAccessToken(
         input?.value || "",
@@ -284,7 +300,7 @@ class GitHubThreadWidget {
       }
       await this.reload();
     } catch (error) {
-      this.error = error.message || String(error);
+      this.setNotice(error.message || String(error), "danger");
       this.render();
     }
   }
@@ -309,9 +325,13 @@ class GitHubThreadWidget {
       );
 
       textarea.value = "";
+      this.setNotice(
+        this.config.kind === "guestbook" ? "留言已发布。" : "评论已发布。",
+        "info"
+      );
       await this.reload();
     } catch (error) {
-      this.error = error.message || String(error);
+      this.setNotice(error.message || String(error), "danger");
       this.render();
     }
   }
@@ -328,9 +348,10 @@ class GitHubThreadWidget {
           body: { content: "+1" }
         }
       );
+      this.setNotice("点赞已提交。", "info");
       await this.reload();
     } catch (error) {
-      this.error = error.message || String(error);
+      this.setNotice(error.message || String(error), "danger");
       this.render();
     }
   }
@@ -347,9 +368,10 @@ class GitHubThreadWidget {
           body: { content: "+1" }
         }
       );
+      this.setNotice("评论点赞已提交。", "info");
       await this.reload();
     } catch (error) {
-      this.error = error.message || String(error);
+      this.setNotice(error.message || String(error), "danger");
       this.render();
     }
   }
