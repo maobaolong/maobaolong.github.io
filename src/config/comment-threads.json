@@ -23,5 +23,10 @@
     "key": "/blog/test/",
     "issueNumber": 5,
     "kind": "article"
+  },
+  {
+    "key": "/blog/test2/",
+    "issueNumber": 6,
+    "kind": "article"
   }
 ]
