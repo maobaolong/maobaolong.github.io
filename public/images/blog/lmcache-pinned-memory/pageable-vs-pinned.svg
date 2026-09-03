@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Pageable memory 与 pinned memory 的区别</title>
+  <desc id="desc">左侧展示普通可分页内存可能换出到磁盘，右侧展示 pinned memory 锁定物理页面供 GPU 稳定访问。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#101b33"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      .title { font: 700 36px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .head { font: 700 27px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .body { font: 500 20px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #cbd5e1; }
+      .small { font: 500 17px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #94a3b8; }
+      .mono { font: 600 18px "SFMono-Regular",Consolas,monospace; fill: #dbeafe; }
+    </style>
+  </defs>
+  <rect width="1280" height="720" rx="28" fill="url(#bg)"/>
+  <text x="640" y="64" text-anchor="middle" class="title">Pageable Memory 与 Pinned Memory</text>
+
+  <rect x="52" y="105" width="564" height="552" rx="24" fill="#0b1528" stroke="#334155" stroke-width="2"/>
+  <text x="334" y="150" text-anchor="middle" class="head">普通可分页内存</text>
+  <rect x="96" y="184" width="214" height="102" rx="16" fill="#172033" stroke="#64748b"/>
+  <text x="203" y="224" text-anchor="middle" class="body">进程虚拟地址</text>
+  <text x="203" y="254" text-anchor="middle" class="mono">0x7fa0...</text>
+  <path d="M310 235H386" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="400" y="176" width="170" height="118" rx="16" fill="#1e293b" stroke="#64748b"/>
+  <text x="485" y="218" text-anchor="middle" class="body">物理内存页</text>
+  <rect x="426" y="240" width="28" height="26" rx="4" fill="#64748b"/>
+  <rect x="460" y="240" width="28" height="26" rx="4" fill="#94a3b8"/>
+  <rect x="494" y="240" width="28" height="26" rx="4" fill="#64748b"/>
+
+  <path d="M485 300V382" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 8" marker-end="url(#arrow)"/>
+  <rect x="383" y="395" width="204" height="93" rx="16" fill="#271b13" stroke="#f59e0b"/>
+  <text x="485" y="433" text-anchor="middle" class="body">Swap / 磁盘</text>
+  <text x="485" y="462" text-anchor="middle" class="small">页面可能被换出</text>
+
+  <rect x="96" y="397" width="214" height="91" rx="16" fill="#172033" stroke="#475569"/>
+  <text x="203" y="434" text-anchor="middle" class="body">操作系统管理</text>
+  <text x="203" y="463" text-anchor="middle" class="small">映射可发生变化</text>
+  <path d="M310 442H371" stroke="#64748b" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="96" y="530" width="474" height="84" rx="16" fill="#2b1518" stroke="#fb7185"/>
+  <text x="333" y="565" text-anchor="middle" class="body">GPU 异步访问需要稳定物理页</text>
+  <text x="333" y="594" text-anchor="middle" class="small">普通 pageable memory 不能直接提供这个保证</text>
+
+  <rect x="664" y="105" width="564" height="552" rx="24" fill="#0b1528" stroke="#0ea5e9" stroke-width="2"/>
+  <text x="946" y="150" text-anchor="middle" class="head">Pinned / Page-Locked Memory</text>
+  <rect x="708" y="184" width="214" height="102" rx="16" fill="#102438" stroke="#38bdf8"/>
+  <text x="815" y="224" text-anchor="middle" class="body">进程虚拟地址</text>
+  <text x="815" y="254" text-anchor="middle" class="mono">0x7fb0...</text>
+  <path d="M922 235H998" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="1012" y="176" width="170" height="118" rx="16" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="1097" y="218" text-anchor="middle" class="body">锁定物理页</text>
+  <rect x="1038" y="240" width="28" height="26" rx="4" fill="#2dd4bf"/>
+  <rect x="1072" y="240" width="28" height="26" rx="4" fill="#38bdf8"/>
+  <rect x="1106" y="240" width="28" height="26" rx="4" fill="#2dd4bf"/>
+
+  <rect x="718" y="360" width="190" height="108" rx="18" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="813" y="405" text-anchor="middle" class="head">GPU</text>
+  <text x="813" y="438" text-anchor="middle" class="small">DMA / 映射访问</text>
+  <path d="M915 414H1013" stroke="url(#cyan)" stroke-width="5" marker-end="url(#arrow)"/>
+  <path d="M1008 444H910" stroke="url(#cyan)" stroke-width="5" marker-end="url(#arrow)"/>
+  <text x="962" y="392" text-anchor="middle" class="small">H2D</text>
+  <text x="962" y="471" text-anchor="middle" class="small">D2H</text>
+
+  <rect x="1012" y="360" width="170" height="108" rx="18" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="1097" y="405" text-anchor="middle" class="body">稳定地址</text>
+  <text x="1097" y="438" text-anchor="middle" class="small">传输期间不换出</text>
+
+  <rect x="708" y="530" width="474" height="84" rx="16" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="945" y="565" text-anchor="middle" class="body">适合异步 CPU ↔ GPU 传输</text>
+  <text x="945" y="594" text-anchor="middle" class="small">但 Tensor 释放后，allocator 仍可能复用这块内存</text>
+</svg>
+

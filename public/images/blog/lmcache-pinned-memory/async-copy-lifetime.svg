@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">异步 H2D 复制中的 pinned Tensor 生命周期竞态</title>
+  <desc id="desc">对比旧流程中过早释放并复用临时 pinned Tensor，与修复后在函数返回前等待复制完成。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#101b33"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      .title { font: 700 35px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .head { font: 700 26px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .body { font: 500 19px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #cbd5e1; }
+      .small { font: 500 16px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #94a3b8; }
+      .lane { font: 700 18px "SFMono-Regular",Consolas,monospace; fill: #dbeafe; }
+    </style>
+  </defs>
+  <rect width="1280" height="820" rx="28" fill="url(#bg)"/>
+  <text x="640" y="58" text-anchor="middle" class="title">临时 Pinned Tensor 的异步复制生命周期</text>
+
+  <rect x="45" y="92" width="1190" height="315" rx="24" fill="#0b1528" stroke="#fb7185" stroke-width="2"/>
+  <text x="75" y="135" class="head" fill="#fb7185">旧流程：地址仍合法，但内容被复用覆盖</text>
+  <text x="88" y="190" class="lane">CPU / Python</text>
+  <text x="88" y="315" class="lane">GPU / CUDA</text>
+  <line x1="235" y1="184" x2="1185" y2="184" stroke="#334155" stroke-width="2"/>
+  <line x1="235" y1="309" x2="1185" y2="309" stroke="#334155" stroke-width="2"/>
+
+  <rect x="262" y="154" width="150" height="61" rx="13" fill="#172033" stroke="#64748b"/>
+  <text x="337" y="181" text-anchor="middle" class="body">pin_memory()</text>
+  <text x="337" y="204" text-anchor="middle" class="small">创建临时 Tensor</text>
+  <path d="M412 184H452" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="466" y="154" width="150" height="61" rx="13" fill="#172033" stroke="#64748b"/>
+  <text x="541" y="181" text-anchor="middle" class="body">传递 raw pointer</text>
+  <text x="541" y="204" text-anchor="middle" class="small">异步工作入队</text>
+  <path d="M616 184H655" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="669" y="146" width="167" height="77" rx="13" fill="#2b1518" stroke="#fb7185"/>
+  <text x="752" y="177" text-anchor="middle" class="body">函数返回</text>
+  <text x="752" y="202" text-anchor="middle" class="small">最后引用消失</text>
+  <path d="M836 184H877" stroke="#fb7185" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="891" y="146" width="184" height="77" rx="13" fill="#2b1518" stroke="#fb7185"/>
+  <text x="983" y="177" text-anchor="middle" class="body">allocator 复用</text>
+  <text x="983" y="202" text-anchor="middle" class="small">新请求覆盖内容</text>
+  <path d="M1075 184H1111" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1145" y="190" text-anchor="middle" class="small">sync</text>
+
+  <path d="M541 220V287" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="554" y="277" width="435" height="65" rx="14" fill="#102438" stroke="#38bdf8"/>
+  <text x="771" y="305" text-anchor="middle" class="body">GPU 持续从同一个 host pointer 读取</text>
+  <text x="771" y="330" text-anchor="middle" class="small">读取期间 CPU 已经把这块内存交给下一次请求</text>
+  <path d="M983 223V275" stroke="#fb7185" stroke-width="4" stroke-dasharray="7 7"/>
+  <text x="1040" y="266" class="small" fill="#fb7185">数据竞争</text>
+  <text x="1160" y="374" text-anchor="end" class="body" fill="#fb7185">结果：KV 静默损坏</text>
+
+  <rect x="45" y="438" width="1190" height="315" rx="24" fill="#0b1528" stroke="#2dd4bf" stroke-width="2"/>
+  <text x="75" y="481" class="head" fill="#2dd4bf">修复后：在局部引用消失前建立完成边界</text>
+  <text x="88" y="536" class="lane">CPU / Python</text>
+  <text x="88" y="661" class="lane">GPU / CUDA</text>
+  <line x1="235" y1="530" x2="1185" y2="530" stroke="#334155" stroke-width="2"/>
+  <line x1="235" y1="655" x2="1185" y2="655" stroke="#334155" stroke-width="2"/>
+
+  <rect x="262" y="500" width="150" height="61" rx="13" fill="#102438" stroke="#38bdf8"/>
+  <text x="337" y="527" text-anchor="middle" class="body">pin_memory()</text>
+  <text x="337" y="550" text-anchor="middle" class="small">临时 Tensor 存活</text>
+  <path d="M412 530H452" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="466" y="500" width="150" height="61" rx="13" fill="#102438" stroke="#38bdf8"/>
+  <text x="541" y="527" text-anchor="middle" class="body">传递 raw pointer</text>
+  <text x="541" y="550" text-anchor="middle" class="small">异步工作入队</text>
+  <path d="M616 530H670" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="684" y="492" width="195" height="77" rx="13" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="781" y="522" text-anchor="middle" class="body">synchronize()</text>
+  <text x="781" y="548" text-anchor="middle" class="small">等待 H2D 完成</text>
+  <path d="M879 530H925" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="939" y="500" width="160" height="61" rx="13" fill="#102b35" stroke="#2dd4bf"/>
+  <text x="1019" y="527" text-anchor="middle" class="body">函数返回</text>
+  <text x="1019" y="550" text-anchor="middle" class="small">现在可以释放</text>
+
+  <path d="M541 566V633" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="554" y="623" width="300" height="65" rx="14" fill="#102438" stroke="#38bdf8"/>
+  <text x="704" y="651" text-anchor="middle" class="body">GPU 完成 H2D 读取</text>
+  <text x="704" y="676" text-anchor="middle" class="small">源内存一直保持有效</text>
+  <path d="M781 620V570" stroke="#2dd4bf" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <text x="1160" y="720" text-anchor="end" class="body" fill="#2dd4bf">结果：生命周期与异步工作对齐</text>
+</svg>
