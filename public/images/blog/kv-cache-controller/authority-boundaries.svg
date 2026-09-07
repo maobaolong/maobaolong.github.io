@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" role="img" aria-labelledby="title desc">
+  <title id="title">KVCC 的角色与控制边界</title>
+  <desc id="desc">Router 提供全局 KV 位置提示，推理引擎掌握 GPU 与最终调度，KVCC 管理节点缓存，NIXL 执行数据搬运，Guard 提供可选故障恢复。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#111c35"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
+    </marker>
+    <style>
+      .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+      .title{font-size:36px;font-weight:750;fill:#f8fafc}
+      .subtitle{font-size:18px;fill:#94a3b8}
+      .boxTitle{font-size:25px;font-weight:700;fill:#f8fafc}
+      .body{font-size:18px;fill:#cbd5e1}
+      .small{font-size:16px;fill:#94a3b8}
+      .pill{font-size:15px;font-weight:650}
+    </style>
+  </defs>
+  <rect width="1400" height="860" rx="28" fill="url(#bg)"/>
+  <g class="sans">
+    <text x="70" y="70" class="title">KVCC 的角色与控制边界</text>
+    <text x="70" y="105" class="subtitle">核心原则：全局地图、本地决定、GPU 单一权威、传输层独立演进</text>
+
+    <g filter="url(#shadow)">
+      <rect x="420" y="145" width="560" height="145" rx="24" fill="#172554" stroke="#3b82f6" stroke-width="2"/>
+      <text x="455" y="190" class="boxTitle">KV Router · 全局地图</text>
+      <text x="455" y="225" class="body">维护最终一致的 key / 节点位置摘要</text>
+      <text x="455" y="257" class="body">路由请求，并附带候选来源 Hint</text>
+      <rect x="810" y="168" width="135" height="35" rx="17" fill="#1d4ed8"/>
+      <text x="877" y="191" text-anchor="middle" class="pill" fill="#dbeafe">建议，不命令</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="70" y="375" width="390" height="235" rx="24" fill="#132a32" stroke="#14b8a6" stroke-width="2"/>
+      <text x="105" y="420" class="boxTitle">推理引擎 · GPU 权威</text>
+      <text x="105" y="460" class="body">• 掌握 G1 HBM 与执行调度</text>
+      <text x="105" y="495" class="body">• 生成传输友好的规范布局</text>
+      <text x="105" y="530" class="body">• 最终决定 Fetch 还是重算</text>
+      <text x="105" y="565" class="body">• 提供安全的目标内存窗口</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="505" y="345" width="390" height="295" rx="24" fill="#2b1d42" stroke="#a78bfa" stroke-width="2.5"/>
+      <text x="540" y="390" class="boxTitle">KVCC / KVCR · 节点总管</text>
+      <text x="540" y="433" class="body">• 本地驻留与准入策略</text>
+      <text x="540" y="468" class="body">• Operation / Claim 生命周期</text>
+      <text x="540" y="503" class="body">• G2 / G3 / G4 淘汰与下沉</text>
+      <text x="540" y="538" class="body">• 根据 Hint 编排远端取回</text>
+      <text x="540" y="573" class="body">• 发布本节点库存增量</text>
+      <rect x="540" y="594" width="320" height="29" rx="14" fill="#6d28d9"/>
+      <text x="700" y="614" text-anchor="middle" class="pill" fill="#ede9fe">不接管引擎正在使用的 G1</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="940" y="375" width="390" height="235" rx="24" fill="#302517" stroke="#f59e0b" stroke-width="2"/>
+      <text x="975" y="420" class="boxTitle">NIXL · 数据通路</text>
+      <text x="975" y="460" class="body">• GPU / DRAM / NVMe</text>
+      <text x="975" y="495" class="body">• UCX / RDMA / 网络连接</text>
+      <text x="975" y="530" class="body">• 对象或文件存储插件</text>
+      <text x="975" y="565" class="body">• 执行搬运，不制定策略</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="390" y="710" width="620" height="95" rx="24" fill="#25202b" stroke="#64748b" stroke-width="2" stroke-dasharray="9 7"/>
+      <text x="425" y="750" class="boxTitle">KVCR-Guard · 可选恢复旁路</text>
+      <text x="425" y="782" class="small">隔离失败 owner，保留已提交的控制器内存，辅助热启动与接管</text>
+    </g>
+
+    <path d="M700 290 L700 335" stroke="#60a5fa" stroke-width="4" marker-end="url(#arrowBlue)"/>
+    <text x="718" y="321" class="small">Hint</text>
+    <path d="M505 465 C480 465,480 465,462 465" stroke="#34d399" stroke-width="4" marker-end="url(#arrowGreen)"/>
+    <path d="M895 465 C920 465,920 465,938 465" stroke="#34d399" stroke-width="4" marker-end="url(#arrowGreen)"/>
+    <path d="M700 640 L700 701" stroke="#94a3b8" stroke-width="3" stroke-dasharray="8 7"/>
+    <text x="270" y="665" text-anchor="middle" class="small">控制面：元数据、Hint、状态</text>
+    <line x1="95" y1="690" x2="445" y2="690" stroke="#60a5fa" stroke-width="4"/>
+    <text x="1135" y="665" text-anchor="middle" class="small">数据面：按操作定向搬运</text>
+    <line x1="960" y1="690" x2="1310" y2="690" stroke="#34d399" stroke-width="4"/>
+  </g>
+</svg>

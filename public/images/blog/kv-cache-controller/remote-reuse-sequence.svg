@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Router Hint 驱动的跨节点 KV 复用时序</title>
+  <desc id="desc">源节点发布库存，Router 将候选来源提示给目标节点，目标引擎查询后决定远程取回或重新计算。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#08131f"/><stop offset="1" stop-color="#141b30"/></linearGradient>
+    <marker id="blue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#60a5fa"/></marker>
+    <marker id="green" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#34d399"/></marker>
+    <marker id="amber" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fbbf24"/></marker>
+    <style>
+      .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}.title{font-size:36px;font-weight:750;fill:#f8fafc}.sub{font-size:18px;fill:#94a3b8}.head{font-size:22px;font-weight:700;fill:#f8fafc}.label{font-size:17px;fill:#e2e8f0}.note{font-size:15px;fill:#94a3b8}.num{font-size:15px;font-weight:750;fill:#08131f}
+    </style>
+  </defs>
+  <rect width="1400" height="900" rx="28" fill="url(#bg)"/>
+  <g class="sans">
+    <text x="70" y="70" class="title">一次远程 KV 复用如何发生</text>
+    <text x="70" y="105" class="sub">蓝色是控制信息，绿色是数据传输，黄色是目标引擎的本地决策</text>
+
+    <rect x="70" y="145" width="280" height="78" rx="18" fill="#173329" stroke="#34d399" stroke-width="2"/>
+    <text x="210" y="178" text-anchor="middle" class="head">源节点 A</text><text x="210" y="205" text-anchor="middle" class="note">Controller + G2 DRAM</text>
+    <rect x="400" y="145" width="260" height="78" rx="18" fill="#172554" stroke="#60a5fa" stroke-width="2"/>
+    <text x="530" y="192" text-anchor="middle" class="head">KV Router</text>
+    <rect x="710" y="145" width="280" height="78" rx="18" fill="#2b1d42" stroke="#a78bfa" stroke-width="2"/>
+    <text x="850" y="178" text-anchor="middle" class="head">目标 KVCC B</text><text x="850" y="205" text-anchor="middle" class="note">节点缓存与传输控制</text>
+    <rect x="1040" y="145" width="290" height="78" rx="18" fill="#132a32" stroke="#14b8a6" stroke-width="2"/>
+    <text x="1185" y="178" text-anchor="middle" class="head">目标引擎 B</text><text x="1185" y="205" text-anchor="middle" class="note">GPU 调度最终权威</text>
+
+    <g stroke="#475569" stroke-width="2" stroke-dasharray="7 8"><line x1="210" y1="223" x2="210" y2="840"/><line x1="530" y1="223" x2="530" y2="840"/><line x1="850" y1="223" x2="850" y2="840"/><line x1="1185" y1="223" x2="1185" y2="840"/></g>
+
+    <circle cx="210" cy="285" r="16" fill="#60a5fa"/><text x="210" y="290" text-anchor="middle" class="num">1</text>
+    <line x1="230" y1="285" x2="510" y2="285" stroke="#60a5fa" stroke-width="4" marker-end="url(#blue)"/>
+    <text x="370" y="273" text-anchor="middle" class="label">发布已提交 block 的库存增量</text>
+
+    <circle cx="530" cy="365" r="16" fill="#60a5fa"/><text x="530" y="370" text-anchor="middle" class="num">2</text>
+    <line x1="550" y1="365" x2="830" y2="365" stroke="#60a5fa" stroke-width="4" marker-end="url(#blue)"/>
+    <text x="690" y="350" text-anchor="middle" class="label">请求元数据 + 来源 A 的 Hint</text>
+    <text x="690" y="385" text-anchor="middle" class="note">提示可过期，不能当成强一致承诺</text>
+
+    <circle cx="1185" cy="455" r="16" fill="#fbbf24"/><text x="1185" y="460" text-anchor="middle" class="num">3</text>
+    <line x1="1165" y1="455" x2="870" y2="455" stroke="#fbbf24" stroke-width="4" marker-end="url(#amber)"/>
+    <text x="1018" y="440" text-anchor="middle" class="label">query(keys, deadline)</text>
+    <text x="1018" y="475" text-anchor="middle" class="note">HIT / FETCHING / FETCHABLE / MISS</text>
+
+    <circle cx="1185" cy="545" r="16" fill="#fbbf24"/><text x="1185" y="550" text-anchor="middle" class="num">4</text>
+    <rect x="1005" y="505" width="325" height="82" rx="16" fill="#332a15" stroke="#fbbf24"/>
+    <text x="1025" y="535" class="label">本地比较：取回成本 vs Prefill</text>
+    <text x="1025" y="565" class="note">结合 GPU 队列、网络、水位和截止时间</text>
+
+    <circle cx="850" cy="640" r="16" fill="#34d399"/><text x="850" y="645" text-anchor="middle" class="num">5</text>
+    <line x1="830" y1="640" x2="230" y2="640" stroke="#34d399" stroke-width="4" marker-end="url(#green)"/>
+    <text x="530" y="625" text-anchor="middle" class="label">选择取回：建立 Operation + 源端 Claim</text>
+    <line x1="230" y1="695" x2="830" y2="695" stroke="#34d399" stroke-width="9" marker-end="url(#green)"/>
+    <text x="530" y="684" text-anchor="middle" class="label">NIXL 定向传输 KV 数据</text>
+    <text x="530" y="720" text-anchor="middle" class="note">若 Hint 失效则快速失败，回落到重新计算</text>
+
+    <circle cx="850" cy="790" r="16" fill="#34d399"/><text x="850" y="795" text-anchor="middle" class="num">6</text>
+    <line x1="870" y1="790" x2="1165" y2="790" stroke="#34d399" stroke-width="4" marker-end="url(#green)"/>
+    <text x="1018" y="775" text-anchor="middle" class="label">完整提交后交付，并释放 Claim</text>
+    <text x="1018" y="812" text-anchor="middle" class="note">未完成数据不会被发布为 HIT</text>
+  </g>
+</svg>
