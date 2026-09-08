@@ -1,81 +1,97 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="870" viewBox="0 0 1400 870" role="img" aria-labelledby="title desc">
-  <title id="title">Lazy offload 的 queued 与 in-flight 状态机</title>
-  <desc id="desc">Store metadata 先进入 FIFO queued 状态，达到策略条件且有正 token step 时进入 in-flight，worker completion 返回 scheduler 后释放 block。queued-only 在零 token step 中无法推进，是 PR 4998 的未闭环边界。</desc>
+  <title id="title">Lazy offload 从 queued 到 in-flight 再到 freed</title>
+  <desc id="desc">Queued metadata 尚未提交，只能在正 token Step 中进入 in-flight，不触发 keepalive。In-flight store 已经提交且持有 GPU blocks，可以通过零 token Step 收 completion，因此触发 keepalive。Scheduler 消费 completion 后释放 blocks，状态结束。</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#07111f"/>
       <stop offset="1" stop-color="#111c35"/>
     </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
       <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".28"/>
     </filter>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
     </marker>
-    <marker id="warnArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
     </marker>
     <style>
       .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
       .title{font-size:36px;font-weight:760;fill:#f8fafc}
       .subtitle{font-size:18px;fill:#94a3b8}
-      .boxTitle{font-size:25px;font-weight:720;fill:#f8fafc}
-      .body{font-size:18px;fill:#cbd5e1}
-      .small{font-size:16px;fill:#94a3b8}
+      .boxTitle{font-size:26px;font-weight:740;fill:#f8fafc}
+      .body{font-size:17px;fill:#cbd5e1}
+      .small{font-size:15px;fill:#94a3b8}
+      .label{font-size:15px;font-weight:720}
       .code{font-family:"SFMono-Regular",Consolas,monospace;font-size:15px;fill:#bfdbfe}
-      .warn{font-size:17px;font-weight:680;fill:#fef3c7}
     </style>
   </defs>
   <rect width="1400" height="870" rx="28" fill="url(#bg)"/>
   <g class="sans">
-    <text x="70" y="70" class="title">不要把两种 pending 混成一件事</text>
-    <text x="70" y="106" class="subtitle">queued 表示“还没发”；in-flight 表示“已经发了，只差 completion 与释放”</text>
+    <text x="70" y="68" class="title">Lazy offload 有两种 pending，但只有一种该让 Engine 保活</text>
+    <text x="70" y="103" class="subtitle">判断标准不是“状态是否非空”，而是“再执行一次零 token Step，状态能否向前推进”</text>
 
     <g filter="url(#shadow)">
-      <rect x="70" y="210" width="330" height="255" rx="26" fill="#172554" stroke="#3b82f6" stroke-width="2.5"/>
-      <text x="105" y="258" class="boxTitle">QUEUED</text>
-      <text x="105" y="293" class="body">Store metadata 在 FIFO</text>
-      <text x="105" y="332" class="code">_policy._pending_items</text>
-      <text x="105" y="378" class="body">尚未提交给 worker</text>
-      <text x="105" y="413" class="body">GPU block 未因本次 store</text>
-      <text x="105" y="441" class="body">进入 in-flight pin 状态</text>
+      <rect x="70" y="180" width="350" height="290" rx="28" fill="#172554" stroke="#3b82f6" stroke-width="2.5"/>
+      <rect x="100" y="210" width="122" height="34" rx="17" fill="#1d4ed8"/>
+      <text x="161" y="233" text-anchor="middle" class="label" fill="#dbeafe">STAGE 1</text>
+      <text x="105" y="289" class="boxTitle">QUEUED</text>
+      <text x="105" y="326" class="body">只有 store metadata</text>
+      <text x="105" y="359" class="code">FIFO _pending_items</text>
+      <text x="105" y="402" class="body">尚未提交给 worker</text>
+      <rect x="103" y="424" width="284" height="28" rx="10" fill="#1e3a8a"/>
+      <text x="245" y="444" text-anchor="middle" class="label" fill="#dbeafe">keepalive = False</text>
     </g>
 
     <g filter="url(#shadow)">
-      <rect x="535" y="210" width="330" height="255" rx="26" fill="#2b1d42" stroke="#a78bfa" stroke-width="2.5"/>
-      <text x="570" y="258" class="boxTitle">IN-FLIGHT</text>
-      <text x="570" y="293" class="body">Store 已提交给 worker</text>
-      <text x="570" y="332" class="code">_request_block_ids</text>
-      <text x="570" y="378" class="body">Scheduler 已 touch blocks</text>
-      <text x="570" y="413" class="body">等待所有 worker 报告完成</text>
-      <text x="570" y="441" class="body">此时必须维持 Engine Step</text>
+      <rect x="525" y="180" width="350" height="290" rx="28" fill="#2b1d42" stroke="#a78bfa" stroke-width="2.5"/>
+      <rect x="555" y="210" width="122" height="34" rx="17" fill="#6d28d9"/>
+      <text x="616" y="233" text-anchor="middle" class="label" fill="#ede9fe">STAGE 2</text>
+      <text x="560" y="289" class="boxTitle">IN-FLIGHT</text>
+      <text x="560" y="326" class="body">STORE 已提交给 worker</text>
+      <text x="560" y="359" class="code">_request_block_ids</text>
+      <text x="560" y="402" class="body">blocks 已 touch，等待 completion</text>
+      <rect x="558" y="424" width="284" height="28" rx="10" fill="#5b21b6"/>
+      <text x="700" y="444" text-anchor="middle" class="label" fill="#ede9fe">keepalive = True</text>
     </g>
 
     <g filter="url(#shadow)">
-      <rect x="1000" y="210" width="330" height="255" rx="26" fill="#132a32" stroke="#14b8a6" stroke-width="2.5"/>
-      <text x="1035" y="258" class="boxTitle">FREED</text>
-      <text x="1035" y="293" class="body">Scheduler 收到 completion</text>
-      <text x="1035" y="332" class="code">update_connector_output()</text>
-      <text x="1035" y="378" class="body">free_blocks()</text>
-      <text x="1035" y="413" class="body">删除 block ID 记录</text>
-      <text x="1035" y="441" class="body">BlockPool 可再次分配</text>
+      <rect x="980" y="180" width="350" height="290" rx="28" fill="#132a32" stroke="#14b8a6" stroke-width="2.5"/>
+      <rect x="1010" y="210" width="122" height="34" rx="17" fill="#0f766e"/>
+      <text x="1071" y="233" text-anchor="middle" class="label" fill="#ccfbf1">STAGE 3</text>
+      <text x="1015" y="289" class="boxTitle">FREED</text>
+      <text x="1015" y="326" class="body">Scheduler 收到 completion</text>
+      <text x="1015" y="359" class="code">free_blocks()</text>
+      <text x="1015" y="402" class="body">删除 block ID 记录，可再次分配</text>
+      <rect x="1013" y="424" width="284" height="28" rx="10" fill="#064e3b"/>
+      <text x="1155" y="444" text-anchor="middle" class="label" fill="#d1fae5">keepalive = False</text>
     </g>
 
-    <path d="M400 320 C450 320 485 320 533 320" stroke="#60a5fa" stroke-width="4" marker-end="url(#arrow)"/>
-    <text x="467" y="275" text-anchor="middle" class="small">达到 threshold</text>
-    <text x="467" y="299" text-anchor="middle" class="small">且有正 token Step</text>
-    <path d="M865 320 C915 320 950 320 998 320" stroke="#60a5fa" stroke-width="4" marker-end="url(#arrow)"/>
-    <text x="932" y="276" text-anchor="middle" class="small">worker completion</text>
-    <text x="932" y="300" text-anchor="middle" class="small">随 Step 返回</text>
+    <path d="M420 320 C460 320 483 320 523 320" stroke="#60a5fa" stroke-width="4" marker-end="url(#blueArrow)"/>
+    <text x="472" y="271" text-anchor="middle" class="small">threshold 满足</text>
+    <text x="472" y="295" text-anchor="middle" class="small">+ 正 token Step</text>
+    <path d="M875 320 C915 320 938 320 978 320" stroke="#34d399" stroke-width="4" marker-end="url(#greenArrow)"/>
+    <text x="928" y="271" text-anchor="middle" class="small">worker completion</text>
+    <text x="928" y="295" text-anchor="middle" class="small">随 Output 返回</text>
 
-    <rect x="70" y="555" width="1260" height="230" rx="26" fill="#302517" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="10 7"/>
-    <text x="105" y="603" class="boxTitle">PR #4998 的关键边界：queued-only 不能靠空 Step 进入 in-flight</text>
-    <text x="105" y="647" class="body">当前实现把 queued 和 in-flight 都视为 has_pending_push_work()，但 LMCache 只有在</text>
-    <text x="105" y="682" class="code">scheduler_output.total_num_scheduled_tokens &gt; 0</text>
-    <text x="565" y="682" class="body">时才从 FIFO 提交 store。</text>
-    <text x="105" y="727" class="warn">因此：queued → 保活 → 零 token Step → 仍不能提交 → queued，可能形成持续空转。</text>
-    <text x="105" y="763" class="body">最小安全方案：只让 in-flight 保活；完整方案：为 queued 提供真正可执行的 connector-only 提交通路。</text>
+    <g filter="url(#shadow)">
+      <rect x="70" y="570" width="590" height="210" rx="26" fill="#111d35" stroke="#3b82f6" stroke-width="2"/>
+      <text x="105" y="615" class="boxTitle">只有 queued：等待下一次真实调度</text>
+      <text x="105" y="654" class="body">零 token Step 不能把 FIFO 项目提交给 worker；</text>
+      <text x="105" y="687" class="body">强行 keepalive 只会重复检查同一份 metadata。</text>
+      <rect x="103" y="714" width="524" height="39" rx="12" fill="#172554"/>
+      <text x="365" y="740" text-anchor="middle" class="code">queued → 下一次正 token Step → in-flight</text>
+    </g>
 
-    <path d="M235 465 C235 505 235 518 235 553" stroke="#f59e0b" stroke-width="4" stroke-dasharray="7 6" marker-end="url(#warnArrow)"/>
+    <g filter="url(#shadow)">
+      <rect x="740" y="570" width="590" height="210" rx="26" fill="#142820" stroke="#34d399" stroke-width="2"/>
+      <text x="775" y="615" class="boxTitle">已经 in-flight：空 Step 能完成收尾</text>
+      <text x="775" y="654" class="body">worker future 会完成，connector-only Step 能收取回执；</text>
+      <text x="775" y="687" class="body">所以每轮都有机会从“等待”推进到“释放”。</text>
+      <rect x="773" y="714" width="524" height="39" rx="12" fill="#064e3b"/>
+      <text x="1035" y="740" text-anchor="middle" class="code">in-flight → 零 token Step → freed</text>
+    </g>
+
+    <text x="700" y="831" text-anchor="middle" class="body">PR #4998 只覆盖紫色阶段：它修复 completion 收尾，不承诺在 idle 时主动 drain FIFO</text>
   </g>
 </svg>
