@@ -5,6 +5,7 @@
 - For local verification here, a reliable setup is:
   - `export PATH="/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:$PATH"`
   - `pnpm install && pnpm build`
+- Quote YAML frontmatter strings that contain GitHub issue or PR references such as `#4998`; in an unquoted `description`, `#` starts a YAML comment and silently truncates the rendered metadata.
 - This site is prepared for GitHub Pages. Use `SITE_URL=https://<username>.github.io` and:
   - no `BASE_PATH` for a `<username>.github.io` repository
   - `BASE_PATH=/repo-name` for a project site repository
