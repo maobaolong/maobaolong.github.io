@@ -12,7 +12,7 @@ tags:
   - autostart
   - distributed-systems
 author: 毛宝龙
-readingTime: 18 min
+readingTime: 14 min
 featured: true
 draft: false
 ---
@@ -86,7 +86,7 @@ PR #3476 想填的就是这个坑。
 
 这里有一个设计点挺关键：**scheduler 不负责启动 server。**
 
-PR 的设计文档里解释了原因：vLLM 会先创建 worker KV connectors，再创建 scheduler KV connector。如果把启动动作放到 scheduler 里，worker 可能已经先开始连 server 了，于是会和 server 启动顺序打架。
+PR 的设计文档里解释了原因：在 #3476 针对的 vLLM multiprocess connector 初始化路径里，worker KV connectors 会先于 scheduler KV connector 创建。如果把启动动作放到 scheduler 里，worker 可能已经先开始连 server 了，于是会和 server 启动顺序打架。
 
 所以最后的责任分配是：
 
@@ -259,51 +259,6 @@ vllm serve Qwen/Qwen3-14B \
   --kv-transfer-config \
   '{"kv_connector":"LMCacheMPConnector","kv_role":"kv_both","kv_connector_extra_config":{"lmcache.mp.autostart":false,"lmcache.mp.port":5555}}'
 ```
-
-## 测试覆盖了什么？
-
-PR 里我比较关注的不是“有没有测 Popen 被调用”，而是有没有覆盖那些容易变成线上坑的边界。
-
-目前能看到的覆盖大概有这几类：
-
-- 配置解析：`autostart` 的 bool 解析、端口范围、wait timeout 的正数/有限值要求。
-- endpoint 校验：只接受本地 TCP endpoint，拒绝 IPv6、路径、query、用户名、非 TCP scheme。
-- `server_args` 校验：拒绝 `--host`、`--port`、`--http-host` 以及它们的缩写/等号写法。
-- 健康检查：用临时 request client 发 ZMQ `PING`，并确保 client 会 close。
-- 启动失败清理：子进程提前退出或 readiness 超时，会 terminate/kill 自己启动的进程。
-- owner election：worker 0 负责 maybe-start，其他 worker 负责 wait。
-- scheduler / legacy adapter：保持 connect-only，不参与 AutoStart。
-- connector 初始化：AutoStart + 多个 `server_urls` 会 fail fast。
-
-Buildkite 还加了一个 `mp_autostart_tp2` smoke test：TP=2 启动 vLLM，启动前确认 LMCache port 没有监听，启动后检查 vLLM log 里出现 AutoStart 和 healthy 的日志，再用独立 ZMQ PING 验证 MP server 真的起来了。
-
-PR 描述里还记录了一次真实 H20 双卡 TP=2 的验证：AutoStart、readiness、推理、store/retrieve、warm request 复用 cached tokens 都跑通过了。这个验证很有价值，但我会把它理解成“强 smoke evidence”，不是“所有生命周期组合都被证明过”。
-
-## 我会怎么评价这个 PR？
-
-我会把 PR #3476 看成一个“部署体验修边”的 PR，而不是核心缓存语义变更。
-
-它的优点很明确：
-
-- 默认关闭，不破坏现有 connect-only 部署。
-- 复用原有 endpoint 配置，不新增第二套端口来源。
-- worker 0 单点启动，其他 worker 等待，避免重复拉 server。
-- readiness 走 ZMQ PING，检查的是 connector 真实会用的通信路径。
-- 对多 server、远端 host、IPv6、endpoint flag 覆盖这类容易混淆的配置做了 fail fast。
-- 文档明确写了生命周期不保证，避免用户误以为这是 managed daemon。
-
-它的边界也很明确：
-
-- 只适合单机、单 LMCache MP server。
-- 不负责 crash recovery，不负责自动 restart。
-- 不适合需要跨 vLLM 生命周期存活或被多个 vLLM 实例共享的 server。
-- 真正复杂的生产部署，还是应该让外部编排系统管理 LMCache server。
-
-所以如果从 reviewer 角度看，我会倾向于这样判断：
-
-> 如果 CI 绿、DCO 没问题，并且 maintainer 接受“AutoStart 只覆盖本地单 server convenience”这个范围，那这个 PR 是可以 approve 的。它没有把部署控制面偷塞进 connector，而是在一个清楚边界内减少本地启动摩擦。
-
-这个尺度挺重要。基础设施里的 convenience feature 最怕一开始只是“帮你启动一下”，后来慢慢变成“顺便负责重启、日志、清理、集群发现、leader election”。PR #3476 没往那个方向滑，我觉得这是它最健康的地方。
 
 ## 最后
 
