@@ -1,0 +1,52 @@
+<svg width="1200" height="660" viewBox="0 0 1200 660" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache MP autostart configuration resolution</title>
+  <desc id="desc">A flowchart explaining server URL precedence, local endpoint validation, and launcher command construction.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="660" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#091421"/>
+      <stop offset="1" stop-color="#0F2538"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#BAE6FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .boxTitle{font:700 18px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#E0F2FE}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#CFE8FF}
+      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;fill:#DCFCE7}
+      .danger{font:700 15px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#FECACA}
+    </style>
+  </defs>
+  <rect width="1200" height="660" rx="36" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">端口到底从哪里来？先解析 connector endpoint，再交给 launcher</text>
+  <rect x="80" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#38BDF8"/>
+  <text x="110" y="165" class="boxTitle">1. 先看 server_urls</text>
+  <text x="110" y="196" class="mono">lmcache.mp.server_urls</text>
+  <text x="110" y="224" class="body">存在时优先级最高</text>
+  <rect x="457" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#38BDF8"/>
+  <text x="487" y="165" class="boxTitle">2. 否则拼 host/port</text>
+  <text x="487" y="196" class="mono">host = tcp://localhost</text>
+  <text x="487" y="224" class="mono">port = 5555</text>
+  <rect x="834" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#34D399"/>
+  <text x="864" y="165" class="boxTitle">3. 得到唯一 URL</text>
+  <text x="864" y="196" class="mono">tcp://localhost:5555</text>
+  <text x="864" y="224" class="body">worker adapter 使用它连接</text>
+  <path d="M366 189H453" stroke="#BAE6FD" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M743 189H830" stroke="#BAE6FD" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="166" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="196" y="354" class="boxTitle">多 endpoint？</text>
+  <text x="196" y="383" class="danger">autostart=true 时直接报错</text>
+  <text x="196" y="405" class="body">多 server 要外部管理</text>
+  <rect x="475" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="505" y="354" class="boxTitle">非本地 / IPv6？</text>
+  <text x="505" y="383" class="danger">只接受 localhost / 127.0.0.1</text>
+  <text x="505" y="405" class="body">::1 也会被拒绝</text>
+  <rect x="784" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="814" y="354" class="boxTitle">server_args 覆盖 endpoint？</text>
+  <text x="814" y="383" class="danger">--host / --port / --http-host 被拒绝</text>
+  <text x="814" y="405" class="body">避免连的和启动的不一致</text>
+  <path d="M977 248C977 292 931 305 909 316" stroke="#FCA5A5" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <rect x="218" y="500" width="764" height="76" rx="20" fill="#112D3D" stroke="#34D399"/>
+  <text x="250" y="532" class="boxTitle">最终命令</text>
+  <text x="250" y="558" class="mono">python -m lmcache.v1.multiprocess.http_server --host localhost --port 5555 --http-host localhost ...</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Worker election sequence for LMCache MP autostart</title>
+  <desc id="desc">A timeline showing worker zero starting the MP server, other workers waiting, and scheduler connecting only.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071522"/>
+      <stop offset="1" stop-color="#101827"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#A7F3D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .lane{font:700 18px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#DBEAFE}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#C7D2FE}
+      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;fill:#ECFCCB}
+      .note{font:500 14px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#94A3B8}
+    </style>
+  </defs>
+  <rect width="1200" height="700" rx="36" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">谁来启动？worker 0。谁来等待？其他 worker。</text>
+  <rect x="68" y="110" width="1064" height="500" rx="30" fill="#0E1E32" stroke="#23425E"/>
+  <line x1="215" y1="170" x2="1080" y2="170" stroke="#233B55" stroke-width="2"/>
+  <line x1="215" y1="290" x2="1080" y2="290" stroke="#233B55" stroke-width="2"/>
+  <line x1="215" y1="410" x2="1080" y2="410" stroke="#233B55" stroke-width="2"/>
+  <line x1="215" y1="530" x2="1080" y2="530" stroke="#233B55" stroke-width="2"/>
+  <text x="94" y="176" class="lane">vLLM worker 0</text>
+  <text x="94" y="296" class="lane">其他 workers</text>
+  <text x="94" y="416" class="lane">MP server</text>
+  <text x="94" y="536" class="lane">scheduler</text>
+  <rect x="250" y="135" width="162" height="70" rx="16" fill="#12324A" stroke="#38BDF8"/>
+  <text x="273" y="163" class="mono">PING probe</text>
+  <text x="273" y="187" class="body">已有健康 server？</text>
+  <rect x="470" y="135" width="170" height="70" rx="16" fill="#163A3A" stroke="#34D399"/>
+  <text x="493" y="163" class="mono">Popen</text>
+  <text x="493" y="187" class="body">启动子进程</text>
+  <rect x="700" y="135" width="174" height="70" rx="16" fill="#13324B" stroke="#7DD3FC"/>
+  <text x="723" y="163" class="mono">wait healthy</text>
+  <text x="723" y="187" class="body">直到 PING 成功</text>
+  <rect x="930" y="135" width="124" height="70" rx="16" fill="#1F2A44" stroke="#A78BFA"/>
+  <text x="953" y="163" class="mono">connect</text>
+  <text x="953" y="187" class="body">创建 client</text>
+  <path d="M412 170H466" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M640 170H696" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M874 170H926" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="470" y="375" width="170" height="70" rx="16" fill="#12324A" stroke="#34D399"/>
+  <text x="493" y="403" class="mono">bind endpoint</text>
+  <text x="493" y="427" class="body">tcp://localhost:port</text>
+  <rect x="700" y="375" width="174" height="70" rx="16" fill="#12324A" stroke="#38BDF8"/>
+  <text x="723" y="403" class="mono">reply PING</text>
+  <text x="723" y="427" class="body">ZMQ readiness</text>
+  <path d="M640 410H696" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="470" y="255" width="170" height="70" rx="16" fill="#182B45" stroke="#64748B"/>
+  <text x="493" y="283" class="mono">wait only</text>
+  <text x="493" y="307" class="body">不重复启动</text>
+  <rect x="930" y="255" width="124" height="70" rx="16" fill="#1F2A44" stroke="#A78BFA"/>
+  <text x="953" y="283" class="mono">connect</text>
+  <text x="953" y="307" class="body">创建 client</text>
+  <path d="M640 290H926" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="700" y="495" width="174" height="70" rx="16" fill="#20263E" stroke="#64748B"/>
+  <text x="723" y="523" class="mono">connect-only</text>
+  <text x="723" y="547" class="body">不参与启动</text>
+  <rect x="918" y="495" width="136" height="70" rx="16" fill="#1F2A44" stroke="#A78BFA"/>
+  <text x="941" y="523" class="mono">scheduler</text>
+  <text x="941" y="547" class="body">照旧连接</text>
+  <path d="M874 530H914" stroke="#A7F3D0" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="84" y="652" class="note">PR #3476 特意用 vLLM worker rank 做 owner election，而不是 kv_worker_id；MLA 场景里多个 TP rank 可能共享同一个 kv_worker_id。</text>
+</svg>

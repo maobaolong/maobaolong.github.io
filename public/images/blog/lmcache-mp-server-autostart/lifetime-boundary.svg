@@ -1,0 +1,40 @@
+<svg width="1200" height="640" viewBox="0 0 1200 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Lifetime boundary of auto-started LMCache MP server</title>
+  <desc id="desc">A diagram showing that normal adapter shutdown does not explicitly stop the child server, while vLLM process-tree cleanup may do so.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1020"/>
+      <stop offset="1" stop-color="#14243B"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 20px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#FEF3C7}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#D9E7F6}
+      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;fill:#E0F2FE}
+      .warn{font:700 16px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#FCA5A5}
+    </style>
+  </defs>
+  <rect width="1200" height="640" rx="36" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">AutoStart 不是 service manager：生命周期边界要看清</text>
+  <rect x="96" y="132" width="1008" height="122" rx="26" fill="#10243A" stroke="#38BDF8"/>
+  <text x="134" y="171" class="head">启动成功路径</text>
+  <text x="134" y="204" class="body">worker 0 持有一个 Popen handle，但 adapter 正常 shutdown 不会主动调用 launcher.shutdown()</text>
+  <text x="134" y="229" class="mono">结论：不要把它理解成“自动托管的持久 LMCache 服务”。</text>
+  <rect x="96" y="316" width="460" height="168" rx="26" fill="#1B2B44" stroke="#22C55E"/>
+  <text x="134" y="357" class="head">失败启动路径</text>
+  <text x="134" y="391" class="body">如果 worker 0 自己拉起的 server 提前退出，</text>
+  <text x="134" y="419" class="body">或者在 timeout 内没有通过 ZMQ PING，</text>
+  <text x="134" y="447" class="body">launcher 会清理这个失败的子进程。</text>
+  <rect x="644" y="316" width="460" height="168" rx="26" fill="#321B28" stroke="#F87171"/>
+  <text x="682" y="357" class="head">正常退出路径</text>
+  <text x="682" y="391" class="body">vLLM 进程树清理“可能”杀掉 MP server，</text>
+  <text x="682" y="419" class="body">但 PR 不承诺 server 一定存活，</text>
+  <text x="682" y="447" class="body">也不承诺一定被自动清掉。</text>
+  <path d="M326 254V312" stroke="#FDE68A" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M874 254V312" stroke="#FDE68A" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="188" y="536" width="824" height="58" rx="18" fill="#201C31" stroke="#A78BFA"/>
+  <text x="222" y="572" class="warn">如果 server 要跨 vLLM 重启复用，或者多个 vLLM 实例共享：继续外部启动并关闭 autostart。</text>
+</svg>
