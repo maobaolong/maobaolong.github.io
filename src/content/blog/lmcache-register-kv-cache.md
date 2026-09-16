@@ -190,6 +190,13 @@ shape: [num_blocks, 2, block_size, num_heads, head_size]
 
 一个 vLLM block 对应一个 tensor page。这时 LMCache 直接看 tensor shape，就能知道一个 page 里有多少 token slot。
 
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/config-slot-page.svg" aria-label="打开 attention 配置、page 和 slot 关系图原图">
+    <img src="/images/blog/lmcache-register-kv-cache/config-slot-page.svg" alt="普通 attention 中配置、tensor page 和 token slot 的关系" />
+  </a>
+  <figcaption>补图 A：普通 attention 里，<code>block_size</code> 决定一个 page 里有多少 token slot；<code>page_size_bytes</code> 是这些 slot 里的 K/V 向量合起来占多少内存。</figcaption>
+</figure>
+
 但 hybrid / MLA / Mamba 模型会打破这个直觉。
 
 ### 先补三个词：page size、logical block、physical block
@@ -212,9 +219,23 @@ one-token attention bytes
 
 但 Mamba / recurrent layer 不一样。它缓存的不是“每个 token 一行 K/V”，而是一组递归状态快照，比如 conv state、SSM state，再加上可能的 padding。Mamba 这一页有多大，主要由这些 state tensor 的 shape 和 dtype 决定，不是简单把 attention 的 token 行数乘起来。
 
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/mamba-state-page.svg" aria-label="打开 attention page 与 Mamba state page 对比图原图">
+    <img src="/images/blog/lmcache-register-kv-cache/mamba-state-page.svg" alt="Attention token slot page 与 Mamba recurrent state page 的对比" />
+  </a>
+  <figcaption>补图 B：attention page 像一排 token slots，每个 slot 里有 K/V；Mamba page 更像一个 recurrent state 快照，由 conv state、SSM state 和 padding 组成。</figcaption>
+</figure>
+
 Mamba-hybrid 模型同时有 attention group 和 Mamba group。vLLM 的 hybrid memory allocator 要把这些 group 放进同一套 KV cache 分组、容量估算和 block table 体系里，所以希望不同 group 的 `page_size_bytes` 对齐。这里的“对齐”是 **bytes 级别的 page size 对齐**，不是要求每个 group 都覆盖相同 token 数。
 
 直观地说，allocator 和 scheduler 后面会不断问这类问题：每个 group 还能分配多少 page、一个 request 的第 N 个 block id 在各个 group 里对应哪一页、给定显存预算下还能承载多少并发。如果不同 group 的“一个 page”代表完全不同的 byte 量，统一估算和统一 block-id 账本就会变得很难维护，甚至容易把某个 group 的 page 数算错。
+
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/hybrid-page-size-alignment.svg" aria-label="打开 Mamba-hybrid page-size 对齐示意图原图">
+    <img src="/images/blog/lmcache-register-kv-cache/hybrid-page-size-alignment.svg" alt="Mamba-hybrid 中 attention page size 与 Mamba state page size 的 byte 对齐" />
+  </a>
+  <figcaption>补图 C：page-size 对齐对齐的是 bytes 账本。Mamba state page 如果约等于 17 个 attention kernel pages，vLLM 就可能把 attention 的 manager block 放大到 17 * 32 = 544 token slots。</figcaption>
+</figure>
 
 为什么会把 attention 的逻辑 block size 放大？因为 attention page bytes 可以通过增大 block size 来变大，而 Mamba state page bytes 往往已经由 state shape 决定了。假设 attention kernel 天然使用 32-token page，大小是 `X`；Mamba state page 大约是 `17X`。为了让两个 group 的 page size 对齐，vLLM 可以把 attention 的 manager block size 从 32 放大到 544：
 
@@ -239,6 +260,13 @@ logical block 0
   = 17 * 32 token slots
   = 544 token slots
 ```
+
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/logical-physical-blocks.svg" aria-label="打开 logical block 和 physical kernel page 关系图原图">
+    <img src="/images/blog/lmcache-register-kv-cache/logical-physical-blocks.svg" alt="一个 544-token logical block 由 17 个 32-token physical kernel pages 组成" />
+  </a>
+  <figcaption>补图 D：block id 是 logical / manager block 坐标；worker tensor 的第一维可能是 physical/kernel page 坐标。LMCache 注册前的 re-view 就是在这两个坐标系之间架桥。</figcaption>
+</figure>
 
 这也是为什么 LMCache 注册时不能只看 raw tensor 的第一维。raw tensor 第一维可能是 kernel page 数，但 vLLM 传下来的 block id 属于 logical block 坐标系。LMCache 必须先把多个 physical pages 重新 view 成一个 logical page，否则后续 STORE / RETRIEVE 会用错 block id 到 byte range 的映射。
 

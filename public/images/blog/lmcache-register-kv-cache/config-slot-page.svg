@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="560" viewBox="0 0 1160 560" role="img" aria-labelledby="title desc">
+  <title id="title">Attention KV cache config, page, and slots</title>
+  <desc id="desc">A diagram showing how vLLM KV cache configuration creates a tensor page with token slots.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .config { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; }
+      .page { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.8; }
+      .slot { fill: #dcfce7; stroke: #22c55e; stroke-width: 1; }
+      .k { fill: #bfdbfe; stroke: #3b82f6; stroke-width: 1; }
+      .v { fill: #fed7aa; stroke: #f97316; stroke-width: 1; }
+      .note { fill: #fff7ed; stroke: #f97316; stroke-width: 1.4; }
+      .title { fill: #0f172a; font: 700 22px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #0f172a; font: 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { fill: #334155; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .label { fill: #0f172a; font: 700 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#334155" />
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1160" height="560" rx="18" />
+  <text class="title" x="40" y="46">Example A: config decides page shape; slots are positions inside a page</text>
+  <text class="muted" x="40" y="74">普通 attention 下，一个 logical block 通常就是一个 tensor page；page 里面有 block_size 个 token slots。</text>
+
+  <rect class="config" x="40" y="112" width="270" height="228" rx="12" />
+  <text class="label" x="64" y="144">vLLM KVCacheSpec</text>
+  <text class="small" x="64" y="178">block_size = 16</text>
+  <text class="small" x="64" y="204">num_kv_heads = H</text>
+  <text class="small" x="64" y="230">head_size = C</text>
+  <text class="small" x="64" y="256">dtype = bf16 / fp16</text>
+  <text class="small" x="64" y="292">shape: [NB, 2, 16, H, C]</text>
+  <text class="muted" x="64" y="322">2 means K plane + V plane</text>
+
+  <path class="arrow" d="M310 226 C366 226 382 226 430 226" />
+  <text class="muted" x="338" y="204">defines one page</text>
+
+  <rect class="panel" x="430" y="112" width="690" height="300" rx="12" />
+  <text class="label" x="456" y="144">tensor page for one block id</text>
+  <text class="small" x="456" y="170">block id 7 -> page 7 -> 16 token slots</text>
+
+  <rect class="page" x="456" y="198" width="638" height="136" rx="10" />
+  <text class="label" x="474" y="224">page 7</text>
+  <text class="muted" x="474" y="250">slot index inside this page</text>
+  <g transform="translate(474 270)">
+    <rect class="slot" x="0" y="0" width="32" height="42" rx="5" /><text class="small" x="10" y="27">0</text>
+    <rect class="slot" x="38" y="0" width="32" height="42" rx="5" /><text class="small" x="48" y="27">1</text>
+    <rect class="slot" x="76" y="0" width="32" height="42" rx="5" /><text class="small" x="86" y="27">2</text>
+    <rect class="slot" x="114" y="0" width="32" height="42" rx="5" /><text class="small" x="124" y="27">3</text>
+    <rect class="slot" x="152" y="0" width="32" height="42" rx="5" /><text class="small" x="162" y="27">4</text>
+    <rect class="slot" x="190" y="0" width="32" height="42" rx="5" /><text class="small" x="200" y="27">5</text>
+    <rect class="slot" x="228" y="0" width="32" height="42" rx="5" /><text class="small" x="238" y="27">6</text>
+    <rect class="slot" x="266" y="0" width="32" height="42" rx="5" /><text class="small" x="276" y="27">7</text>
+    <rect class="slot" x="304" y="0" width="32" height="42" rx="5" /><text class="small" x="314" y="27">8</text>
+    <rect class="slot" x="342" y="0" width="32" height="42" rx="5" /><text class="small" x="352" y="27">9</text>
+    <rect class="slot" x="380" y="0" width="32" height="42" rx="5" /><text class="small" x="386" y="27">10</text>
+    <rect class="slot" x="418" y="0" width="32" height="42" rx="5" /><text class="small" x="424" y="27">11</text>
+    <rect class="slot" x="456" y="0" width="32" height="42" rx="5" /><text class="small" x="462" y="27">12</text>
+    <rect class="slot" x="494" y="0" width="32" height="42" rx="5" /><text class="small" x="500" y="27">13</text>
+    <rect class="slot" x="532" y="0" width="32" height="42" rx="5" /><text class="small" x="538" y="27">14</text>
+    <rect class="slot" x="570" y="0" width="32" height="42" rx="5" /><text class="small" x="576" y="27">15</text>
+  </g>
+
+  <g transform="translate(456 352)">
+    <rect class="k" x="0" y="0" width="88" height="28" rx="5" />
+    <rect class="v" x="96" y="0" width="88" height="28" rx="5" />
+    <text class="small" x="24" y="19">K row</text>
+    <text class="small" x="120" y="19">V row</text>
+    <text class="muted" x="208" y="20">each slot stores K/V vectors for one token position</text>
+  </g>
+
+  <rect class="note" x="40" y="438" width="1080" height="70" rx="12" />
+  <text class="label" x="64" y="466">page_size_bytes is memory size, not token count</text>
+  <text class="small" x="64" y="492">page_size_bytes = block_size * 2(K,V) * num_kv_heads * head_size * dtype_size</text>
+</svg>
