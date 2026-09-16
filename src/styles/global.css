@@ -207,6 +207,30 @@ main {
   background: rgba(4, 11, 22, 0.92);
 }
 
+.diagram-scroll {
+  margin: 2rem 0;
+}
+
+.diagram-scroll__canvas {
+  display: block;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  scrollbar-color: var(--accent-2) rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+}
+
+.diagram-scroll__canvas img {
+  width: 100%;
+  max-width: none;
+}
+
+.diagram-scroll figcaption {
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .site-shell {
   padding-bottom: 4rem;
 }
@@ -817,6 +841,10 @@ select:focus {
 
   .button {
     width: 100%;
+  }
+
+  .diagram-scroll__canvas img {
+    width: 900px;
   }
 
   .github-thread__header,

@@ -1,0 +1,46 @@
+<svg width="1200" height="620" viewBox="0 0 1200 620" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MTP draft verify commit 流程</title>
+  <desc id="desc">MTP 模块快速提出 D E F G，主模型并行验证为 D E X，系统接受 D E 并提交主模型的 X。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2L10 6L2 10" stroke="#CBD5E1" stroke-width="2"/></marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 20px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
+      .token{font:700 22px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC;text-anchor:middle}
+      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#9FB2C7}
+    </style>
+  </defs>
+  <rect width="1200" height="620" rx="20" fill="#09111E"/>
+  <text x="62" y="62" class="title">MTP：先便宜地猜多个，再让主模型一次验证</text>
+
+  <rect x="64" y="106" width="210" height="104" rx="10" fill="#172A42" stroke="#64748B"/>
+  <text x="90" y="142" class="head">已确认上下文</text>
+  <text x="90" y="178" class="body">A B C</text>
+  <path d="M274 158H342" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="350" y="106" width="780" height="104" rx="10" fill="#20203B" stroke="#A78BFA"/>
+  <text x="380" y="140" class="head">1. MTP modules 提出草稿</text>
+  <g><rect x="626" y="124" width="64" height="58" rx="8" fill="#4C3470"/><text x="658" y="161" class="token">D</text>
+  <rect x="706" y="124" width="64" height="58" rx="8" fill="#4C3470"/><text x="738" y="161" class="token">E</text>
+  <rect x="786" y="124" width="64" height="58" rx="8" fill="#4C3470"/><text x="818" y="161" class="token">F</text>
+  <rect x="866" y="124" width="64" height="58" rx="8" fill="#4C3470"/><text x="898" y="161" class="token">G</text></g>
+
+  <path d="M742 210V264" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="350" y="272" width="780" height="104" rx="10" fill="#153149" stroke="#38BDF8"/>
+  <text x="380" y="306" class="head">2. 主模型在一个批量 forward 中验证</text>
+  <g><rect x="626" y="290" width="64" height="58" rx="8" fill="#155E75"/><text x="658" y="327" class="token">D</text>
+  <rect x="706" y="290" width="64" height="58" rx="8" fill="#155E75"/><text x="738" y="327" class="token">E</text>
+  <rect x="786" y="290" width="64" height="58" rx="8" fill="#7F1D1D"/><text x="818" y="327" class="token">X</text>
+  <text x="894" y="327" class="body">第一处分歧</text></g>
+
+  <path d="M742 376V430" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="350" y="438" width="780" height="104" rx="10" fill="#17382F" stroke="#22C55E"/>
+  <text x="380" y="472" class="head">3. 只提交连续通过验证的 token</text>
+  <g><rect x="626" y="456" width="64" height="58" rx="8" fill="#166534"/><text x="658" y="493" class="token">D</text>
+  <rect x="706" y="456" width="64" height="58" rx="8" fill="#166534"/><text x="738" y="493" class="token">E</text>
+  <rect x="786" y="456" width="64" height="58" rx="8" fill="#854D0E"/><text x="818" y="493" class="token">X</text>
+  <text x="880" y="493" class="body">主模型 token</text></g>
+
+  <text x="68" y="590" class="small">收益来自减少主模型 forward 次数；候选 state 在 verify 完成前都只能是临时状态。</text>
+</svg>

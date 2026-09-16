@@ -1,0 +1,40 @@
+<svg width="1200" height="640" viewBox="0 0 1200 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MTP prefix cache 命中回退</title>
+  <desc id="desc">展示缓存物理上命中到 3232，但为了重建 MTP 所需 hidden state，scheduler 只报告命中到 1616 并重算后一块。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2L10 6L2 10" stroke="#FDE68A" stroke-width="2"/></marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 20px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
+      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC}
+      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#AAB9C9}
+    </style>
+  </defs>
+  <rect width="1200" height="640" rx="20" fill="#0A1220"/>
+  <text x="62" y="62" class="title">“Drop last matched block”只是少算命中，让当前请求重算</text>
+
+  <text x="76" y="132" class="head">缓存实际拥有</text>
+  <rect x="240" y="100" width="360" height="74" rx="8" fill="#12405A" stroke="#38BDF8"/>
+  <rect x="600" y="100" width="360" height="74" rx="8" fill="#12405A" stroke="#38BDF8"/>
+  <text x="390" y="145" class="mono">block 0: [0, 1616)</text>
+  <text x="728" y="145" class="mono">block 1: [1616, 3232)</text>
+  <text x="225" y="200" class="small">0</text><text x="576" y="200" class="small">1616</text><text x="940" y="200" class="small">3232</text>
+
+  <path d="M780 180C780 238 660 244 660 292" stroke="#FDE68A" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
+  <text x="796" y="246" class="body">MTP 不能直接信任尾部 draft 状态</text>
+
+  <text x="76" y="336" class="head">对 scheduler 报告</text>
+  <rect x="240" y="304" width="360" height="82" rx="8" fill="#155E45" stroke="#22C55E"/>
+  <text x="350" y="338" class="mono">HIT [0, 1616)</text>
+  <text x="320" y="366" class="body">直接复用 KV</text>
+  <rect x="600" y="304" width="360" height="82" rx="8" fill="#713F12" stroke="#F59E0B"/>
+  <text x="690" y="338" class="mono">RECOMPUTE [1616, 3232)</text>
+  <text x="661" y="366" class="body">重建 hidden state 与 draft cache</text>
+
+  <rect x="190" y="458" width="820" height="106" rx="10" fill="#182638" stroke="#64748B"/>
+  <text x="224" y="493" class="head">没有发生什么？</text>
+  <text x="224" y="526" class="body">不是把 block 1 从显存里擦掉，也不是说其中的 Attention KV 算错。</text>
+  <text x="224" y="551" class="body">它只是不能计入“无需执行 forward 就能跳过”的 computed prefix。</text>
+  <text x="76" y="610" class="small">Prefix hash 证明 token 对应的缓存；它不自动证明 MTP 在边界处需要的所有 hidden/draft 状态。</text>
+</svg>

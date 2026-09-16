@@ -1,0 +1,61 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">推理缓存机制分类图</title>
+  <desc id="desc">对比 Attention 家族与递归状态家族，并标出 SWA、MLA、Mamba、GDN 在 vLLM 中对应的缓存类型。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#C7D2FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .section{font:700 23px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 19px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
+      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#9FB2C7}
+      .mono{font:700 14px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#D9F99D}
+    </style>
+  </defs>
+  <rect width="1200" height="720" rx="20" fill="#09111E"/>
+  <text x="64" y="62" class="title">先分家族，再谈 block：三种 cache 不能混为一谈</text>
+
+  <rect x="60" y="102" width="526" height="522" rx="14" fill="#102239" stroke="#38BDF8"/>
+  <text x="92" y="145" class="section">Attention 家族</text>
+  <text x="92" y="174" class="body">历史仍是可寻址的 token / latent KV 条目</text>
+  <rect x="92" y="210" width="210" height="116" rx="10" fill="#15304A"/>
+  <text x="116" y="244" class="head">Full Attention</text>
+  <text x="116" y="274" class="body">保存全部 token K/V</text>
+  <text x="116" y="301" class="mono">FullAttentionSpec</text>
+  <rect x="344" y="210" width="210" height="116" rx="10" fill="#15304A"/>
+  <text x="368" y="244" class="head">SWA</text>
+  <text x="368" y="274" class="body">保存最近 W 个 K/V</text>
+  <text x="368" y="301" class="mono">SlidingWindowSpec</text>
+  <rect x="92" y="366" width="462" height="128" rx="10" fill="#162D42" stroke="#22C55E"/>
+  <text x="116" y="402" class="head">MLA / DeepSeek-V4 SWA</text>
+  <text x="116" y="432" class="body">K/V 被压成 latent，但仍按 token 或压缩条目寻址</text>
+  <text x="116" y="464" class="mono">MLAAttentionSpec / SlidingWindowMLASpec</text>
+  <text x="92" y="546" class="small">内存随保留条目增长：Full 是 O(N)，SWA 是 O(W)，</text>
+  <text x="92" y="571" class="small">压缩 MLA 约为 O(N / ratio)。</text>
+
+  <rect x="614" y="102" width="526" height="522" rx="14" fill="#211B36" stroke="#A78BFA"/>
+  <text x="646" y="145" class="section">递归状态家族</text>
+  <text x="646" y="174" class="body">整段历史被压进固定大小的 running state</text>
+  <rect x="646" y="210" width="210" height="154" rx="10" fill="#2B2443"/>
+  <text x="670" y="244" class="head">Mamba</text>
+  <text x="670" y="274" class="body">Selective SSM</text>
+  <text x="670" y="301" class="body">SSM + conv state</text>
+  <text x="670" y="336" class="mono">MambaSpec</text>
+  <rect x="898" y="210" width="210" height="154" rx="10" fill="#2B2443"/>
+  <text x="922" y="244" class="head">GDN</text>
+  <text x="922" y="274" class="body">Gated DeltaNet</text>
+  <text x="922" y="301" class="body">递归矩阵状态</text>
+  <text x="922" y="336" class="mono">MambaSpec</text>
+  <path d="M858 286H894" stroke="#C7D2FE" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="752" y="397" class="small">数学不同，缓存生命周期相似</text>
+  <rect x="646" y="430" width="462" height="76" rx="10" fill="#3A2637" stroke="#F59E0B"/>
+  <text x="670" y="461" class="head">vLLM 工程统称：MambaManager</text>
+  <text x="670" y="489" class="body">负责 state page、checkpoint、null slot 与恢复</text>
+  <text x="646" y="546" class="small">推理时保留固定大小状态；prefix cache 需要在指定</text>
+  <text x="646" y="571" class="small">token boundary 额外 materialize checkpoint。</text>
+
+  <rect x="210" y="654" width="780" height="42" rx="8" fill="#19273A"/>
+  <text x="244" y="681" class="body">“都是 hybrid cache”只说明组合了多种 cache，不说明它们属于同一种模型机制。</text>
+</svg>

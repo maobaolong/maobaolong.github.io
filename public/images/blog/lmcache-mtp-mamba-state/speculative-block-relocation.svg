@@ -1,0 +1,46 @@
+<svg width="1200" height="670" viewBox="0 0 1200 670" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Speculative state page relocation</title>
+  <desc id="desc">展示物理 block S1 从逻辑 slot 1 搬到尾部、旧位置变成 null，以及 LMCache 只收到尾部增量。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2L10 6L2 10" stroke="#FDE68A" stroke-width="2"/></marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 20px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
+      .mono{font:700 17px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC;text-anchor:middle}
+      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#AAB9C9}
+    </style>
+  </defs>
+  <rect width="1200" height="670" rx="20" fill="#09111E"/>
+  <text x="62" y="62" class="title">搬的是物理 page；变的是它对应的逻辑 token slot</text>
+
+  <text x="70" y="132" class="head">搬动前：S1 只是预留的 speculative scratch page</text>
+  <g>
+    <rect x="76" y="166" width="112" height="82" rx="8" fill="#155E45" stroke="#22C55E"/><text x="132" y="214" class="mono">A</text>
+    <rect x="202" y="166" width="112" height="82" rx="8" fill="#4C3470" stroke="#A78BFA"/><text x="258" y="214" class="mono">S1</text>
+    <rect x="328" y="166" width="112" height="82" rx="8" fill="#322B47"/><text x="384" y="214" class="mono">S2</text>
+    <rect x="454" y="166" width="112" height="82" rx="8" fill="#322B47"/><text x="510" y="214" class="mono">S3</text>
+    <rect x="580" y="166" width="112" height="82" rx="8" fill="#322B47"/><text x="636" y="214" class="mono">S4</text>
+    <rect x="706" y="166" width="112" height="82" rx="8" fill="#12405A"/><text x="762" y="214" class="mono">C</text>
+  </g>
+  <text x="102" y="273" class="small">slot 0</text><text x="228" y="273" class="small">slot 1</text><text x="354" y="273" class="small">slot 2</text>
+
+  <path d="M258 252C258 330 914 306 914 386" stroke="#FDE68A" stroke-width="3" stroke-dasharray="9 7" marker-end="url(#arrow)"/>
+  <text x="400" y="332" class="body">slot 1 没有 state_3232；S1 被移到尾部继续复用</text>
+
+  <text x="70" y="398" class="head">vLLM 搬动后</text>
+  <g>
+    <rect x="76" y="426" width="112" height="82" rx="8" fill="#155E45" stroke="#22C55E"/><text x="132" y="474" class="mono">A</text>
+    <rect x="202" y="426" width="112" height="82" rx="8" fill="#172033" stroke="#F87171"/><text x="258" y="474" class="mono">0</text>
+    <rect x="328" y="426" width="112" height="82" rx="8" fill="#322B47"/><text x="384" y="474" class="mono">S2</text>
+    <rect x="454" y="426" width="112" height="82" rx="8" fill="#322B47"/><text x="510" y="474" class="mono">S3</text>
+    <rect x="580" y="426" width="112" height="82" rx="8" fill="#322B47"/><text x="636" y="474" class="mono">S4</text>
+    <rect x="706" y="426" width="112" height="82" rx="8" fill="#12405A"/><text x="762" y="474" class="mono">C</text>
+    <rect x="832" y="426" width="112" height="82" rx="8" fill="#4C3470" stroke="#A78BFA"/><text x="888" y="474" class="mono">S1</text>
+    <rect x="958" y="426" width="112" height="82" rx="8" fill="#12405A"/><text x="1014" y="474" class="mono">D</text>
+  </g>
+  <text x="212" y="537" class="small">旧 slot 原地置零</text><text x="844" y="537" class="small">尾部 append delta</text>
+
+  <rect x="198" y="580" width="804" height="58" rx="8" fill="#3A2637" stroke="#F59E0B"/>
+  <text x="232" y="616" class="body">Connector 只收到 new_block_ids = [S1, D]，看不到旧位置发生的 S1 -> 0。</text>
+</svg>

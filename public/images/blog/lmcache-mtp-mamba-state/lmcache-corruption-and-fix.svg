@@ -1,0 +1,56 @@
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache 错误链与修复后的安全回退</title>
+  <desc id="desc">左侧展示旧 tracker 把 speculative block 存储并恢复为错误 Mamba state，右侧展示修复后旧 slot 置零、跳过存储并回退命中。</desc>
+  <defs>
+    <marker id="redArrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M1 1L9 5.5L1 10" stroke="#FCA5A5" stroke-width="2"/></marker>
+    <marker id="greenArrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M1 1L9 5.5L1 10" stroke="#86EFAC" stroke-width="2"/></marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .section{font:700 23px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .head{font:700 18px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .body{font:500 15px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
+      .mono{font:700 14px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC}
+      .small{font:500 13px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#AAB9C9}
+    </style>
+  </defs>
+  <rect width="1200" height="780" rx="20" fill="#09111E"/>
+  <text x="62" y="62" class="title">同一个 token key，必须对应同一个准确模型状态</text>
+  <line x1="600" y1="104" x2="600" y2="700" stroke="#334155" stroke-width="2"/>
+
+  <text x="70" y="126" class="section">旧路径：格式正确，语义错误</text>
+  <rect x="72" y="162" width="454" height="86" rx="8" fill="#3A2637" stroke="#F87171"/>
+  <text x="96" y="194" class="head">1. Tracker 保留了旧 S1</text>
+  <text x="96" y="224" class="mono">[A, S1, ..., S1, D]</text>
+  <path d="M299 248V286" stroke="#FCA5A5" stroke-width="3" marker-end="url(#redArrow)"/>
+  <rect x="72" y="294" width="454" height="86" rx="8" fill="#3A2637" stroke="#F87171"/>
+  <text x="96" y="326" class="head">2. Store 把 S1 当作 state_3232</text>
+  <text x="96" y="356" class="body">内容 key 正常，但 page 没有对应 boundary state</text>
+  <path d="M299 380V418" stroke="#FCA5A5" stroke-width="3" marker-end="url(#redArrow)"/>
+  <rect x="72" y="426" width="454" height="86" rx="8" fill="#3A2637" stroke="#F87171"/>
+  <text x="96" y="458" class="head">3. 下次 Retrieve 把它装回 slot 1</text>
+  <text x="96" y="488" class="body">传输成功不代表恢复语义正确</text>
+  <path d="M299 512V550" stroke="#FCA5A5" stroke-width="3" marker-end="url(#redArrow)"/>
+  <rect x="72" y="558" width="454" height="86" rx="8" fill="#4A2027" stroke="#EF4444"/>
+  <text x="96" y="590" class="head">4. Decode 从错误 recurrent state 继续</text>
+  <text x="96" y="620" class="body">后续 token 全部受到污染，输出损坏</text>
+
+  <text x="644" y="126" class="section">修复路径：宁可少命中</text>
+  <rect x="646" y="162" width="482" height="86" rx="8" fill="#17382F" stroke="#22C55E"/>
+  <text x="670" y="194" class="head">1. 重复非零 ID 表示 relocation</text>
+  <text x="670" y="224" class="mono">[A, 0, ..., S1, D]</text>
+  <path d="M887 248V286" stroke="#86EFAC" stroke-width="3" marker-end="url(#greenArrow)"/>
+  <rect x="646" y="294" width="482" height="86" rx="8" fill="#17382F" stroke="#22C55E"/>
+  <text x="670" y="326" class="head">2. Mamba object group 看到 all-null chunk</text>
+  <text x="670" y="356" class="body">没有合法 state，就不提交外部对象</text>
+  <path d="M887 380V418" stroke="#86EFAC" stroke-width="3" marker-end="url(#greenArrow)"/>
+  <rect x="646" y="426" width="482" height="86" rx="8" fill="#17382F" stroke="#22C55E"/>
+  <text x="670" y="458" class="head">3. Hybrid common hit 回退到更早 checkpoint</text>
+  <text x="670" y="488" class="body">Attention 有数据也不能越过缺失的 recurrent state</text>
+  <path d="M887 512V550" stroke="#86EFAC" stroke-width="3" marker-end="url(#greenArrow)"/>
+  <rect x="646" y="558" width="482" height="86" rx="8" fill="#145A4A" stroke="#34D399"/>
+  <text x="670" y="590" class="head">4. 从有效 checkpoint 重算缺失区间</text>
+  <text x="670" y="620" class="body">计算多一点，但模型状态仍然正确</text>
+
+  <rect x="170" y="704" width="860" height="48" rx="8" fill="#19273A"/>
+  <text x="214" y="734" class="body">缓存系统的首要约束不是“尽量命中”，而是“命中的字节必须代表 key 声明的状态”。</text>
+</svg>
