@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="610" viewBox="0 0 1120 610" role="img" aria-labelledby="title desc">
+  <title id="title">KV layout conversion map</title>
+  <desc id="desc">Which KV layout transformations are cheap views, explicit data movement, supported special cases, or unsupported.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#020617" flood-opacity=".45"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#5ce1e6"/>
+    </marker>
+    <style>
+      .bg{fill:#07111f}.box{fill:#0d1b31;stroke:#315173;stroke-width:1.2;filter:url(#shadow)}
+      .ok{stroke:#74d680}.warn{stroke:#f6b73c}.bad{stroke:#ff8e82}
+      .title{fill:#eef4ff;font:700 34px Arial,sans-serif}.sub{fill:#9eb0cb;font:18px Arial,sans-serif}
+      .h{fill:#eef4ff;font:700 21px Arial,sans-serif}.t{fill:#adc0df;font:16px Arial,sans-serif}
+      .mono{fill:#5ce1e6;font:700 15px monospace}.arrow{stroke:#5ce1e6;stroke-width:3;fill:none;marker-end:url(#arrow)}
+      .no{stroke:#ff8e82;stroke-width:4}.yes{stroke:#74d680;stroke-width:4}
+    </style>
+  </defs>
+  <rect class="bg" width="1120" height="610"/>
+  <text class="title" x="48" y="60">layout 可以互相转换吗？可以，但要分四类成本</text>
+  <text class="sub" x="48" y="94">KV cache 很大，转换不是字符串改名；真正的代价取决于是否只改 view、是否要搬数据、kernel 是否支持。</text>
+
+  <g transform="translate(60 145)">
+    <rect class="box ok" x="0" y="0" width="455" height="120" rx="18"/>
+    <text class="h" x="22" y="38">A. 元数据 view：便宜</text>
+    <text class="t" x="22" y="68">HND 物理布局如果只是被暴露成 NHD 逻辑视图</text>
+    <text class="mono" x="22" y="96">permute by stride，不拷贝 storage</text>
+  </g>
+  <g transform="translate(605 145)">
+    <rect class="box warn" x="0" y="0" width="455" height="120" rx="18"/>
+    <text class="h" x="22" y="38">B. 数据重排：贵</text>
+    <text class="t" x="22" y="68">NIXL 某些 hetero TP receive path 可以做</text>
+    <text class="mono" x="22" y="96">HND -> NHD + block_size postprocess</text>
+  </g>
+  <path class="arrow" d="M515 205 H605"/>
+
+  <g transform="translate(60 335)">
+    <rect class="box warn" x="0" y="0" width="455" height="120" rx="18"/>
+    <text class="h" x="22" y="38">C. 语义解析：不是转换</text>
+    <text class="t" x="22" y="68">LMCache 把 vLLM layout 翻译成 EngineKVFormat</text>
+    <text class="mono" x="22" y="96">LBNHC -> NHD，LBHNC -> HND</text>
+  </g>
+  <g transform="translate(605 335)">
+    <rect class="box bad" x="0" y="0" width="455" height="120" rx="18"/>
+    <text class="h" x="22" y="38">D. 不支持：应当失败</text>
+    <text class="t" x="22" y="68">例如 head-outermost LHBNC/BHLNC 会把每个 block 按 head 碎片化</text>
+    <text class="mono" x="22" y="96">LMCache transfer kernels 当前拒绝</text>
+  </g>
+  <path class="no" d="M605 456 L1060 335"/>
+
+  <g transform="translate(210 515)">
+    <rect x="0" y="0" width="700" height="54" rx="16" fill="#10213b" stroke="#5ce1e6" stroke-width="1.2"/>
+    <text class="t" x="22" y="35">工程判断：能在解析阶段选对 layout，就不要在热路径里做大规模 KV 转置。</text>
+  </g>
+</svg>

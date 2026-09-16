@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">vLLM KV layout selection flow</title>
+  <desc id="desc">How vLLM resolves one KV cache layout from backend support, mixed specs, explicit env and connector preference.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#020617" flood-opacity=".45"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#5ce1e6"/>
+    </marker>
+    <style>
+      .bg{fill:#07111f}.box{fill:#0d1b31;stroke:#345a7c;stroke-width:1.2;filter:url(#shadow)}
+      .decision{fill:#132640;stroke:#f6b73c;stroke-width:1.4;filter:url(#shadow)}
+      .title{fill:#eef4ff;font:700 34px Arial,sans-serif}.sub{fill:#9eb0cb;font:18px Arial,sans-serif}
+      .h{fill:#eef4ff;font:700 20px Arial,sans-serif}.t{fill:#adc0df;font:16px Arial,sans-serif}.mono{fill:#5ce1e6;font:700 15px monospace}
+      .arrow{stroke:#5ce1e6;stroke-width:3;fill:none;marker-end:url(#arrow)}.warn{fill:#ffcf7a;font:700 15px Arial,sans-serif}
+    </style>
+  </defs>
+  <rect class="bg" width="1120" height="620"/>
+  <text class="title" x="48" y="58">vLLM：layout 是 engine core 在分配 KV 之前解析出来的</text>
+  <text class="sub" x="48" y="92">它不是模型文件里写死的字段，而是 backend、spec、connector、env 一起约束出的一个物理内存布局。</text>
+
+  <g transform="translate(60 135)">
+    <rect class="box" x="0" y="0" width="280" height="96" rx="16"/>
+    <text class="h" x="20" y="34">1. attention backend 上报</text>
+    <text class="t" x="20" y="62">支持的 layout 列表，按偏好排序</text>
+    <text class="mono" x="20" y="84">supported_kv_cache_layouts()</text>
+  </g>
+  <path class="arrow" d="M340 183 H430"/>
+  <g transform="translate(430 135)">
+    <rect class="decision" x="0" y="0" width="280" height="96" rx="16"/>
+    <text class="h" x="20" y="34">2. 求共同支持集</text>
+    <text class="t" x="20" y="62">多个 backend 混用时取交集</text>
+    <text class="t" x="20" y="84">空交集就是启动失败</text>
+  </g>
+  <path class="arrow" d="M710 183 H800"/>
+  <g transform="translate(800 135)">
+    <rect class="box" x="0" y="0" width="260" height="96" rx="16"/>
+    <text class="h" x="20" y="34">3. HNC shape 过滤</text>
+    <text class="t" x="20" y="62">混合 spec/page size 时</text>
+    <text class="mono" x="20" y="84">只保留 block-compact</text>
+  </g>
+
+  <path class="arrow" d="M560 231 V305"/>
+  <g transform="translate(245 305)">
+    <rect class="decision" x="0" y="0" width="630" height="168" rx="18"/>
+    <text class="h" x="24" y="38">4. 谁最后拍板？优先级从高到低</text>
+    <text class="mono" x="24" y="72">cache_config.kv_cache_layout 已有值：直接沿用</text>
+    <text class="mono" x="24" y="102">VLLM_KV_CACHE_LAYOUT：强制，但必须在候选集里</text>
+    <text class="mono" x="24" y="132">KV connector preference：兼容则采用，不兼容会降级并 warning</text>
+    <text class="mono" x="24" y="162">否则：使用候选列表第一个</text>
+  </g>
+  <path class="arrow" d="M560 473 V535"/>
+  <g transform="translate(355 535)">
+    <rect class="box" x="0" y="0" width="410" height="58" rx="16"/>
+    <text class="h" x="22" y="36">记录到 CacheConfig，并广播给 workers</text>
+  </g>
+  <text class="warn" x="76" y="574">NHD/HND 是兼容别名：NHD -> LBNHC，HND -> LBHNC。</text>
+</svg>

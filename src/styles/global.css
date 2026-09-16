@@ -191,6 +191,36 @@ main {
   color: var(--accent-2);
 }
 
+.prose img {
+  width: 100%;
+  margin: 1.8rem 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(4, 11, 22, 0.5);
+}
+
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  color: var(--muted);
+}
+
+.prose th,
+.prose td {
+  min-width: 10rem;
+  padding: 0.72rem 0.9rem;
+  border: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.prose th {
+  color: var(--text);
+  background: rgba(92, 225, 230, 0.08);
+}
+
 .prose code,
 .meta code {
   padding: 0.14rem 0.35rem;
