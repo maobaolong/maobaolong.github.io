@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="640" viewBox="0 0 1160 640" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="700" viewBox="0 0 1160 700" role="img" aria-labelledby="title desc">
   <title id="title">LMCache driven register_kv_cache flow</title>
   <desc id="desc">A sequence diagram from vLLM worker tensors to the LMCache multiprocess server registration path.</desc>
   <defs>
@@ -20,7 +20,7 @@
       <path d="M0,0 L10,4 L0,8 Z" fill="#334155" />
     </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1160" height="640" rx="18" />
+  <rect class="bg" x="0" y="0" width="1160" height="700" rx="18" />
   <text class="title" x="40" y="48">register_kv_caches: from vLLM worker memory to LMCache server metadata</text>
   <text class="muted" x="40" y="76">Only the LMCache driven path is shown. The serving engine exports handles; the LMCache server performs later device-side transfers.</text>
 
@@ -74,8 +74,8 @@
   <line class="dash" x1="580" y1="118" x2="580" y2="582" />
   <text class="muted" x="500" y="112">IPC boundary</text>
 
-  <rect x="382" y="248" width="310" height="76" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" />
-  <text class="small" x="400" y="274">payload</text>
-  <text class="small" x="400" y="296">DeviceIPCWrapper[] + model/world</text>
-  <text class="small" x="400" y="316">engine_type + layout_hints + group infos</text>
+  <rect x="398" y="602" width="364" height="66" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" />
+  <text class="small" x="418" y="626">payload crossing the IPC boundary</text>
+  <text class="small" x="418" y="648">DeviceIPCWrapper[] + model/world</text>
+  <text class="small" x="418" y="666">engine_type + layout_hints + group infos</text>
 </svg>

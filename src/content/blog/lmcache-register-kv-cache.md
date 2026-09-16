@@ -192,9 +192,59 @@ shape: [num_blocks, 2, block_size, num_heads, head_size]
 
 但 hybrid / MLA / Mamba 模型会打破这个直觉。
 
+### 先补三个词：page size、logical block、physical block
+
+这里最容易混的是 `block_size` 和 `page_size`。在 vLLM 的 KV cache spec 里，`block_size` 说的是“一个 block 管多少 token / state”；`page_size_bytes` 说的是“这样一个 page 实际占多少 bytes”。所以 page size 不是 token 数，而是内存大小。
+
+对普通 attention 来说，一个 token 的 cache 大致包含 K 和 V 两份向量：
+
+```text
+one-token attention bytes
+  = K/V planes * num_kv_heads * head_size * dtype_size
+```
+
+因此 attention 的 page size 会随 block size 线性增长：
+
+```text
+32-token attention page  -> 32 * one-token bytes
+544-token attention page -> 544 * one-token bytes
+```
+
+但 Mamba / recurrent layer 不一样。它缓存的不是“每个 token 一行 K/V”，而是一组递归状态快照，比如 conv state、SSM state，再加上可能的 padding。Mamba 这一页有多大，主要由这些 state tensor 的 shape 和 dtype 决定，不是简单把 attention 的 token 行数乘起来。
+
+Mamba-hybrid 模型同时有 attention group 和 Mamba group。vLLM 的 hybrid memory allocator 要把这些 group 放进同一套 KV cache 分组、容量估算和 block table 体系里，所以希望不同 group 的 `page_size_bytes` 对齐。这里的“对齐”是 **bytes 级别的 page size 对齐**，不是要求每个 group 都覆盖相同 token 数。
+
+直观地说，allocator 和 scheduler 后面会不断问这类问题：每个 group 还能分配多少 page、一个 request 的第 N 个 block id 在各个 group 里对应哪一页、给定显存预算下还能承载多少并发。如果不同 group 的“一个 page”代表完全不同的 byte 量，统一估算和统一 block-id 账本就会变得很难维护，甚至容易把某个 group 的 page 数算错。
+
+为什么会把 attention 的逻辑 block size 放大？因为 attention page bytes 可以通过增大 block size 来变大，而 Mamba state page bytes 往往已经由 state shape 决定了。假设 attention kernel 天然使用 32-token page，大小是 `X`；Mamba state page 大约是 `17X`。为了让两个 group 的 page size 对齐，vLLM 可以把 attention 的 manager block size 从 32 放大到 544：
+
+```text
+natural attention kernel page: 32 tokens  -> X bytes
+Mamba state page:              1 state    -> 17X bytes
+aligned attention logical page:544 tokens -> 17X bytes
+```
+
+这里就出现了两个层次：
+
+| 概念 | 站在哪一层看 | 含义 |
+|---|---|---|
+| logical block / manager block | scheduler、block table、prefix cache、LMCache register payload | vLLM 调度和 cache manager 认的 block id 单位。上面的例子里，一个 logical block 覆盖 544 个 token slot。 |
+| physical block / kernel page | attention backend kernel、真实 worker tensor | kernel 真正读写的 tensor page 单位。上面的例子里，kernel 仍按 32-token page 访问。 |
+
+所以“544-token logical block”不是说 FlashAttention kernel 忽然改成一次处理 544-token page。更准确地说，是 vLLM 的调度层把 17 个连续的 32-token kernel pages 视为同一个 manager block：
+
+```text
+logical block 0
+  = physical/kernel pages 0..16
+  = 17 * 32 token slots
+  = 544 token slots
+```
+
+这也是为什么 LMCache 注册时不能只看 raw tensor 的第一维。raw tensor 第一维可能是 kernel page 数，但 vLLM 传下来的 block id 属于 logical block 坐标系。LMCache 必须先把多个 physical pages 重新 view 成一个 logical page，否则后续 STORE / RETRIEVE 会用错 block id 到 byte range 的映射。
+
 ### 1. Sub-paged attention
 
-某些 Mamba-hybrid 模型里，vLLM 为了让不同 KV group 的 page size 对齐，会把 attention 的逻辑 block size 放大。比如逻辑上一个 block 是 544 token，但 attention backend 实际 kernel 仍用 32-token page。
+有了上面的概念，Sub-paged attention 就比较好理解了：它说的是 **vLLM 调度侧的一个 logical attention block，被 attention backend 拆成了多个更小的 physical/kernel pages 存放**。
 
 于是 worker tensor 可能长这样：
 
@@ -202,7 +252,7 @@ shape: [num_blocks, 2, block_size, num_heads, head_size]
 [num_kernel_pages, 2, 32, num_heads, head_size]
 ```
 
-而 vLLM 后续给 LMCache 的 block id 仍然是 544-token logical block 的 id。一个 logical block 其实占 17 个连续 kernel pages：
+这里的 `32` 是 attention backend 真实使用的 kernel page token 数。可 vLLM 后续给 LMCache 的 block id 仍然是 544-token logical block 的 id。一个 logical block 其实占 17 个连续 kernel pages：
 
 ```text
 logical block 0 = kernel pages 0..16
