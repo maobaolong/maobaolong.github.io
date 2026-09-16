@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="700" viewBox="0 0 1160 700" role="img" aria-labelledby="title desc">
+  <title id="title">create_engine_group_infos_from_vllm conversion</title>
+  <desc id="desc">How vLLM KV cache groups and physical tensor formats become LMCache EngineGroupInfo records.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .blue { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; }
+      .green { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+      .orange { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.5; }
+      .purple { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.5; }
+      .gray { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.4; }
+      .text { fill: #0f172a; font: 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .title { fill: #0f172a; font: 700 22px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { fill: #334155; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#334155" />
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1160" height="700" rx="18" />
+  <text class="title" x="40" y="48">create_engine_group_infos_from_vllm translates two truths into one protocol</text>
+  <text class="muted" x="40" y="76">vLLM owns scheduler groups and block-id spaces; tensors reveal transfer layout. LMCache needs both.</text>
+
+  <rect class="panel" x="40" y="118" width="320" height="500" rx="14" />
+  <text class="title" x="66" y="154">vLLM metadata</text>
+  <rect class="blue" x="72" y="188" width="252" height="86" rx="10" />
+  <text class="text" x="92" y="216">group 0</text>
+  <text class="small" x="92" y="239">layers: attn.0, attn.2</text>
+  <text class="small" x="92" y="258">block_size: 1600</text>
+  <rect class="blue" x="72" y="302" width="252" height="86" rx="10" />
+  <text class="text" x="92" y="330">group 1</text>
+  <text class="small" x="92" y="353">layers: ring.1</text>
+  <text class="small" x="92" y="372">prefix_cacheable: false</text>
+  <rect class="blue" x="72" y="416" width="252" height="86" rx="10" />
+  <text class="text" x="92" y="444">group 2</text>
+  <text class="small" x="92" y="467">layers: mla.3, idx.4</text>
+  <text class="small" x="92" y="486">UniformTypeKVCacheSpecs</text>
+  <text class="muted" x="72" y="552">These groups define block-id coordinate systems.</text>
+
+  <rect class="panel" x="420" y="118" width="320" height="500" rx="14" />
+  <text class="title" x="446" y="154">registered tensors</text>
+  <rect class="green" x="452" y="188" width="252" height="70" rx="10" />
+  <text class="small" x="472" y="216">attn.*: [NB, 2, BS, NH, HS]</text>
+  <text class="small" x="472" y="238">format: K+V, rank-5</text>
+  <rect class="gray" x="452" y="286" width="252" height="70" rx="10" />
+  <text class="small" x="472" y="314">ring.1: unsupported layout</text>
+  <text class="small" x="472" y="336">skipped because scratch</text>
+  <rect class="green" x="452" y="384" width="252" height="70" rx="10" />
+  <text class="small" x="472" y="412">mla.3: [NB, states, C]</text>
+  <text class="small" x="472" y="434">format: key-only MLA</text>
+  <rect class="green" x="452" y="482" width="252" height="70" rx="10" />
+  <text class="small" x="472" y="510">idx.4: [NB, states, C]</text>
+  <text class="small" x="472" y="532">different C / dtype / states</text>
+
+  <rect class="panel" x="800" y="118" width="320" height="500" rx="14" />
+  <text class="title" x="826" y="154">EngineGroupInfo list</text>
+  <rect class="purple" x="832" y="188" width="252" height="86" rx="10" />
+  <text class="text" x="852" y="216">info 0</text>
+  <text class="small" x="852" y="239">engine_group_id = 0</text>
+  <text class="small" x="852" y="258">layers = attn.0, attn.2</text>
+  <rect class="orange" x="832" y="302" width="252" height="70" rx="10" />
+  <text class="text" x="852" y="330">scratch group</text>
+  <text class="small" x="852" y="353">tokens_per_block = 0</text>
+  <text class="small" x="852" y="372">no info emitted</text>
+  <rect class="purple" x="832" y="400" width="252" height="86" rx="10" />
+  <text class="text" x="852" y="428">info 1</text>
+  <text class="small" x="852" y="451">engine_group_id = 2</text>
+  <text class="small" x="852" y="470">layers = mla.3</text>
+  <rect class="purple" x="832" y="514" width="252" height="70" rx="10" />
+  <text class="text" x="852" y="542">info 2</text>
+  <text class="small" x="852" y="565">same engine group, new layout</text>
+
+  <path class="arrow" d="M360 350 C390 350 390 350 420 350" />
+  <path class="arrow" d="M740 350 C770 350 770 350 800 350" />
+  <text class="muted" x="393" y="330">map layer names</text>
+  <text class="muted" x="754" y="330">split by identity</text>
+  <text class="small" x="354" y="650">identity = (kv_size, heads, head_size, slots_per_block, engine_group_id, dtype, engine_kv_format)</text>
+</svg>
