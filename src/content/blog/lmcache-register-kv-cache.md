@@ -369,7 +369,40 @@ LMCache 的 transfer path 更擅长处理“每个 block 一个 page”的 tenso
 
 ## 五、客户端第二步：create_engine_group_infos_from_vllm 是整条链路的翻译器
 
-用户常问的 `create_engine_group_info_from_engine`，在这个 PR 当前代码里实际函数名是 `create_engine_group_infos_from_vllm`。这个复数很重要：一个 vLLM engine group 最后可能拆成多个 LMCache kernel group，所以返回的是 `list[EngineGroupInfo]`。
+先把名字说清楚：`create_engine_group_info_from_engine` 不是这个 PR 当前代码里的函数名，更像讨论时容易说出口的“泛称”或旧式单数叫法。当前代码里的实际入口是：
+
+```python
+create_engine_group_infos_from_vllm(...)
+```
+
+它在 `lmcache/integration/vllm/kv_cache_groups.py` 里，被 `LMCacheConnectorV1Impl.register_kv_caches` 调用。函数名里有三个值得注意的词：
+
+| 名字片段 | 含义 |
+|---|---|
+| `infos` | 返回的不是一个 info，而是一组 info：`list[EngineGroupInfo]` |
+| `from_vllm` | 这里读的是 vLLM 的 `KVCacheConfig` / `KVCacheGroupSpec`，不是 engine-neutral 的抽象对象 |
+| `EngineGroupInfo` | 单个元素描述的是 LMCache 协议里的一个 transfer/kernel group，以及它来自哪个 serving-engine block-id group |
+
+为什么一定是 `list[EngineGroupInfo]`？不能只用“一 vLLM group 可能拆成多个 LMCache kernel group”这一句话概括。它只是最常见的原因之一。当前代码里，最后返回多少个 info，取决于 `group_layers_by_identity(...)` 产出的多少个 transfer identity；而这个 identity 里包含：
+
+```text
+(kv_size, num_heads, head_size, slots_per_block,
+ engine_group_idx, dtype, engine_kv_format)
+```
+
+所以 `list[EngineGroupInfo]` 可能因为下面这些情况变长、变短，或者保持为空：
+
+| 情况 | 会发生什么 | 为什么 |
+|---|---|---|
+| vLLM 本来就有多个 engine group | 通常会至少产生多个 `EngineGroupInfo` | 不同 vLLM engine group 是不同 block-id address space；即使 tensor shape 一样，也不能混用 block ids |
+| 同一个 vLLM engine group 内有不同物理 layout | 一个 `engine_group_id` 会拆成多个 `EngineGroupInfo` | 比如 main KV 是 rank-5 K/V，indexer 是 rank-3 key-only；它们共享同一份 block id list，但 copy kernel 形状不同 |
+| 同一个 engine group 内 shape / dtype / head 配置不同 | 继续按 identity 拆分 | `kv_size`、`num_heads`、`head_size`、`slots_per_block`、`dtype` 任一不同，都可能需要不同 kernel descriptor |
+| 没有 vLLM group metadata 的非 hybrid 情况 | 也可能返回多个 info | `per_layer_engine_group_idx` 为 `None` 时，所有 layer 都被当作 engine group 0；但如果真实 tensor layout 不同，仍会按 physical identity 拆开 |
+| CacheBlend 注册 connector 私有 aux pool | 会追加 synthetic engine group | aux pool 不是 vLLM 原生 group，但也要独立 format discovery、注册和传输，所以会生成额外 group id，并带 `extra_object_group_tag` |
+| scratch / `prefix_cacheable = False` group | 不会产生 `EngineGroupInfo` | 这些是请求内临时 ring buffer，不属于可复用 prefix KV；代码用 `tokens_per_block = 0` 表示排除 |
+| cross-layer KV sharing / alias layer | 相关 layer 会被排除 | 如果某些 layer 的 KV 实际由 owner layer 持有，重复注册会导致重复搬运或 block-size 计算错误 |
+
+还有一些字段会影响 `EngineGroupInfo` 的内容，但不一定独立制造新的 info。比如 DCP 会改变 attention 的 `tokens_per_block`；sliding-window 会写入 `sw_size_tokens`；Mamba / linear attention 的 state snapshot 会写入 `recurrent_state`。它们会继续影响服务端 object group、window 语义和 block 数量计算，但“是否多出一个 info”仍要看 engine group id 和 physical transfer identity 是否分开。
 
 它要解决的问题是：vLLM 的 group 和 LMCache 的 transfer group 不是同一个概念。
 
