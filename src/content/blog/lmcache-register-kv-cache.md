@@ -297,7 +297,24 @@ logical block 1 = kernel pages 17..33
 [num_logical_blocks, 2, 544, 1, C']
 ```
 
-这个 view 的维度已经不再表示真实语义上的 K plane / V plane / head。它只是一个“block id 到 byte range”的地址视图。只要 STORE 和 RETRIEVE 用同一套视图，bytes 就能正确 round-trip。
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/subpaged-attention-review-shape.svg" aria-label="打开 sub-paged attention re-view 逐维解释图原图">
+    <img src="/images/blog/lmcache-register-kv-cache/subpaged-attention-review-shape.svg" alt="Sub-paged attention re-view 中每个维度如何变化" />
+  </a>
+  <figcaption>补图 E：这个 re-view 的核心是元素数量守恒。17 个 kernel pages 被并成 1 个 logical block；原来的 head 维被折叠进新的 trailing width，所以 registered tensor 只保留 1 个 synthetic head。</figcaption>
+</figure>
+
+逐维拆开看：
+
+| 原始维度 | 新维度 | 为什么这样变 |
+|---|---|---|
+| `num_kernel_pages` | `num_logical_blocks = num_kernel_pages / 17` | 原始第一维数的是 32-token kernel page。vLLM block id 数的是 544-token logical block。因为 `544 / 32 = 17`，所以 17 个连续 kernel pages 合成 1 个 logical block。这里要求 `num_kernel_pages` 必须能被 17 整除。 |
+| `2` | `2` | 这一维保留下来，是为了让 LMCache 后面的通用 KV transfer 仍看到一个 rank-5、`kv_size = 2` 的形状。注意 re-view 后它不再可靠表示“整个 logical block 的纯 K plane / 纯 V plane”。 |
+| `32` | `544` | 原始 `32` 是 kernel page 里的 token slot 数；新 `544` 是 vLLM scheduler 认的 logical block size。LMCache 后续按 block id 搬运时，需要看到的是 544-token block 坐标，而不是 32-token kernel page 坐标。 |
+| `H` | `1` | 原始 `H` 是真实 attention head 数。但这个 view 的目标不是让 LMCache 理解每个 head 的语义，而是让一整个 logical page 的 bytes 能被当成一个可搬运 payload。代码里使用 1 个 synthetic head。 |
+| `C` | `C'` | 原始 `C` 是每个 head 的宽度。因为 `H` 被折叠成 1，原来分散在 `H * C` 里的内容会被塞进新的 trailing width。简单情况下 `C' = H * C`；真实代码会用 `spec.page_size_bytes / element_size / (2 * 544 * 1)` 算出来，确保一页元素数正好对上。 |
+
+所以这个 view 不是在重新解释 attention 的数学语义，而是在建立一个“block id 到 byte range”的地址视图。它要求 raw tensor 是 contiguous；它不会搬动任何 byte，只是把同一段 storage 用新的 shape 标出来。只要 STORE 和 RETRIEVE 使用同一套视图，bytes 就能正确 round-trip。但这也意味着，re-view 之后不能再把 `kv_caches[:, 0]` 当作纯 K tensor 做内容感知处理，因为 K/V 可能已经按 kernel-page 粒度交错在这个 opaque payload 里。
 
 ### 2. Sub-paged MLA
 
