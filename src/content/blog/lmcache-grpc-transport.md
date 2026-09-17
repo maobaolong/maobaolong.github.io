@@ -179,6 +179,8 @@ LMCache MP mode 最早的 request path 很直接：client 把一个 `RequestType
 
 我理解后续会逐渐放弃 ZMQ，准确说不是“今天删掉 ZMQ”，而是**新增能力、文档推荐、CI 覆盖、生产部署默认值会逐步向 gRPC-first 收敛**。ZMQ 仍然会在一段时间内承担兼容路径，但它不再适合作为不断扩展的主协议面。
 
+这点也影响后面的协议演进方式：当前双栈阶段，`RequestType` 和 `ProtocolDefinition` 仍然是 gRPC registry 连接 proto method、Python payload/response 类型和业务 handler 的桥；但它们不是 gRPC 最终形态必须永远保留的中间层。等 ZMQ 彻底退场后，LMCache 可以把 operation identity 收敛到 protobuf service/method，把 Python 类型契约从 proto descriptor 或生成代码中推导出来，减少今天为了兼容历史 wire path 而维护的重复表。
+
 ## 三、request transport 边界长什么样
 
 现在应用层不应该直接关心 ZMQ 或 gRPC。它只做两件事：
@@ -469,13 +471,17 @@ message FooBarResponse {}
 
 ### 3. 追加 `RequestType`
 
+在当前版本里，这一步仍然需要。`RequestType` 不只是 ZMQ 的数字 enum，gRPC 的 method registry 也会用 proto method name 找到对应 `RequestType`，再通过它定位 handler metadata。
+
 在 `protocols/base.py` 里把新 enum member 追加到末尾、deprecated aliases 之前。不要插入中间，因为 `RequestType` 旧值仍然是 ZMQ wire 协议的一部分。
 
 LMCache 已经有 frozen wire id 测试，目的就是防止旧值被 renumber。
 
+但这属于双栈过渡期的要求，不是 gRPC 本身的要求。未来如果 ZMQ 路径被移除，新增 RPC 理论上可以不再先加 `RequestType`，而是让 `package.Service/Method` 直接成为 operation identity。
+
 ### 4. 添加 `ProtocolDefinition`
 
-在对应 `protocols/*.py` 里声明 payload 和 response Python 类型：
+当前也仍然需要在对应 `protocols/*.py` 里声明 payload 和 response Python 类型：
 
 ```python
 "FOO_BAR": ProtocolDefinition(
@@ -486,6 +492,15 @@ LMCache 已经有 frozen wire id 测试，目的就是防止旧值被 renumber�
 ```
 
 如果 payload 已经复杂到参数很多，更推荐定义一个 dataclass 或 `msgspec.Struct`，让 Python 侧也变成命名字段，而不是继续堆 positional payload。
+
+`ProtocolDefinition` 的价值是把 Python 语义说清楚：handler 应该收哪些 Python 对象、返回什么 Python 对象、这个调用是 sync 还是 blocking、是否需要 client affinity。gRPC codec 编译时也会依赖它来确认 proto message 和 Python 类型能互相转换。
+
+等到项目进入 gRPC-only 形态后，这层可以被简化。比较自然的方向有两种：
+
+1. 从 protobuf descriptor 和生成类型直接推导 Python payload/response contract；
+2. 或者让生成出来的 gRPC adapter 直接绑定 handler，handler annotation 使用 service/method 名称，而不是 `RequestType`。
+
+到那时，`RequestType -> ProtocolDefinition -> codec -> handler` 这条链可以缩短成 `proto method -> generated adapter / codec -> handler`。换句话说，今天的中间结构主要是在帮 LMCache 平滑地从 ZMQ 迁到 gRPC，不应该被理解成 gRPC 长期架构里的必要复杂度。
 
 ### 5. 添加业务 handler
 
@@ -524,13 +539,13 @@ python -m lmcache.v1.multiprocess.transport.grpc_impl._proto_gen._generate
 
 ## 十、新增 message 或 field 时如何保持兼容
 
-gRPC/protobuf 给了 wire-level 兼容基础，但 LMCache 还多两层账：Python 类型契约和 ZMQ 历史兼容。
+gRPC/protobuf 给了 wire-level 兼容基础，但当前 LMCache 还多两层账：Python 类型契约和 ZMQ 历史兼容。等 ZMQ 退场后，ZMQ enum 这张账可以消失，兼容性重点会回到 protobuf wire contract、Python handler contract 和 codec contract。
 
 <figure class="diagram-scroll">
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-grpc-transport/compatibility-rules.svg" aria-label="打开兼容性规则图原图">
     <img src="/images/blog/lmcache-grpc-transport/compatibility-rules.svg" alt="LMCache gRPC 兼容性规则" />
   </a>
-  <figcaption>图 8：新增 service、RPC、message、field 时要同时维护 protobuf wire、Python contract 和 ZMQ enum。</figcaption>
+  <figcaption>图 8：当前双栈阶段要同时维护 protobuf wire、Python contract 和 ZMQ enum；未来 gRPC-only 后可以去掉 ZMQ enum 这层。</figcaption>
 </figure>
 
 我建议把兼容性分成几类来看。
@@ -541,7 +556,7 @@ gRPC/protobuf 给了 wire-level 兼容基础，但 LMCache 还多两层账：Pyt
 
 - service 名不能和已有 generated service 重复；
 - 文件名保持 `*_service.proto`，否则 descriptor discovery 不会加载；
-- 新 service 里的 method 仍然要能映射到 `RequestType`；
+- 当前双栈阶段，新 service 里的 method 仍然要能映射到 `RequestType`；
 - 如果这个 service 是可选模块，未启用时应该返回 `UNIMPLEMENTED`，而不是让请求半成功。
 
 ### 2. 新增 RPC
@@ -636,7 +651,7 @@ class EventResult:
     success: bool
 ```
 
-wire 上也许仍然是同样两个字段，但 method registry 看到的 response type 变了。你需要确认 response encoder/decoder、handler annotation、ZMQ facade、测试 fixture 全部同步，而不是只改 proto。
+wire 上也许仍然是同样两个字段，但 method registry 看到的 response type 变了。你需要确认 response encoder/decoder、handler annotation、双栈阶段的 ZMQ facade、测试 fixture 全部同步，而不是只改 proto。
 
 这也是为什么 LMCache 的 registry 初始化要做这么多校验：协议层出错时，宁愿启动失败，也不要让 KV cache 在运行时被错误的字段解释污染。
 
@@ -722,9 +737,9 @@ LMCache 这次 gRPC 支持真正解决的不是“把 ZMQ 换成另一个网络�
 - 应用层只调用 `RequestClient`；
 - URL scheme 和 `--transport` 决定 request transport；
 - protobuf 描述 wire schema；
-- `ProtocolDefinition` 描述 Python 语义；
+- 当前双栈阶段，`ProtocolDefinition` 描述 Python 语义；
 - codec registry 把两者编译到一起；
 - server 仍然复用 transport-neutral handler metadata 和调度语义；
 - 兼容性通过 protobuf field 规则、append-only `RequestType`、handler annotation validation 和 E2E 测试共同维护。
 
-这也是为什么我建议新部署尽量启用 gRPC。它不会替代 CUDA IPC/SHM 这些真正搬 KV bytes 的路径，但它会让 LMCache MP 的控制面更可读、更可测、更容易演进。随着协议面继续扩展，ZMQ 更适合作为兼容路径，gRPC 才更适合作为长期主路径。
+这也是为什么我建议新部署尽量启用 gRPC。它不会替代 CUDA IPC/SHM 这些真正搬 KV bytes 的路径，但它会让 LMCache MP 的控制面更可读、更可测、更容易演进。随着协议面继续扩展，ZMQ 更适合作为兼容路径，gRPC 才更适合作为长期主路径；当 ZMQ 最终退场后，`RequestType`、`ProtocolDefinition` 这类为了桥接新旧 transport 的中间结构也可以继续收敛，最终让新增 RPC 更接近“改 proto、生成 adapter、写 handler、补测试”的简单流程。

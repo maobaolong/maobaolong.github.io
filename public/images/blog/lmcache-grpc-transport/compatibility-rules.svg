@@ -16,14 +16,14 @@
     </style>
   </defs>
   <rect class="bg" width="1280" height="760" rx="20" />
-  <text class="title" x="50" y="58">兼容性维护：protobuf wire、Python contract、ZMQ enum 三张账都要对齐</text>
-  <text class="muted" x="50" y="88">gRPC 带来 schema，但 LMCache 还有 Python handler 和历史 ZMQ RequestType，所以不能只改 .proto。</text>
+  <text class="title" x="50" y="58">兼容性维护：当前三张账，未来收敛到 gRPC-first</text>
+  <text class="muted" x="50" y="88">双栈阶段要同时维护 proto、Python contract、历史 ZMQ RequestType；去掉 ZMQ 后可删除 enum 桥接层。</text>
 
   <rect class="ok" x="60" y="132" width="360" height="176" rx="16" />
   <text class="heading" x="86" y="168">可以安全添加</text>
   <text class="text" x="86" y="202">1. 新 optional/default 字段放在 message 末尾</text>
   <text class="text" x="86" y="232">2. 新 RPC 使用新 request / response message</text>
-  <text class="text" x="86" y="262">3. 新 RequestType 只追加，不插入</text>
+  <text class="text" x="86" y="262">3. 双栈期新 RequestType 只追加</text>
   <text class="code" x="86" y="290">field number 永远不复用</text>
 
   <rect class="warn" x="460" y="132" width="360" height="176" rx="16" />
@@ -37,17 +37,19 @@
   <text class="heading" x="886" y="168">不要这样改</text>
   <text class="text" x="886" y="202">1. 改已有字段 tag 或 wire type</text>
   <text class="text" x="886" y="232">2. 删除后复用 field number</text>
-  <text class="text" x="886" y="262">3. 插入 RequestType enum</text>
+  <text class="text" x="886" y="262">3. 双栈期插入 RequestType enum</text>
   <text class="code" x="886" y="290">payload shape 变了就新 RPC</text>
 
-  <rect class="card" x="80" y="370" width="1120" height="246" rx="18" />
-  <text class="heading" x="112" y="410">新增一个 RPC 的完整 checklist</text>
+  <rect class="card" x="80" y="370" width="1120" height="270" rx="18" />
+  <text class="heading" x="112" y="410">新增一个 RPC 的当前 checklist</text>
   <text class="text" x="112" y="446">A. 在合适的 *_service.proto 里加 Request/Response message 和 rpc；新 message 的字段从未用过的 tag 开始。</text>
-  <text class="text" x="112" y="480">B. 在 protocols/base.py 末尾追加 RequestType，并在对应 protocols/*.py 添加 ProtocolDefinition。</text>
+  <text class="text" x="112" y="480">B. 双栈阶段追加 RequestType，并添加 ProtocolDefinition 连接 Python 类型和 handler。</text>
   <text class="text" x="112" y="514">C. 在业务 module 上添加 @request_handler，参数和返回注解必须等于 ProtocolDefinition 的 Python 类型。</text>
-  <text class="text" x="112" y="548">D. 结构化类型直接走 structural codec；DeviceIPCWrapper、torch.Size 这类非结构化对象要注册 explicit codec。</text>
-  <text class="text" x="112" y="582">E. 重新生成 protobuf binding，补 registry / E2E / frozen wire id 测试，再同时验证 ZMQ 和 gRPC 路径。</text>
+  <text class="text" x="112" y="548">D. 结构化类型直接走 structural codec；DeviceIPCWrapper、torch.Size 这类非结构化对象</text>
+  <text class="text" x="112" y="572">   要注册 explicit codec。</text>
+  <text class="text" x="112" y="602">E. 重新生成 protobuf binding，补 registry / E2E / frozen wire id 测试；gRPC-only 后可移除 ZMQ 验证。</text>
 
-  <rect class="card" x="160" y="660" width="960" height="54" rx="14" />
-  <text class="heading" x="190" y="694">判断标准：新旧版本混跑时，未知字段被忽略、缺失字段可默认、已有语义不变；否则用新 RPC 或新 message。</text>
+  <rect class="card" x="160" y="670" width="960" height="64" rx="14" />
+  <text class="heading" x="190" y="696">判断标准：新旧版本混跑时，未知字段被忽略、缺失字段可默认、已有语义不变；</text>
+  <text class="heading" x="190" y="720">未来 gRPC-only 后，中间层可以继续收敛。</text>
 </svg>
