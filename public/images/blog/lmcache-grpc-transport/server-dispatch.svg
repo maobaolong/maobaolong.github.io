@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC server dispatch pools</title>
+  <desc id="desc">The gRPC server dispatches handlers according to transport-neutral handler metadata: sync handlers run under a lock, blocking CPU handlers use a normal pool, and client-affinity handlers use an affinity pool.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+      <path d="M0,0 L11,4.5 L0,9 Z" fill="#334155" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .ingress { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.7; }
+      .sync { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.6; }
+      .cpu { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.6; }
+      .gpu { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.6; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="720" rx="20" />
+  <text class="title" x="50" y="58">gRPC server 不是把所有请求扔进一个线程池</text>
+  <text class="muted" x="50" y="88">调度策略来自 transport-neutral @request_handler metadata，因此 ZMQ 和 gRPC 共享同一套 handler 语义。</text>
+
+  <rect class="ingress" x="70" y="154" width="300" height="122" rx="16" />
+  <text class="heading" x="96" y="190">gRPC ingress executor</text>
+  <text class="code" x="96" y="224">--grpc-server-workers</text>
+  <text class="text" x="96" y="250">接收 unary RPC，进入 _dispatch</text>
+
+  <rect class="card" x="490" y="132" width="324" height="166" rx="16" />
+  <text class="heading" x="518" y="168">method codec + handler metadata</text>
+  <text class="code" x="518" y="202">RequestType.STORE</text>
+  <text class="code" x="518" y="230">HandlerType.BLOCKING</text>
+  <text class="code" x="518" y="258">requires_client_affinity=True</text>
+  <path class="arrow" d="M370 215 H490" />
+
+  <rect class="sync" x="88" y="424" width="296" height="116" rx="16" />
+  <text class="heading" x="116" y="460">SYNC</text>
+  <text class="text" x="116" y="490">快速、不应阻塞的控制操作</text>
+  <text class="code" x="116" y="518">sync_handler_lock</text>
+
+  <rect class="cpu" x="492" y="424" width="296" height="116" rx="16" />
+  <text class="heading" x="520" y="460">normal pool</text>
+  <text class="text" x="520" y="490">LOOKUP / PING / 管理类阻塞操作</text>
+  <text class="code" x="520" y="518">--max-cpu-workers</text>
+
+  <rect class="gpu" x="896" y="424" width="296" height="116" rx="16" />
+  <text class="heading" x="924" y="460">affinity pool</text>
+  <text class="text" x="924" y="490">STORE / RETRIEVE 等 GPU 相关请求</text>
+  <text class="code" x="924" y="518">--max-gpu-workers + client-id</text>
+
+  <path class="arrow" d="M652 298 C652 354 236 354 236 424" />
+  <path class="arrow" d="M652 298 V424" />
+  <path class="arrow" d="M652 298 C652 354 1044 354 1044 424" />
+
+  <rect class="card" x="200" y="594" width="880" height="58" rx="14" />
+  <text class="heading" x="232" y="630">重点：client affinity 用 metadata 中的 client-id 固定到同一 affinity key，减少同一 vLLM 实例的 GPU transfer 锁竞争。</text>
+</svg>

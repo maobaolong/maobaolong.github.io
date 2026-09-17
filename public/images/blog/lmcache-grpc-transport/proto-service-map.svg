@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC service map</title>
+  <desc id="desc">Generated gRPC services are split by LMCache multiprocess protocol domains and mapped to RequestType names.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .svc1 { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; }
+      .svc2 { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+      .svc3 { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.5; }
+      .svc4 { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.5; }
+      .svc5 { fill: #ecfeff; stroke: #0891b2; stroke-width: 1.5; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 17px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="20" />
+  <text class="title" x="50" y="58">gRPC service 按协议域拆分，而不是塞进一个巨大 EngineService</text>
+  <text class="muted" x="50" y="88">每个 rpc 名称会转成 snake_case，再映射到同名 RequestType，例如 Store -> STORE，P2PLookupAndLock -> P2P_LOOKUP_AND_LOCK。</text>
+
+  <rect class="svc1" x="56" y="132" width="360" height="168" rx="16" />
+  <text class="heading" x="82" y="168">LMCacheDrivenService</text>
+  <text class="code" x="82" y="202">RegisterKvCache / UnregisterKvCache</text>
+  <text class="code" x="82" y="230">Store / Retrieve</text>
+  <text class="text" x="82" y="262">server-driven CUDA IPC / SHM 路径</text>
+
+  <rect class="svc2" x="460" y="132" width="360" height="168" rx="16" />
+  <text class="heading" x="486" y="168">EngineDrivenService</text>
+  <text class="code" x="486" y="202">Register...Context</text>
+  <text class="code" x="486" y="230">PrepareStore / CommitStore</text>
+  <text class="code" x="486" y="258">PrepareRetrieve / CommitRetrieve</text>
+
+  <rect class="svc3" x="864" y="132" width="360" height="168" rx="16" />
+  <text class="heading" x="890" y="168">LookupService</text>
+  <text class="code" x="890" y="202">Lookup</text>
+  <text class="code" x="890" y="230">Query / Wait prefetch status</text>
+  <text class="code" x="890" y="258">FreeLookupLocks / EndSession</text>
+
+  <rect class="svc4" x="56" y="344" width="360" height="168" rx="16" />
+  <text class="heading" x="82" y="380">BlendService</text>
+  <text class="code" x="82" y="414">CbProtocolHandshake</text>
+  <text class="code" x="82" y="442">CbRegisterRope / CbUnregisterRope</text>
+  <text class="code" x="82" y="470">CbRetrievePreComputed / CbUnifiedLookup</text>
+
+  <rect class="svc5" x="460" y="344" width="360" height="168" rx="16" />
+  <text class="heading" x="486" y="380">P2PService</text>
+  <text class="code" x="486" y="414">P2PLookupAndLock</text>
+  <text class="code" x="486" y="442">P2PQueryLookupResults</text>
+  <text class="code" x="486" y="470">P2PUnlockObjects</text>
+
+  <rect class="card" x="864" y="344" width="360" height="168" rx="16" />
+  <text class="heading" x="890" y="380">Controller / Observability / Debug / QStore</text>
+  <text class="code" x="890" y="414">Clear / GetChunkSize / Ping</text>
+  <text class="code" x="890" y="442">ReportBlockAllocation</text>
+  <text class="code" x="890" y="470">Noop / StoreQ</text>
+
+  <rect class="card" x="156" y="578" width="968" height="110" rx="16" />
+  <text class="heading" x="188" y="616">common.proto 是共享词汇表</text>
+  <text class="text" x="188" y="646">IpcCacheServerKey、BlockIdGroup、EventIpcHandleResult、DeviceIpcWrapper、EngineGroupInfo 等公共消息只定义一次。</text>
+  <text class="text" x="188" y="674">这样服务可以按业务域拆分，跨服务共享的数据结构仍然保持同一套 wire contract。</text>
+</svg>
