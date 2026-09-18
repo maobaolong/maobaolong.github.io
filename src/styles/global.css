@@ -987,6 +987,561 @@ main {
   opacity: 1;
 }
 
+.lmcache-knowledge-map,
+.lmcache-scenario-lab {
+  margin: 2rem 0;
+  color: var(--text);
+  --lab-cyan: #5ce1e6;
+  --lab-amber: #f6b73c;
+  --lab-green: #71e08a;
+  --lab-rose: #ff8eaa;
+  --lab-violet: #b7a4ff;
+  --lab-panel: rgba(5, 12, 24, 0.78);
+}
+
+.lmcache-knowledge-map *,
+.lmcache-scenario-lab * {
+  min-width: 0;
+}
+
+.knowledge-shell,
+.scenario-shell {
+  overflow: hidden;
+  border: 1px solid rgba(92, 225, 230, 0.24);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(180deg, rgba(9, 20, 36, 0.96), rgba(5, 12, 24, 0.94)),
+    linear-gradient(135deg, rgba(92, 225, 230, 0.11), rgba(246, 183, 60, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.knowledge-header,
+.scenario-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(124, 154, 214, 0.16);
+}
+
+.prose .knowledge-header h2,
+.prose .scenario-header h2 {
+  margin: 0.15rem 0 0.35rem;
+  color: var(--text);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.knowledge-kicker,
+.scenario-kicker,
+.scenario-detail__kicker {
+  margin: 0;
+  color: var(--lab-cyan);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.76rem;
+}
+
+.knowledge-lead,
+.scenario-lead,
+.knowledge-phase p,
+.scenario-visual__summary p,
+.scenario-detail__copy {
+  margin: 0;
+  color: #c5d3ea;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}
+
+.knowledge-tour,
+.scenario-tabs,
+.knowledge-tabs,
+.scenario-rail,
+.scenario-fields,
+.knowledge-related,
+.knowledge-fields {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.knowledge-tour {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.knowledge-icon-button,
+.knowledge-tab,
+.scenario-tab,
+.scenario-stage-button,
+.knowledge-node,
+.knowledge-related button,
+.scenario-fields button,
+.scenario-pipe-card {
+  border: 1px solid rgba(124, 154, 214, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    transform 170ms ease,
+    border-color 170ms ease,
+    background 170ms ease,
+    opacity 170ms ease;
+}
+
+.knowledge-icon-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  font: 700 1.1rem/1 "IBM Plex Mono", monospace;
+}
+
+.knowledge-tab,
+.scenario-tab,
+.knowledge-related button,
+.scenario-fields button {
+  min-height: 2rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+.knowledge-tabs,
+.scenario-rail {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(124, 154, 214, 0.13);
+}
+
+.knowledge-tab.is-active,
+.scenario-tab.is-active,
+.scenario-stage-button.is-active,
+.scenario-fields button.is-active {
+  border-color: rgba(246, 183, 60, 0.72);
+  background: rgba(246, 183, 60, 0.14);
+  color: #fff5dc;
+}
+
+.knowledge-icon-button:hover,
+.knowledge-tab:hover,
+.scenario-tab:hover,
+.scenario-stage-button:hover,
+.knowledge-node:hover,
+.knowledge-related button:hover,
+.scenario-fields button:hover,
+.scenario-pipe-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(92, 225, 230, 0.55);
+  background: rgba(92, 225, 230, 0.09);
+}
+
+.knowledge-icon-button:focus-visible,
+.knowledge-tab:focus-visible,
+.scenario-tab:focus-visible,
+.scenario-stage-button:focus-visible,
+.knowledge-node:focus-visible,
+.knowledge-related button:focus-visible,
+.scenario-fields button:focus-visible,
+.scenario-pipe-card:focus-visible {
+  outline: 2px solid rgba(246, 183, 60, 0.5);
+  outline-offset: 2px;
+}
+
+.knowledge-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.knowledge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.knowledge-phase {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(124, 154, 214, 0.16);
+  border-radius: 14px;
+  background: rgba(3, 9, 19, 0.42);
+}
+
+.prose .knowledge-phase h3,
+.prose .knowledge-detail h2,
+.prose .knowledge-detail__section h3,
+.prose .scenario-visual__summary h3,
+.prose .scenario-detail h3,
+.prose .scenario-detail h4 {
+  margin: 0;
+  color: var(--text);
+  letter-spacing: 0;
+}
+
+.prose .knowledge-phase h3,
+.prose .knowledge-detail__section h3,
+.prose .scenario-detail h4 {
+  color: var(--lab-cyan);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.knowledge-node {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  min-height: 5.9rem;
+  padding: 0.65rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.knowledge-node__badge,
+.knowledge-detail__meta span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.18rem 0.42rem;
+  border: 1px solid rgba(92, 225, 230, 0.22);
+  border-radius: 999px;
+  color: var(--lab-cyan);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  overflow-wrap: anywhere;
+}
+
+.knowledge-node strong {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.knowledge-node em {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-style: normal;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.knowledge-node.is-active {
+  border-color: rgba(246, 183, 60, 0.76);
+  background: rgba(246, 183, 60, 0.12);
+  box-shadow: 0 0 0 1px rgba(246, 183, 60, 0.14);
+}
+
+.knowledge-node.is-related:not(.is-active) {
+  border-color: rgba(92, 225, 230, 0.48);
+  background: rgba(92, 225, 230, 0.08);
+}
+
+.knowledge-node.is-active,
+.scenario-pipe-card.is-active {
+  animation: teaching-pulse 1800ms ease-in-out infinite;
+}
+
+.knowledge-detail,
+.scenario-detail {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(246, 183, 60, 0.26);
+  border-radius: 14px;
+  background: rgba(246, 183, 60, 0.06);
+}
+
+.knowledge-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.prose .knowledge-detail h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.22rem;
+}
+
+.knowledge-detail__short,
+.knowledge-detail__section p,
+.scenario-field-explain p {
+  margin: 0;
+  color: #d5e1f1;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.knowledge-detail__section {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.knowledge-fields span {
+  max-width: 100%;
+  padding: 0.28rem 0.48rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8f3ff;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+
+.scenario-header {
+  align-items: center;
+}
+
+.scenario-tabs {
+  justify-content: flex-end;
+  min-width: min(100%, 25rem);
+}
+
+.scenario-rail {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.scenario-stage-button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.1rem 0.45rem;
+  align-items: center;
+  min-width: 0;
+  min-height: 4.25rem;
+  padding: 0.55rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.scenario-stage-button span {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  background: rgba(92, 225, 230, 0.12);
+  color: var(--lab-cyan);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+}
+
+.scenario-stage-button strong,
+.scenario-stage-button em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.scenario-stage-button strong {
+  font-size: 0.78rem;
+}
+
+.scenario-stage-button em {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-style: normal;
+}
+
+.scenario-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.scenario-visual {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(124, 154, 214, 0.16);
+  border-radius: 14px;
+  background: rgba(3, 9, 19, 0.42);
+}
+
+.scenario-visual[data-scenario="simple"] {
+  --scenario-accent: var(--lab-cyan);
+}
+
+.scenario-visual[data-scenario="mla"] {
+  --scenario-accent: var(--lab-violet);
+}
+
+.scenario-visual[data-scenario="hybrid"] {
+  --scenario-accent: var(--lab-green);
+}
+
+.scenario-visual__summary {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.prose .scenario-visual__summary h3,
+.prose .scenario-detail h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.08rem;
+}
+
+.scenario-pipeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.scenario-pipe-card {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  min-height: 5.6rem;
+  padding: 0.65rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.scenario-pipe-card__index {
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  background: rgba(92, 225, 230, 0.12);
+  color: var(--scenario-accent, var(--lab-cyan));
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+}
+
+.scenario-pipe-card strong,
+.scenario-pipe-card em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.scenario-pipe-card strong {
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.scenario-pipe-card em {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1.3;
+}
+
+.scenario-pipe-card.is-before {
+  border-color: rgba(92, 225, 230, 0.38);
+  background: rgba(92, 225, 230, 0.06);
+}
+
+.scenario-pipe-card.is-active {
+  border-color: color-mix(in srgb, var(--scenario-accent, var(--lab-cyan)) 75%, white 0%);
+  background: color-mix(in srgb, var(--scenario-accent, var(--lab-cyan)) 14%, transparent);
+}
+
+.scenario-pipe-arrow {
+  display: none;
+  color: var(--scenario-accent, var(--lab-cyan));
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.scenario-data-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.scenario-data-card {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+  min-height: 7.2rem;
+  padding: 0.7rem;
+  border: 1px solid rgba(124, 154, 214, 0.2);
+  border-radius: 12px;
+  background: var(--lab-panel);
+  animation: data-card-in 220ms ease both;
+}
+
+.scenario-data-card strong {
+  color: var(--scenario-accent, var(--lab-cyan));
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+}
+
+.scenario-data-card code {
+  display: block;
+  width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(124, 154, 214, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8f3ff;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.scenario-detail {
+  border-color: rgba(92, 225, 230, 0.26);
+  background: rgba(92, 225, 230, 0.06);
+}
+
+.scenario-fields {
+  align-items: flex-start;
+}
+
+.scenario-field-explain {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 5rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(246, 183, 60, 0.24);
+  border-radius: 12px;
+  background: rgba(246, 183, 60, 0.08);
+}
+
+.scenario-field-explain strong {
+  color: var(--lab-amber);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+}
+
+@keyframes teaching-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(246, 183, 60, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 1px rgba(246, 183, 60, 0.24), 0 0 24px rgba(246, 183, 60, 0.12);
+  }
+}
+
+@keyframes data-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes packet-hop {
   0% {
     transform: translateX(-2.2rem);
@@ -1005,6 +1560,12 @@ main {
   .register-packet.is-visible {
     animation: none;
     transform: translateX(0);
+  }
+
+  .knowledge-node.is-active,
+  .scenario-pipe-card.is-active,
+  .scenario-data-card {
+    animation: none;
   }
 
   .register-node,
@@ -1604,6 +2165,23 @@ select:focus {
   .admin-form-grid {
     grid-template-columns: 1fr;
   }
+
+  .knowledge-body,
+  .scenario-body {
+    grid-template-columns: 1fr;
+  }
+
+  .knowledge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scenario-rail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .scenario-pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -1644,6 +2222,8 @@ select:focus {
   }
 
   .lmcache-anim__header,
+  .knowledge-header,
+  .scenario-header,
   .review-label-row,
   .review-address,
   .expand-stage {
@@ -1662,8 +2242,45 @@ select:focus {
 
   .register-stage,
   .mamba-stage,
-  .grouping-stage {
+  .grouping-stage,
+  .knowledge-grid,
+  .scenario-data-cards {
     grid-template-columns: 1fr;
+  }
+
+  .knowledge-shell,
+  .scenario-shell {
+    border-radius: 14px;
+  }
+
+  .knowledge-header,
+  .scenario-header,
+  .knowledge-body,
+  .scenario-body {
+    padding: 0.8rem;
+  }
+
+  .knowledge-tabs,
+  .scenario-rail {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .scenario-tabs,
+  .knowledge-tour {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .scenario-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scenario-pipeline {
+    grid-template-columns: 1fr;
+  }
+
+  .scenario-pipe-card {
+    min-height: 4.7rem;
   }
 
   .register-boundary {

@@ -36,6 +36,14 @@ draft: false
 
 本文基于 2026-09-16 复核的 [LMCache PR #5042](https://github.com/LMCache/LMCache/pull/5042)，head 为 `e3cffcf`，标题是 `[Feature][MP] Support GLM-5.3-Flash and Qwen3.8-Flash-Next`。PR 还在继续演进的话，请以当前代码为准。
 
+<section id="register-knowledge-map" class="lmcache-knowledge-map" data-lmcache-knowledge-map aria-label="register_kv_cache 知识地图">
+  <noscript>这里原本是可点击的知识地图：它把 KV tensor、block id、page size、layout hint、IPC wrapper、EngineGroupInfo、Mamba state 和 scratch group 等概念串起来。当前浏览器禁用了 JavaScript，所以请继续阅读正文。</noscript>
+</section>
+
+<section id="register-scenario-lab" class="lmcache-scenario-lab" data-lmcache-scenario-lab aria-label="register_kv_cache 分场景交互流程">
+  <noscript>这里原本是可切换 simple / MLA / hybrid 场景的 register_kv_cache 交互流程图。当前浏览器禁用了 JavaScript，所以请继续阅读正文里的静态流程和表格。</noscript>
+</section>
+
 <figure class="diagram-scroll">
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/register-flow.svg" aria-label="打开 register_kv_cache 流程图原图">
     <img src="/images/blog/lmcache-register-kv-cache/register-flow.svg" alt="LMCache driven register_kv_cache 从 vLLM worker 到 LMCache server 的流程图" />
