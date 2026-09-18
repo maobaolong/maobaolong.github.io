@@ -2,7 +2,7 @@
 title: "LMCache gRPC 支持详解：从启用方式到协议演进"
 description: "介绍 LMCache multiprocess request transport 如何从 ZMQ 演进到 gRPC：server 与 vLLM 的具体配置、实现原理、codec 设计、收益，以及新增 service/message/rpc/field 时如何保持兼容。"
 publishedAt: 2026-09-17
-updatedAt: 2026-09-17
+updatedAt: 2026-09-18
 category: AI Infra
 tags:
   - lmcache
@@ -13,7 +13,7 @@ tags:
   - protobuf
   - distributed-systems
 author: 毛宝龙
-readingTime: 25 min
+readingTime: 28 min
 featured: true
 draft: false
 ---
@@ -31,8 +31,38 @@ LMCache MP 模式里有两类“传输”容易混在一起：
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-grpc-transport/quick-enable.svg" aria-label="打开 gRPC 启用配置图原图">
     <img src="/images/blog/lmcache-grpc-transport/quick-enable.svg" alt="LMCache gRPC 启用配置" />
   </a>
-  <figcaption>图 1：启用 gRPC 要同时改 server 端和 vLLM 端；窄屏可横向滑动，也可以点开原图。</figcaption>
+  <figcaption>图 1：请求从 vLLM 侧发到 LMCache server；启用 gRPC 要同时改两端配置。窄屏可横向滑动，也可以点开原图。</figcaption>
 </figure>
+
+## 零、实现路线：一串 PR 怎么铺路
+
+这次 gRPC 支持不是一个“大 PR 直接把 ZMQ 换掉”的做法，而是一串边界逐渐清晰的 PR。这样的节奏很重要：先让上层代码不再依赖 ZMQ 细节，再把 client 创建入口收拢到工厂，然后把老 ZMQ 逻辑隔离出去，最后再接入 protobuf、gRPC client/server、测试矩阵和打包流程。
+
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-grpc-transport/zmq-to-grpc-roadmap.svg" aria-label="打开 ZMQ 到 gRPC PR 路线图原图">
+    <img src="/images/blog/lmcache-grpc-transport/zmq-to-grpc-roadmap.svg" alt="LMCache 从 ZMQ 到 gRPC 的 PR 演进路线" />
+  </a>
+  <figcaption>图 2：gRPC 支持按 PR 分层落地；后续会继续向 gRPC-first 收敛。</figcaption>
+</figure>
+
+从公开 PR 看，这条路线大致是：
+
+| 阶段 | PR | 做了什么 | 为什么要先做 |
+|---|---|---|---|
+| ZMQ 语义抽象 | [#4878](https://github.com/LMCache/LMCache/pull/4878) | 引入 `RequestClient` / `ZmqMultiprocessClient` facade，把 `lookup()`、`store()`、`retrieve()` 这些语义方法放到统一 client 接口上 | 上层调用方先脱离 `submit_request(RequestType, payload_list)`，后面才能换 transport |
+| client 工厂 | [#4882](https://github.com/LMCache/LMCache/pull/4882) | 通过 `RequestClientFactory.create(server_url)` 按 URL scheme 选择 transport | `tcp://`、裸 host 继续走 ZMQ，`grpc://` 可以交给新的 gRPC client |
+| ZMQ 边界隔离 | [#5050](https://github.com/LMCache/LMCache/pull/5050) | 把 ZMQ request handling 移到更明确的 `zmq_impl` 边界后面 | 老实现继续可用，但不再散落在共享协议层里 |
+| protobuf 地基 | [#5066](https://github.com/LMCache/LMCache/pull/5066) | 增加 `*_service.proto`、生成入口、基础测试和 transport test plumbing | 先让 schema、生成代码、测试入口稳定，再谈 runtime 切换 |
+| wheel 生成稳定性 | [#5081](https://github.com/LMCache/LMCache/pull/5081) | 稳定 wheel 构建里的 gRPC proto generation | 防止 protobuf/gRPC tooling 变成打包和安装路径上的隐性风险 |
+| runtime gRPC | [#4953](https://github.com/LMCache/LMCache/pull/4953) | 接入 gRPC request transport，让 `--transport grpc` 和 `grpc://` 真正跑起来，并在测试里覆盖 gRPC/ZMQ | 这一步才是用户能启用的 gRPC client/server runtime |
+
+这条路线后面还有很多值得做的事：
+
+- **逐步删除 ZMQ。** 新能力、文档、CI 和生产推荐先转向 gRPC；等兼容窗口结束后，ZMQ facade、ZMQ server path、`RequestType` 数字 wire id 这些历史负担就可以逐步下线。
+- **简化协议中间层。** 当前 `RequestType` 和 `ProtocolDefinition` 是双栈时期的桥。gRPC-only 后，可以让 `package.Service/Method` 成为 operation identity，让 proto descriptor 或生成 adapter 直接提供 Python contract。
+- **优化 gRPC 性能。** 后续可以围绕 deadline 传播、backpressure、连接复用、worker pool 配置、批量小控制请求、codec 开销做更细的 benchmark 和优化。
+- **增加 gRPC 指标。** per-RPC latency、status code、payload encode/decode cost、server queue wait、affinity worker 分布、client reconnect/error rate 都可以变成可观测指标。
+- **扩展生态能力。** gRPC health check、reflection、外部 sidecar、跨语言 SDK、debug gateway、版本协商都会比自定义 ZMQ payload 更自然。
 
 ## 一、最小启用方式
 
@@ -169,13 +199,6 @@ LMCache MP mode 最早的 request path 很直接：client 把一个 `RequestType
 2. 再把每个 RPC 的 Python payload/response 类型沉淀成 `ProtocolDefinition`；
 3. 然后为 gRPC 定义 protobuf schema 和生成代码；
 4. 最后把 gRPC client/server 接到同一个 handler 和 codec registry 上。
-
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-grpc-transport/zmq-to-grpc-roadmap.svg" aria-label="打开 ZMQ 到 gRPC 迁移路线图原图">
-    <img src="/images/blog/lmcache-grpc-transport/zmq-to-grpc-roadmap.svg" alt="LMCache 从 ZMQ 到 gRPC 的迁移路线" />
-  </a>
-  <figcaption>图 2：迁移路径是先收敛语义契约，再替换 wire transport。</figcaption>
-</figure>
 
 我理解后续会逐渐放弃 ZMQ，准确说不是“今天删掉 ZMQ”，而是**新增能力、文档推荐、CI 覆盖、生产部署默认值会逐步向 gRPC-first 收敛**。ZMQ 仍然会在一段时间内承担兼容路径，但它不再适合作为不断扩展的主协议面。
 

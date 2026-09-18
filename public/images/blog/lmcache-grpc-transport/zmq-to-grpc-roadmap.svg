@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="700" viewBox="0 0 1280 700" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
   <title id="title">LMCache ZMQ to gRPC migration roadmap</title>
-  <desc id="desc">A staged roadmap showing LMCache moving from ZMQ-only positional payloads to typed messages, protobuf schemas, runtime gRPC, and eventually gRPC-first operation.</desc>
+  <desc id="desc">A public PR roadmap showing LMCache moving from ZMQ semantic abstraction to request factories, protobuf schemas, runtime gRPC, and future gRPC-first improvements.</desc>
   <defs>
     <marker id="arrow" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
       <path d="M0,0 L11,4.5 L0,9 Z" fill="#334155" />
@@ -19,43 +19,57 @@
       .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
     </style>
   </defs>
-  <rect class="bg" width="1280" height="700" rx="20" />
-  <text class="title" x="50" y="58">为什么后续会逐渐放弃 ZMQ：迁移不是一次替换，而是四步收敛</text>
-  <text class="muted" x="50" y="88">ZMQ 会保留一段兼容期，但新增能力会越来越倾向于 explicit schema + typed RPC。</text>
+  <rect class="bg" width="1280" height="820" rx="20" />
+  <text class="title" x="50" y="58">gRPC 支持的 PR 路线：先抽象边界，再接入新 transport</text>
+  <text class="muted" x="50" y="88">每个 PR 都只推动一层边界，避免把业务逻辑、ZMQ 兼容、protobuf、打包和 runtime 一次性搅在一起。</text>
 
-  <rect class="stage" x="56" y="160" width="250" height="250" rx="18" />
-  <text class="heading" x="84" y="202">0. 旧世界</text>
-  <text class="code" x="84" y="238">RequestType + [payload...]</text>
-  <text class="text" x="84" y="276">调用方知道 ZMQ 细节</text>
-  <text class="text" x="84" y="306">参数顺序就是契约</text>
-  <text class="text" x="84" y="336">扩展容易牵动全局</text>
+  <rect class="done" x="50" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="76" y="164">1. PR #4878：ZMQ 语义抽象</text>
+  <text class="code" x="76" y="194">RequestClient + named RPC facade</text>
+  <text class="text" x="76" y="224">调用方从 submit_request/list payload</text>
+  <text class="text" x="76" y="248">迁移到 lookup/store/retrieve 方法。</text>
 
-  <rect class="done" x="356" y="160" width="250" height="250" rx="18" />
-  <text class="heading" x="384" y="202">1. typed Python RPC</text>
-  <text class="code" x="384" y="238">RequestClient.lookup()</text>
-  <text class="text" x="384" y="276">调用方只看命名方法</text>
-  <text class="text" x="384" y="306">ProtocolDefinition 给语义类型</text>
-  <text class="text" x="384" y="336">ZMQ 退到边界后面</text>
+  <rect class="done" x="460" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="486" y="164">2. PR #4882：client 工厂</text>
+  <text class="code" x="486" y="194">RequestClientFactory.create(url)</text>
+  <text class="text" x="486" y="224">tcp:// 留给 ZMQ；grpc:// 预留给</text>
+  <text class="text" x="486" y="248">新的 gRPC client 实现。</text>
 
-  <rect class="done" x="656" y="160" width="250" height="250" rx="18" />
-  <text class="heading" x="684" y="202">2. protobuf schema</text>
-  <text class="code" x="684" y="238">*_service.proto</text>
-  <text class="text" x="684" y="276">wire 字段显式可读</text>
-  <text class="text" x="684" y="306">生成 binding 与 stub</text>
-  <text class="text" x="684" y="336">codec 对齐 Python 类型</text>
+  <rect class="done" x="870" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="896" y="164">3. PR #5050：隔离 ZMQ 实现</text>
+  <text class="code" x="896" y="194">zmq_impl owns old wire path</text>
+  <text class="text" x="896" y="224">老协议继续可用，但退到 transport</text>
+  <text class="text" x="896" y="248">边界后面，给 gRPC 腾位置。</text>
 
-  <rect class="now" x="956" y="160" width="250" height="250" rx="18" />
-  <text class="heading" x="984" y="202">3. 运行态 gRPC</text>
-  <text class="code" x="984" y="238">--transport grpc</text>
-  <text class="text" x="984" y="276">URL scheme 选择 client</text>
-  <text class="text" x="984" y="306">server 注册生成服务</text>
-  <text class="text" x="984" y="336">CI 开始覆盖 grpc matrix</text>
+  <path class="arrow" d="M410 199 H460" />
+  <path class="arrow" d="M820 199 H870" />
 
-  <path class="arrow" d="M306 285 H356" />
-  <path class="arrow" d="M606 285 H656" />
-  <path class="arrow" d="M906 285 H956" />
+  <rect class="done" x="50" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="76" y="376">4. PR #5066：protobuf 地基</text>
+  <text class="code" x="76" y="406">*_service.proto + generator</text>
+  <text class="text" x="76" y="436">先把 schema、生成代码和测试</text>
+  <text class="text" x="76" y="460">基础设施放稳，不急着切流量。</text>
 
-  <rect class="next" x="188" y="498" width="904" height="92" rx="16" />
-  <text class="heading" x="220" y="536">下一步：gRPC-first，而不是立刻删除 ZMQ</text>
-  <text class="text" x="220" y="568">推荐新部署启用 gRPC；老部署继续可用。等文档、CI、插件和外部集成稳定后，再逐步降低 ZMQ 的默认权重。</text>
+  <rect class="done" x="460" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="486" y="376">5. PR #5081：打包稳定性</text>
+  <text class="code" x="486" y="406">wheel proto generation</text>
+  <text class="text" x="486" y="436">处理 wheel/build 里的生成边界，</text>
+  <text class="text" x="486" y="460">避免 gRPC tooling 污染运行时。</text>
+
+  <rect class="now" x="870" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="896" y="376">6. PR #4953：运行态 gRPC</text>
+  <text class="code" x="896" y="406">--transport grpc + grpc://</text>
+  <text class="text" x="896" y="436">client/server 接到 codec registry，</text>
+  <text class="text" x="896" y="460">CI 同时覆盖 ZMQ 和 gRPC。</text>
+
+  <path class="arrow" d="M230 270 V340" />
+  <path class="arrow" d="M410 415 H460" />
+  <path class="arrow" d="M820 415 H870" />
+
+  <rect class="next" x="80" y="592" width="1120" height="174" rx="18" />
+  <text class="heading" x="112" y="630">下一步：gRPC-first 后可以做更多事</text>
+  <text class="text" x="112" y="664">删除 ZMQ 兼容层：ZMQ facade、server path、RequestType 数字 wire id 可以逐步下线。</text>
+  <text class="text" x="112" y="694">简化中间结构：operation identity 回到 package.Service/Method，Python contract 由生成 adapter 承担。</text>
+  <text class="text" x="112" y="724">优化 gRPC 性能：deadline、backpressure、连接复用、worker pool、批量小控制请求、codec 开销。</text>
+  <text class="text" x="112" y="754">增加指标：per-RPC latency/status、codec cost、queue wait、affinity 分布、reconnect/error rate。</text>
 </svg>

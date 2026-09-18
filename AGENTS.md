@@ -2,6 +2,7 @@
 
 - In this Codex desktop environment, `node` and `npm` are not on the default `PATH`. Use the bundled runtime at `/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin` or prepend that directory to `PATH` before running `pnpm` commands.
 - The bundled `pnpm` executable lives at `/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/pnpm`.
+- For Playwright-based visual checks in this environment, the bundled Node runtime has the `playwright` package, but the Playwright-managed Chromium binary may be missing. Prefer launching with the local Chrome executable at `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`.
 - For local verification here, a reliable setup is:
   - `export PATH="/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:$PATH"`
   - `pnpm install && pnpm build`

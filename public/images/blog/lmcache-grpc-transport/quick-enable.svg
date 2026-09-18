@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="700" viewBox="0 0 1260 700" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="760" viewBox="0 0 1260 760" role="img" aria-labelledby="title desc">
   <title id="title">LMCache gRPC quick enable configuration</title>
   <desc id="desc">Concrete server and vLLM side configuration required to switch LMCache MP request transport from ZMQ to gRPC.</desc>
   <defs>
@@ -20,39 +20,41 @@
       .arrow { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#arrow); }
     </style>
   </defs>
-  <rect class="bg" width="1260" height="700" rx="20" />
+  <rect class="bg" width="1260" height="760" rx="20" />
   <text class="title" x="48" y="58">启用 LMCache MP gRPC：两端必须同时切到 gRPC</text>
-  <text class="muted" x="48" y="88">server 端选择 request transport；vLLM 端通过 URL scheme 选择 client transport。KV 数据搬运模式是另一层配置。</text>
+  <text class="muted" x="48" y="88">vLLM 端通过 URL scheme 选择 client transport；server 端通过 --transport 选择 request server。</text>
 
-  <rect class="server" x="52" y="132" width="520" height="430" rx="18" />
-  <rect x="78" y="158" width="82" height="26" rx="13" fill="#2563eb" />
-  <text class="label" x="100" y="176">SERVER</text>
-  <text class="heading" x="78" y="220">LMCache 独立进程</text>
-  <text class="text" x="78" y="250">请求入口从 ZMQ server 切换成 gRPC server：</text>
-  <rect class="panel" x="78" y="278" width="468" height="118" rx="10" />
-  <text class="code" x="100" y="312">lmcache server \</text>
-  <text class="code" x="100" y="340">  --transport grpc \</text>
-  <text class="code" x="100" y="368">  --host 0.0.0.0 --port 5555 \</text>
-  <text class="code" x="100" y="396">  --l1-size-gb 20 --eviction-policy LRU</text>
-  <text class="muted" x="78" y="436">常用调优：</text>
-  <text class="code" x="78" y="466">--grpc-server-workers 32</text>
-  <text class="code" x="78" y="492">--max-gpu-workers &lt;TP&gt; --max-cpu-workers 4</text>
-  <text class="muted" x="78" y="525">端口要对 vLLM worker 可达；容器部署时注意 service / hostNetwork。</text>
+  <rect class="client" x="52" y="132" width="520" height="456" rx="18" />
+  <rect x="78" y="158" width="74" height="26" rx="13" fill="#16a34a" />
+  <text class="label" x="97" y="176">vLLM</text>
+  <text class="heading" x="78" y="220">LMCacheMPConnector</text>
+  <text class="text" x="78" y="250">把 host 写成 grpc://，port 仍然单独传：</text>
+  <rect class="panel" x="78" y="278" width="468" height="226" rx="10" />
+  <text class="code" x="100" y="312">vllm serve Qwen/Qwen3-8B \</text>
+  <text class="code" x="100" y="340">  --kv-transfer-config '{</text>
+  <text class="code" x="100" y="368">    "kv_connector":"LMCacheMPConnector",</text>
+  <text class="code" x="100" y="396">    "kv_role":"kv_both",</text>
+  <text class="code" x="100" y="424">    "kv_connector_extra_config":{</text>
+  <text class="code" x="100" y="452">      "lmcache.mp.host":"grpc://lmcache",</text>
+  <text class="code" x="100" y="480">      "lmcache.mp.port":5555}}}'</text>
+  <text class="muted" x="78" y="532">多 server 时用 lmcache.mp.server_urls，</text>
+  <text class="muted" x="78" y="556">每个 URL 都要写 scheme。</text>
 
-  <rect class="client" x="688" y="132" width="520" height="430" rx="18" />
-  <rect x="714" y="158" width="74" height="26" rx="13" fill="#16a34a" />
-  <text class="label" x="733" y="176">vLLM</text>
-  <text class="heading" x="714" y="220">LMCacheMPConnector</text>
-  <text class="text" x="714" y="250">把 host 写成 grpc://，port 仍然单独传：</text>
-  <rect class="panel" x="714" y="278" width="468" height="194" rx="10" />
-  <text class="code" x="736" y="312">vllm serve Qwen/Qwen3-8B \</text>
-  <text class="code" x="736" y="340">  --kv-transfer-config '{</text>
-  <text class="code" x="736" y="368">    "kv_connector":"LMCacheMPConnector",</text>
-  <text class="code" x="736" y="396">    "kv_role":"kv_both",</text>
-  <text class="code" x="736" y="424">    "kv_connector_extra_config":{</text>
-  <text class="code" x="736" y="452">      "lmcache.mp.host":"grpc://lmcache",</text>
-  <text class="code" x="736" y="480">      "lmcache.mp.port":5555}}}'</text>
-  <text class="muted" x="714" y="512">多 server 时用 lmcache.mp.server_urls，每个 URL 都写 scheme。</text>
+  <rect class="server" x="688" y="132" width="520" height="456" rx="18" />
+  <rect x="714" y="158" width="82" height="26" rx="13" fill="#2563eb" />
+  <text class="label" x="736" y="176">SERVER</text>
+  <text class="heading" x="714" y="220">LMCache 独立进程</text>
+  <text class="text" x="714" y="250">请求入口从 ZMQ server 切换成 gRPC server：</text>
+  <rect class="panel" x="714" y="278" width="468" height="118" rx="10" />
+  <text class="code" x="736" y="312">lmcache server \</text>
+  <text class="code" x="736" y="340">  --transport grpc \</text>
+  <text class="code" x="736" y="368">  --host 0.0.0.0 --port 5555 \</text>
+  <text class="code" x="736" y="396">  --l1-size-gb 20 --eviction-policy LRU</text>
+  <text class="muted" x="714" y="436">常用调优：</text>
+  <text class="code" x="714" y="466">--grpc-server-workers 32</text>
+  <text class="code" x="714" y="492">--max-gpu-workers &lt;TP&gt; --max-cpu-workers 4</text>
+  <text class="muted" x="714" y="525">端口要对 vLLM worker 可达；</text>
+  <text class="muted" x="714" y="549">容器部署时注意 service / hostNetwork。</text>
 
   <path class="arrow" d="M572 347 H688" />
   <rect class="wire" x="584" y="286" width="92" height="92" rx="14" />
@@ -60,6 +62,7 @@
   <text class="text" x="606" y="352">request</text>
   <text class="text" x="606" y="374">RPC</text>
 
-  <rect class="panel" x="150" y="596" width="960" height="62" rx="14" />
-  <text class="heading" x="178" y="632">迁移规则：server 的 --transport 与 vLLM 的 lmcache.mp.host scheme 要匹配；tcp:// 仍然走 ZMQ，grpc:// 才走 gRPC。</text>
+  <rect class="panel" x="150" y="620" width="960" height="88" rx="14" />
+  <text class="heading" x="178" y="654">迁移规则：server 的 --transport 与 vLLM 的 lmcache.mp.host scheme 要匹配。</text>
+  <text class="heading" x="178" y="682">tcp:// 仍然走 ZMQ；grpc:// 才走 gRPC。</text>
 </svg>
