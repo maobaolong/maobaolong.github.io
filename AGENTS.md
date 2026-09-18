@@ -13,6 +13,9 @@
   that dependency is intentionally added first.
 - Quote YAML frontmatter strings that contain GitHub issue or PR references such as `#4998`; in an unquoted `description`, `#` starts a YAML comment and silently truncates the rendered metadata.
 - The Pages workflow currently emits a Node.js 20 deprecation annotation for `actions/checkout@v4`, `actions/configure-pages@v5`, and `actions/deploy-pages@v4`; GitHub forces them onto Node.js 24 and the deployment still succeeds, so treat it as an upstream-action migration warning rather than an Astro build failure.
+- The Pages workflow may also emit an `ubuntu-latest` migration annotation for
+  Ubuntu 26 beginning October 19, 2026. Treat it as runner-image notice unless
+  the Astro build or deploy job actually fails.
 - This site is prepared for GitHub Pages. Use `SITE_URL=https://<username>.github.io` and:
   - no `BASE_PATH` for a `<username>.github.io` repository
   - `BASE_PATH=/repo-name` for a project site repository
