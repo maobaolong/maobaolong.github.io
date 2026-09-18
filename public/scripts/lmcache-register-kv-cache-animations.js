@@ -504,7 +504,8 @@ const KNOWLEDGE_EXTRA = {
     deep: [
       "page size 在这里主要指 page_size_bytes，也就是“一个 page 在显存里占多少 bytes”。它不是 token 数。",
       "普通 attention 的 page bytes 通常跟 block_size 成正比；Mamba state page 的 bytes 更多由 conv/SSM state shape 决定。",
-      "hybrid 模型要把多种 group 放进一套容量估算和 block table 账本，因此可能让 attention 的 manager block 变大，使 attention logical page 的 bytes 接近 Mamba state page。"
+      "hybrid 模型要把多种 group 放进一套容量估算和 block table 账本，因此可能让 attention 的 manager block 变大，使 attention logical page 的 bytes 接近 Mamba state page。",
+      "注意这会反过来约束 LMCache chunk_size：如果某个 cacheable group 的 tokens_per_block 变成 544，默认 256 就不再合法，chunk_size 必须改成所有可缓存 group 的 tokens_per_block 的共同倍数。"
     ],
     anchors: [
       ["page size 解释", "#先补三个词page-sizelogical-blockphysical-block"],
@@ -974,6 +975,7 @@ const SCENARIO_NOTES = {
       notes: [
         "Mamba-hybrid 模型里至少有两种缓存语义：attention 是逐 token 的 K/V page，Mamba 是 recurrent state snapshot。",
         "vLLM 为了让不同 group 进入同一套 page/block 账本，可能要求 page_size_bytes 对齐；attention 这边就可能把 manager block 放大。",
+        "放大后的 manager block 会成为这个 cacheable group 的 tokens_per_block，因此 LMCache chunk_size 也必须随之对齐；默认 256 不能容纳 544-token logical block。",
         "同时，Qwen/GLM 这类模型还可能有 prefix_cacheable=false 的临时 group。它在 vLLM runtime 中存在，但不应进入 LMCache prefix cache。"
       ],
       anchors: [["page size 对齐", "#先补三个词page-sizelogical-blockphysical-block"], ["Qwen/GLM scratch", "#6-pr-5042-的-qwen38b--glm-scratch-group"]]
@@ -982,6 +984,7 @@ const SCENARIO_NOTES = {
       notes: [
         "attention raw tensor 仍按 32-token kernel pages 存，但 register 前会把 17 个 physical pages view 成一个 544-token logical block。",
         "Mamba 的 conv_state/ssm_state 会被包装成固定大小的 opaque page，再映射到 LMCache transfer kernel 能接受的 shape。",
+        "如果最终 tokens_per_block 是 544，LMCache 的可复用 prefix chunk 至少要覆盖一个完整 logical block；低于一个 chunk 的前缀不会成为完整跨请求缓存对象。",
         "prefix_cacheable=false 的 group 则不做 format discovery、不生成 EngineGroupInfo，也不会参与后续 prefix store/retrieve。"
       ],
       anchors: [["logical vs physical", "#先补三个词page-sizelogical-blockphysical-block"], ["Mamba state page", "#3-mamba-state-page"]]
@@ -1120,7 +1123,7 @@ const DEEP_ANIMS = {
         focus: "register",
         title: "register 要记录放大后的 logical block",
         text: "LMCache 后续拿到的是 vLLM block id。这个 block id 属于 544-token logical 坐标，所以注册前必须把 raw tensor re-view 成 logical page 视图。",
-        bullets: ["block id 10 不能只指向第 10 个 32-token physical page", "它应该指向 17 个连续 physical pages", "这正是 sub-paged re-view 的价值"],
+        bullets: ["block id 10 不能只指向第 10 个 32-token physical page", "它应该指向 17 个连续 physical pages", "LMCache chunk_size 也必须按所有可缓存 group 对齐"],
         link: ["跳到 sub-paged attention", "#1-sub-paged-attention"]
       }
     ]

@@ -323,6 +323,21 @@ logical block 0
   = 544 token slots
 ```
 
+这里有一个非常重要的配置约束：如果这个 cacheable group 的 `tokens_per_block` 真的是 544，那么 LMCache 的 `chunk_size` 不能继续用默认 256。当前 MP 路径要求 **LMCache chunk size 必须是每个可缓存 group 的 `tokens_per_block` 的整数倍**，因为一个 LMCache chunk 不能切在某个 vLLM logical block 的中间。也就是说：
+
+```text
+tokens_per_block = 544
+chunk_size = 256   -> 不行，注册阶段应直接报错
+chunk_size = 544   -> 对这个 group 可以，一个 LMCache chunk 放 1 个 logical block
+chunk_size = 1088  -> 对这个 group 可以，一个 LMCache chunk 放 2 个 logical blocks
+```
+
+如果同一个模型还有其它可缓存 group，比如另一个 group 的 `tokens_per_block` 是 64，那么 `chunk_size` 还要同时是 64 和 544 的共同倍数。实际配置通常要取所有 cacheable groups 的正 `tokens_per_block` 的共同倍数；`prefix_cacheable = False` 的临时 group 因为 `tokens_per_block = 0`，不参与这个约束。
+
+所以 `544` 这个例子不是说“默认 256 也能保存 544-token block”，而是说明 hybrid/page-size 对齐可能会把 cache 的最小可注册粒度放大。真实部署时要么把 LMCache `chunk_size` 配成所有可缓存 group `tokens_per_block` 的共同倍数，要么这个模型就不能按当前这套 MP prefix KV 路径正确注册。
+
+这也回答另一个常见疑问：是不是 544 个 token 以下就无法在 LMCache 里保存？在这类配置下，**按完整 prefix chunk 来说，是的，低于一个 LMCache chunk 的前缀不会形成一个可复用的完整缓存对象**。但这不代表当前请求自己不能 decode，也不代表 vLLM 显存里没有这些 KV；它只是不能作为 LMCache 跨请求复用的一个完整 chunk 被安全存取。LMCache 的可复用粒度由 `chunk_size` 决定，而 `chunk_size` 又必须和 engine group 的 logical block 边界对齐。
+
 <section class="lmcache-deep-anim" data-lmcache-deep-anim="logical-physical" aria-label="补图 D：logical block 和 physical kernel page">
   <noscript>补图 D：block id 是 logical / manager block 坐标；worker tensor 的第一维可能是 physical/kernel page 坐标。LMCache 注册前的 re-view 就是在这两个坐标系之间架桥。</noscript>
 </section>
@@ -1099,7 +1114,7 @@ for info in engine_group_infos:
         raise ValueError(...)
 ```
 
-LMCache 存储对象通常按 chunk 组织。如果一个 group 的 block 覆盖 64 token，而 chunk size 是 256，那么每个 chunk 正好 4 个 block。如果不能整除，chunk 边界会落在某个 vLLM block 中间，STORE / RETRIEVE 很难保持一致。
+LMCache 存储对象通常按 chunk 组织。如果一个 group 的 block 覆盖 64 token，而 chunk size 是 256，那么每个 chunk 正好 4 个 block。如果一个 group 的 block 覆盖 544 token，那么默认 chunk size 256 就不成立，因为一个 chunk 连一个完整 logical block 都放不下。必须显式改成 544、1088 或其它 544 的倍数。如果不能整除，chunk 边界会落在某个 vLLM block 中间，STORE / RETRIEVE 很难保持一致。
 
 第二，把 `kv_caches`、`engine_group_infos`、`layout_hints` 保存下来。这不是为了好看，而是为了 heartbeat recovery。server 重启或恢复时，worker 可以用同一份信息重新注册。
 
