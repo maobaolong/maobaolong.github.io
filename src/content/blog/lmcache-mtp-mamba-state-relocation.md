@@ -2,7 +2,7 @@
 title: "从 MTP 到 Mamba State：LMCache 为什么会把一块草稿缓存当成前缀状态"
 description: "从 Prefill、Decode 和 KV Cache 开始，逐步解释 Mamba、GDN、SWA、MLA、MTP、vLLM align-mode checkpoint、speculative block relocation，以及 LMCache PR #5004 修复的状态错位问题。"
 publishedAt: 2026-09-16
-updatedAt: 2026-09-16
+updatedAt: 2026-09-19
 category: AI Infra
 tags:
   - lmcache
@@ -14,7 +14,7 @@ tags:
   - mtp
   - hybrid-model
 author: 毛宝龙
-readingTime: 28 min
+readingTime: 31 min
 featured: true
 draft: false
 ---
@@ -29,13 +29,21 @@ draft: false
 
 但如果不知道 Mamba block 是什么、GDN 为什么也被 vLLM 叫作 Mamba、MTP 为什么需要临时状态、prefix cache 为什么会少命中一个 block，以及 scheduler 为什么因此跨过一个 block boundary，这句话几乎没法真正理解。
 
-所以本文不从补丁开始，而是从最基础的推理过程一层一层搭起来。
+所以本文不从补丁开始，而是从最基础的推理过程一层一层搭起来。这一版也补了一段配音视频和九张动态图：先建立 Attention cache 与 recurrent state 的差别，再一路跟着 MTP、scheduler、speculative page relocation 和 LMCache tracker 走到最终修复。
+
+<figure class="video-feature">
+  <video controls preload="metadata" poster="/videos/blog/lmcache-mtp-mamba-state/mtp-mamba-relocation-explainer-poster.jpg">
+    <source src="/videos/blog/lmcache-mtp-mamba-state/mtp-mamba-relocation-explainer.mp4" type="video/mp4" />
+    <track kind="subtitles" src="/videos/blog/lmcache-mtp-mamba-state/mtp-mamba-relocation-explainer.vtt" srclang="zh" label="中文字幕" default />
+  </video>
+  <figcaption>视频：配音版用动态图串起整条 bug 链路，从 MTP 为什么改变 checkpoint，一直讲到 LMCache 如何安全回退。</figcaption>
+</figure>
 
 <figure class="diagram-scroll">
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/cache-family-map.svg" aria-label="打开缓存机制全景图原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/cache-family-map.svg" alt="本文涉及的缓存机制全景图" />
   </a>
-  <figcaption>图 1：先区分 Attention cache 与递归状态；窄屏可横向滑动，也可以点开原图。</figcaption>
+  <figcaption>图 1：动态图先区分 Attention cache 与递归状态；窄屏可横向滑动，也可以点开原图。</figcaption>
 </figure>
 
 ## 一、先把 Prefill、Decode 和 KV Cache 放回原位
@@ -91,7 +99,7 @@ state_t = F(state_{t-1}, x_t)
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/attention-vs-recurrent.svg" aria-label="打开 Attention KV 与递归状态对比原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/attention-vs-recurrent.svg" alt="Full Attention KV 与递归状态的根本差别" loading="lazy" />
   </a>
-  <figcaption>图 2：Attention 保存可寻址的历史条目，Mamba/GDN 把历史递归压入 running state。</figcaption>
+  <figcaption>图 2：动态图展示 Attention 保存可寻址的历史条目，而 Mamba/GDN 把历史递归压入 running state。</figcaption>
 </figure>
 
 ### Mamba：Selective State Space Model
@@ -241,7 +249,7 @@ verify: D E X ...
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/mtp-draft-verify.svg" aria-label="打开 MTP draft verify commit 流程原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/mtp-draft-verify.svg" alt="MTP 的 draft、verify 与 commit" loading="lazy" />
   </a>
-  <figcaption>图 3：MTP 先草拟多个 token，再由主模型批量验证并提交有效前缀。</figcaption>
+  <figcaption>图 3：动态图展示 MTP 先草拟多个 token，再由主模型批量验证并提交有效前缀。</figcaption>
 </figure>
 
 ### MTP 为什么需要主模型 hidden state
@@ -288,7 +296,7 @@ MTP drafting：除了 KV，还需要边界附近的 target hidden state 和 draf
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/mtp-prefix-recompute.svg" aria-label="打开 MTP prefix cache 重算流程原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/mtp-prefix-recompute.svg" alt="MTP 命中为什么要回退一个 block" loading="lazy" />
   </a>
-  <figcaption>图 4：“丢掉最后一个命中块”是缩短可跳过前缀，并不等于物理删除缓存。</figcaption>
+  <figcaption>图 4：动态图展示“丢掉最后一个命中块”只是缩短可跳过前缀，并不等于物理删除缓存。</figcaption>
 </figure>
 
 ## 七、为什么 1616 已经不再是“下一次停止点”
@@ -345,7 +353,7 @@ MTP on:
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/mamba-checkpoint-timeline.svg" aria-label="打开 MTP 改变 Prefill checkpoint 原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/mamba-checkpoint-timeline.svg" alt="MTP 开关如何改变 Prefill checkpoint" loading="lazy" />
   </a>
-  <figcaption>图 5：第二步已经从 1616 开始时，1616 不能再成为位于 step 内部的未来停止点。</figcaption>
+  <figcaption>图 5：动态图展示第二步已经从 1616 开始时，1616 不能再成为位于 step 内部的未来停止点。</figcaption>
 </figure>
 
 ## 八、speculative block 为什么会存在
@@ -398,7 +406,7 @@ state_C -> state_D -> state_E -> state_F -> state_G
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/speculative-block-relocation.svg" aria-label="打开 speculative state page 搬动过程原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/speculative-block-relocation.svg" alt="vLLM 搬动 speculative state page 的过程" loading="lazy" />
   </a>
-  <figcaption>图 6：物理 page S1 从旧逻辑 slot 搬到尾部，旧位置必须同步变成 null block。</figcaption>
+  <figcaption>图 6：动态图展示物理 page S1 从旧逻辑 slot 搬到尾部，旧位置必须同步变成 null block。</figcaption>
 </figure>
 
 ## 十、LMCache 为什么只看到了搬动的一半
@@ -434,6 +442,13 @@ LMCache：[A, S1, ..., S1, D]
 ```
 
 vLLM 保证同一个非零物理 block 不会同时占据同一请求的两个 slot。LMCache tracker 里出现两个 `S1`，因此不是合法的“两个位置共享一个状态”，而是旧位置漏掉了一次置零。
+
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/append-delta-blindspot.svg" aria-label="打开 LMCache append delta 盲区动态图原图">
+    <img src="/images/blog/lmcache-mtp-mamba-state/append-delta-blindspot.svg" alt="LMCache 只收到 append delta 时的 tracker 分叉动态图" loading="lazy" />
+  </a>
+  <figcaption>图 7：动态图把 vLLM 的真实变化和 connector 收到的 append delta 放在一起；重复非零 ID 是 relocation 的证据。</figcaption>
+</figure>
 
 ## 十一、错误状态是怎样进入外部缓存的
 
@@ -525,7 +540,7 @@ Hybrid prefix resume 要求各个必要 group 在同一个恢复点上都拥有�
   <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/lmcache-corruption-and-fix.svg" aria-label="打开 LMCache 错误链与修复流程原图">
     <img src="/images/blog/lmcache-mtp-mamba-state/lmcache-corruption-and-fix.svg" alt="错误链与修复后的安全回退" loading="lazy" />
   </a>
-  <figcaption>图 7：旧逻辑会持久化 scratch state；修复后缺失的递归状态会让共同命中点安全回退。</figcaption>
+  <figcaption>图 8：动态图展示旧逻辑如何持久化 scratch state；修复后缺失的递归状态会让共同命中点安全回退。</figcaption>
 </figure>
 
 这里体现的是一个很重要的缓存原则：
@@ -567,6 +582,13 @@ Hybrid model，包含 Mamba/GDN 类递归层
 ## 十五、最后把整条链压缩成九步
 
 读到这里，可以把整个问题压缩成下面九步：
+
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-mtp-mamba-state/nine-step-causal-chain.svg" aria-label="打开九步因果链动态图原图">
+    <img src="/images/blog/lmcache-mtp-mamba-state/nine-step-causal-chain.svg" alt="MTP Mamba state relocation 九步因果链动态图" loading="lazy" />
+  </a>
+  <figcaption>图 9：动态图把整条链压缩成九个节点：递归状态、boundary 语义、MTP 回退、speculative relocation、tracker 置零和安全回退。</figcaption>
+</figure>
 
 1. Mamba/GDN 用固定大小 recurrent state 表示历史，而不是逐 token KV。
 2. vLLM 用 Mamba block/page 保存这些状态，并让逻辑 slot 对应确定的 token boundary。

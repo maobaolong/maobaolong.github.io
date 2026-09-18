@@ -1,6 +1,6 @@
 <svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-<title id="title">先区分：Attention cache 与递归状态</title>
-<desc id="desc">token KV、递归状态和 hybrid cache 的关系动态图</desc>
+<title id="title">九步因果链：从递归状态到安全回退</title>
+<desc id="desc">把 MTP Mamba relocation 问题压缩成九个动态节点</desc>
 <defs>
   <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M2 2L12 7L2 12" stroke="#fde68a" stroke-width="2.4"/></marker>
   <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -31,25 +31,14 @@
 </defs>
 <rect width="1200" height="700" rx="24" fill="#08111f"/>
 <rect x="22" y="22" width="1156" height="656" rx="22" fill="#0b1422" stroke="#1e344d"/>
-<text x="58" y="70" class="title">先区分：Attention cache 与递归状态</text>
+<text x="58" y="70" class="title">九步因果链：从递归状态到安全回退</text>
 
-<text x="64" y="126" class="h">逐 token KV</text>
-<text x="500" y="126" class="h">固定大小 recurrent state</text>
-<text x="875" y="126" class="h">hybrid model cache</text>
-<g><rect x="72" y="166" width="68" height="56" rx="13" class="blue"/><text x="106" y="194" class="m">t0</text></g><g><rect x="158" y="166" width="68" height="56" rx="13" class="blue"/><text x="192" y="194" class="m">t1</text></g><g><rect x="244" y="166" width="68" height="56" rx="13" class="blue"/><text x="278" y="194" class="m">t2</text></g><g><rect x="330" y="166" width="68" height="56" rx="13" class="blue"/><text x="364" y="194" class="m">t3</text></g>
-<g><rect x="72" y="254" width="68" height="56" rx="13" class="dim"/><text x="106" y="282" class="m">K0/V0</text></g><g><rect x="158" y="254" width="68" height="56" rx="13" class="dim"/><text x="192" y="282" class="m">K1/V1</text></g><g><rect x="244" y="254" width="68" height="56" rx="13" class="dim"/><text x="278" y="282" class="m">K2/V2</text></g><g><rect x="330" y="254" width="68" height="56" rx="13" class="dim"/><text x="364" y="282" class="m">K3/V3</text></g>
-<path d="M102 228V252M188 228V252M274 228V252M360 228V252" stroke="#38bdf8" stroke-width="3"/>
-<g style="animation:tokenMove 4s ease-in-out infinite"><circle cx="82" cy="360" r="13" fill="#f8fafc" class="glow"/></g>
-<path class="arrow" d="M75 360H440"/>
-<g><rect x="520" y="172" width="230" height="86" rx="13" class="violet"/><text x="635" y="215" class="m">state t</text></g>
-<g><rect x="520" y="292" width="230" height="86" rx="13" class="ok"/><text x="635" y="335" class="m">state t + 1</text></g>
-<path class="arrow" d="M635 258V288"/>
-<circle cx="604" cy="235" r="10" fill="#a78bfa" style="animation:pulse 2.6s ease-in-out infinite"/>
-<text x="536" y="430" class="t">Mamba / GDN 把历史压入 running state</text>
-<g><rect x="888" y="166" width="210" height="64" rx="13" class="blue"/><text x="993" y="198" class="m">Attention KV</text></g>
-<g><rect x="888" y="256" width="210" height="64" rx="13" class="violet"/><text x="993" y="288" class="m">Mamba / GDN</text></g>
-<g><rect x="888" y="346" width="210" height="64" rx="13" class="ok"/><text x="993" y="378" class="m">统一 block 表</text></g>
-<path class="arrow" d="M992 230V252"/><path class="arrow" d="M992 320V342"/>
-<text x="70" y="590" class="t">动画含义：左边按 token 保存可寻址历史；中间把历史滚入一个状态；右边说明 hybrid cache 需要同时管理两种对象。</text>
+<g><rect x="74" y="210" width="94" height="76" rx="13" class="blue"/><text x="121" y="237" class="m">1</text><text x="121" y="261" class="m">递归状态</text></g><g><rect x="186" y="210" width="94" height="76" rx="13" class="blue"/><text x="233" y="237" class="m">2</text><text x="233" y="261" class="m">block slot</text></g><g><rect x="298" y="210" width="94" height="76" rx="13" class="blue"/><text x="345" y="237" class="m">3</text><text x="345" y="261" class="m">boundary</text></g><g><rect x="410" y="210" width="94" height="76" rx="13" class="blue"/><text x="457" y="237" class="m">4</text><text x="457" y="261" class="m">MTP</text></g><g><rect x="522" y="210" width="94" height="76" rx="13" class="blue"/><text x="569" y="237" class="m">5</text><text x="569" y="261" class="m">回退一块</text></g><g><rect x="634" y="210" width="94" height="76" rx="13" class="blue"/><text x="681" y="237" class="m">6</text><text x="681" y="261" class="m">跨过 stop</text></g><g><rect x="746" y="210" width="94" height="76" rx="13" class="warn"/><text x="793" y="237" class="m">7</text><text x="793" y="261" class="m">S1 搬尾部</text></g><g><rect x="858" y="210" width="94" height="76" rx="13" class="ok"/><text x="905" y="237" class="m">8</text><text x="905" y="261" class="m">tracker 置零</text></g><g><rect x="970" y="210" width="94" height="76" rx="13" class="ok"/><text x="1017" y="237" class="m">9</text><text x="1017" y="261" class="m">安全回退</text></g>
+<path d="M168 248H956" stroke="#36506a" stroke-width="5" stroke-linecap="round"/>
+<g style="animation:stepNine 9s steps(8,end) infinite"><circle cx="121" cy="248" r="15" fill="#fde68a" class="glow"/></g>
+<text x="74" y="392" class="h">关键分界</text>
+<g><rect x="92" y="430" width="250" height="82" rx="13" class="warn"/><text x="217" y="460" class="m">有没有合法</text><text x="217" y="484" class="m">boundary state</text></g><g><rect x="438" y="430" width="250" height="82" rx="13" class="bad"/><text x="563" y="460" class="m">LMCache 看到的是</text><text x="563" y="484" class="m">append delta</text></g><g><rect x="784" y="430" width="250" height="82" rx="13" class="ok"/><text x="909" y="460" class="m">修复信号是</text><text x="909" y="484" class="m">重复非零 ID</text></g>
+<path class="arrow" d="M342 471H428"/><path class="arrow" d="M688 471H774"/>
+<text x="74" y="598" class="t">动画含义：这不是 list 去重小修，而是在恢复“这个 token boundary 是否真的有可共享状态”的语义。</text>
 
 </svg>

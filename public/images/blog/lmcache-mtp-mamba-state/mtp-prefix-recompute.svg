@@ -1,40 +1,49 @@
-<svg width="1200" height="640" viewBox="0 0 1200 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">MTP prefix cache 命中回退</title>
-  <desc id="desc">展示缓存物理上命中到 3232，但为了重建 MTP 所需 hidden state，scheduler 只报告命中到 1616 并重算后一块。</desc>
-  <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2L10 6L2 10" stroke="#FDE68A" stroke-width="2"/></marker>
-    <style>
-      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
-      .head{font:700 20px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
-      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
-      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC}
-      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#AAB9C9}
-    </style>
-  </defs>
-  <rect width="1200" height="640" rx="20" fill="#0A1220"/>
-  <text x="62" y="62" class="title">“Drop last matched block”只是少算命中，让当前请求重算</text>
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<title id="title">MTP 命中后：少跳过最后一个 block</title>
+<desc id="desc">展示 prefix cache 命中与强制重算最后一个块</desc>
+<defs>
+  <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M2 2L12 7L2 12" stroke="#fde68a" stroke-width="2.4"/></marker>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>
+.title{font:800 33px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.h{font:760 23px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.t{font:520 18px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#d8e5f3}
+.s{font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#aebed0}
+.m{font:760 18px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f8fafc;text-anchor:middle}
+.box{fill:#111b2a;stroke:#36506a;stroke-width:2}
+.ok{fill:#103325;stroke:#34d399}.warn{fill:#3b2a17;stroke:#f59e0b}.bad{fill:#3a1f2b;stroke:#fb7185}
+.blue{fill:#122d44;stroke:#38bdf8}.violet{fill:#2d2546;stroke:#a78bfa}.dim{fill:#182335;stroke:#415267}
+.arrow{stroke:#fde68a;stroke-width:4;fill:none;marker-end:url(#arrow)}
+.soft{opacity:.38}.glow{filter:url(#glow)}
+@keyframes pulse{0%,100%{opacity:.34}45%,65%{opacity:1}}
+@keyframes fade{0%,20%{opacity:.18}35%,85%{opacity:1}100%{opacity:.18}}
+@keyframes scanX{0%{transform:translateX(0)}45%{transform:translateX(344px)}70%{transform:translateX(688px)}100%{transform:translateX(688px)}}
+@keyframes scanShort{0%{transform:translateX(0)}50%{transform:translateX(184px)}100%{transform:translateX(368px)}}
+@keyframes tokenMove{0%{transform:translate(0,0);opacity:0}12%{opacity:1}78%{opacity:1}100%{transform:translate(560px,0);opacity:0}}
+@keyframes downMove{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(0,188px);opacity:0}}
+@keyframes relocate{0%,18%{transform:translate(0,0)}58%,100%{transform:translate(630px,260px)}}
+@keyframes zeroIn{0%,42%{opacity:0}55%,100%{opacity:1}}
+@keyframes reject{0%,45%{opacity:.25}55%,100%{opacity:1}}
+@keyframes grow{0%{stroke-dashoffset:620}70%,100%{stroke-dashoffset:0}}
+@keyframes hop{0%{transform:translate(0,0)}20%{transform:translate(96px,0)}40%{transform:translate(192px,0)}60%{transform:translate(288px,0)}80%,100%{transform:translate(384px,0)}}
+@keyframes stepNine{0%{transform:translate(0,0)}11%{transform:translate(112px,0)}22%{transform:translate(224px,0)}33%{transform:translate(336px,0)}44%{transform:translate(448px,0)}55%{transform:translate(560px,0)}66%{transform:translate(672px,0)}77%{transform:translate(784px,0)}88%,100%{transform:translate(896px,0)}}
+</style>
+</defs>
+<rect width="1200" height="700" rx="24" fill="#08111f"/>
+<rect x="22" y="22" width="1156" height="656" rx="22" fill="#0b1422" stroke="#1e344d"/>
+<text x="58" y="70" class="title">MTP 命中后：少跳过最后一个 block</text>
 
-  <text x="76" y="132" class="head">缓存实际拥有</text>
-  <rect x="240" y="100" width="360" height="74" rx="8" fill="#12405A" stroke="#38BDF8"/>
-  <rect x="600" y="100" width="360" height="74" rx="8" fill="#12405A" stroke="#38BDF8"/>
-  <text x="390" y="145" class="mono">block 0: [0, 1616)</text>
-  <text x="728" y="145" class="mono">block 1: [1616, 3232)</text>
-  <text x="225" y="200" class="small">0</text><text x="576" y="200" class="small">1616</text><text x="940" y="200" class="small">3232</text>
+<text x="70" y="134" class="h">缓存实际拥有</text>
+<g><rect x="70" y="170" width="230" height="82" rx="13" class="ok"/><text x="185" y="200" class="m">block 0</text><text x="185" y="224" class="m">0-1616</text></g>
+<g><rect x="318" y="170" width="230" height="82" rx="13" class="ok"/><text x="433" y="200" class="m">block 1</text><text x="433" y="224" class="m">1616-3232</text></g>
+<text x="70" y="324" class="h">对 scheduler 报告</text>
+<g><rect x="70" y="360" width="230" height="82" rx="13" class="ok"/><text x="185" y="390" class="m">直接跳过</text><text x="185" y="414" class="m">0-1616</text></g>
+<g><rect x="318" y="360" width="230" height="82" rx="13" class="warn"/><text x="433" y="390" class="m">当前请求</text><text x="433" y="414" class="m">重新计算</text></g>
+<rect x="318" y="360" width="230" height="82" rx="13" fill="none" stroke="#f8fafc" stroke-width="5" style="animation:pulse 3s ease-in-out infinite"/>
+<path class="arrow" d="M548 210C702 210 710 390 558 402"/>
+<text x="656" y="280" class="t">最后一个 matched block 不丢数据，</text>
+<text x="656" y="310" class="t">只是不能当作可跳过前缀。</text>
+<g><rect x="785" y="360" width="260" height="86" rx="13" class="blue"/><text x="915" y="392" class="m">重算 hidden state</text><text x="915" y="416" class="m">与 draft state</text></g>
+<path class="arrow" d="M548 402H778"/>
 
-  <path d="M780 180C780 238 660 244 660 292" stroke="#FDE68A" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
-  <text x="796" y="246" class="body">MTP 不能直接信任尾部 draft 状态</text>
-
-  <text x="76" y="336" class="head">对 scheduler 报告</text>
-  <rect x="240" y="304" width="360" height="82" rx="8" fill="#155E45" stroke="#22C55E"/>
-  <text x="350" y="338" class="mono">HIT [0, 1616)</text>
-  <text x="320" y="366" class="body">直接复用 KV</text>
-  <rect x="600" y="304" width="360" height="82" rx="8" fill="#713F12" stroke="#F59E0B"/>
-  <text x="690" y="338" class="mono">RECOMPUTE [1616, 3232)</text>
-  <text x="661" y="366" class="body">重建 hidden state 与 draft cache</text>
-
-  <rect x="190" y="458" width="820" height="106" rx="10" fill="#182638" stroke="#64748B"/>
-  <text x="224" y="493" class="head">没有发生什么？</text>
-  <text x="224" y="526" class="body">不是把 block 1 从显存里擦掉，也不是说其中的 Attention KV 算错。</text>
-  <text x="224" y="551" class="body">它只是不能计入“无需执行 forward 就能跳过”的 computed prefix。</text>
-  <text x="76" y="610" class="small">Prefix hash 证明 token 对应的缓存；它不自动证明 MTP 在边界处需要的所有 hidden/draft 状态。</text>
 </svg>

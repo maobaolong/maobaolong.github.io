@@ -1,48 +1,47 @@
 <svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">MTP 如何改变 Mamba checkpoint 切分</title>
-  <desc id="desc">对比 MTP 关闭时三段 Prefill 和 MTP 开启时两段 Prefill，说明 3232 边界为何不再 materialize state。</desc>
-  <defs>
-    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M1 1L9 5.5L1 10" stroke="#FDE68A" stroke-width="2"/></marker>
-    <style>
-      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
-      .head{font:700 21px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#F8FAFC}
-      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#D8E5F3}
-      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#F8FAFC}
-      .small{font:500 14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:#AAB9C9}
-    </style>
-  </defs>
-  <rect width="1200" height="700" rx="20" fill="#09111E"/>
-  <text x="62" y="62" class="title">同一段 Prompt，MTP 改变了值得保存的边界</text>
+<title id="title">MTP 改变 Prefill checkpoint 停止点</title>
+<desc id="desc">展示 MTP off 三段和 MTP on 两段的 scheduler stop 差异</desc>
+<defs>
+  <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M2 2L12 7L2 12" stroke="#fde68a" stroke-width="2.4"/></marker>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>
+.title{font:800 33px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.h{font:760 23px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.t{font:520 18px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#d8e5f3}
+.s{font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#aebed0}
+.m{font:760 18px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f8fafc;text-anchor:middle}
+.box{fill:#111b2a;stroke:#36506a;stroke-width:2}
+.ok{fill:#103325;stroke:#34d399}.warn{fill:#3b2a17;stroke:#f59e0b}.bad{fill:#3a1f2b;stroke:#fb7185}
+.blue{fill:#122d44;stroke:#38bdf8}.violet{fill:#2d2546;stroke:#a78bfa}.dim{fill:#182335;stroke:#415267}
+.arrow{stroke:#fde68a;stroke-width:4;fill:none;marker-end:url(#arrow)}
+.soft{opacity:.38}.glow{filter:url(#glow)}
+@keyframes pulse{0%,100%{opacity:.34}45%,65%{opacity:1}}
+@keyframes fade{0%,20%{opacity:.18}35%,85%{opacity:1}100%{opacity:.18}}
+@keyframes scanX{0%{transform:translateX(0)}45%{transform:translateX(344px)}70%{transform:translateX(688px)}100%{transform:translateX(688px)}}
+@keyframes scanShort{0%{transform:translateX(0)}50%{transform:translateX(184px)}100%{transform:translateX(368px)}}
+@keyframes tokenMove{0%{transform:translate(0,0);opacity:0}12%{opacity:1}78%{opacity:1}100%{transform:translate(560px,0);opacity:0}}
+@keyframes downMove{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(0,188px);opacity:0}}
+@keyframes relocate{0%,18%{transform:translate(0,0)}58%,100%{transform:translate(630px,260px)}}
+@keyframes zeroIn{0%,42%{opacity:0}55%,100%{opacity:1}}
+@keyframes reject{0%,45%{opacity:.25}55%,100%{opacity:1}}
+@keyframes grow{0%{stroke-dashoffset:620}70%,100%{stroke-dashoffset:0}}
+@keyframes hop{0%{transform:translate(0,0)}20%{transform:translate(96px,0)}40%{transform:translate(192px,0)}60%{transform:translate(288px,0)}80%,100%{transform:translate(384px,0)}}
+@keyframes stepNine{0%{transform:translate(0,0)}11%{transform:translate(112px,0)}22%{transform:translate(224px,0)}33%{transform:translate(336px,0)}44%{transform:translate(448px,0)}55%{transform:translate(560px,0)}66%{transform:translate(672px,0)}77%{transform:translate(784px,0)}88%,100%{transform:translate(896px,0)}}
+</style>
+</defs>
+<rect width="1200" height="700" rx="24" fill="#08111f"/>
+<rect x="22" y="22" width="1156" height="656" rx="22" fill="#0b1422" stroke="#1e344d"/>
+<text x="58" y="70" class="title">MTP 改变 Prefill checkpoint 停止点</text>
 
-  <line x1="208" y1="138" x2="1080" y2="138" stroke="#64748B" stroke-width="3"/>
-  <line x1="208" y1="128" x2="208" y2="148" stroke="#94A3B8" stroke-width="3"/>
-  <line x1="500" y1="128" x2="500" y2="148" stroke="#94A3B8" stroke-width="3"/>
-  <line x1="792" y1="128" x2="792" y2="148" stroke="#94A3B8" stroke-width="3"/>
-  <line x1="1080" y1="128" x2="1080" y2="148" stroke="#94A3B8" stroke-width="3"/>
-  <text x="197" y="112" class="mono">0</text><text x="477" y="112" class="mono">1616</text><text x="768" y="112" class="mono">3232</text><text x="1054" y="112" class="mono">4538</text>
+<text x="70" y="134" class="h">MTP off：3232 仍是未来停止点</text>
+<line x1="92" y1="205" x2="930" y2="205" stroke="#36506a" stroke-width="8" stroke-linecap="round"/>
+<g><rect x="92" y="164" width="196" height="82" rx="13" class="ok"/><text x="190" y="205" class="m">0-1616</text></g><g><rect x="300" y="164" width="196" height="82" rx="13" class="ok"/><text x="398" y="205" class="m">1616-3232</text></g><g><rect x="508" y="164" width="260" height="82" rx="13" class="dim"/><text x="638" y="205" class="m">3232-4538</text></g>
+<g style="animation:hop 5s steps(4,end) infinite"><circle cx="92" cy="205" r="16" fill="#f8fafc" class="glow"/></g>
+<text x="70" y="330" class="h">MTP on：未来 resume 会回退一块</text>
+<line x1="92" y1="402" x2="930" y2="402" stroke="#36506a" stroke-width="8" stroke-linecap="round"/>
+<g><rect x="92" y="360" width="196" height="82" rx="13" class="ok"/><text x="190" y="401" class="m">0-1616</text></g><g><rect x="300" y="360" width="468" height="82" rx="13" class="warn"/><text x="534" y="401" class="m">1616-4538</text></g>
+<line x1="496" y1="344" x2="496" y2="466" stroke="#fb7185" stroke-width="5" stroke-dasharray="10 8" style="animation:pulse 3s infinite"/>
+<text x="516" y="490" class="s">3232 被跨过，没有 step 恰好结束在这里</text>
+<text x="70" y="588" class="t">动画含义：MTP on 时，1616 已经是 step 起点，不再是当前 step 内部的未来 stop。</text>
 
-  <text x="64" y="228" class="head">MTP off</text>
-  <rect x="208" y="188" width="292" height="82" rx="8" fill="#12405A" stroke="#38BDF8"/>
-  <rect x="500" y="188" width="292" height="82" rx="8" fill="#145A4A" stroke="#22C55E"/>
-  <rect x="792" y="188" width="288" height="82" rx="8" fill="#3D315A" stroke="#A78BFA"/>
-  <text x="310" y="223" class="mono">step 1</text><text x="278" y="250" class="body">结束在 1616</text>
-  <text x="602" y="223" class="mono">step 2</text><text x="570" y="250" class="body">结束在 3232</text>
-  <text x="894" y="223" class="mono">step 3</text><text x="858" y="250" class="body">结束在 prompt tail</text>
-  <circle cx="500" cy="300" r="12" fill="#38BDF8"/><circle cx="792" cy="300" r="12" fill="#22C55E"/>
-  <text x="432" y="334" class="small">state_1616</text><text x="724" y="334" class="small">state_3232</text>
-
-  <text x="64" y="438" class="head">MTP on</text>
-  <rect x="208" y="398" width="292" height="82" rx="8" fill="#12405A" stroke="#38BDF8"/>
-  <rect x="500" y="398" width="580" height="82" rx="8" fill="#713F12" stroke="#F59E0B"/>
-  <text x="310" y="433" class="mono">step 1</text><text x="278" y="460" class="body">结束在 1616</text>
-  <text x="726" y="433" class="mono">step 2</text><text x="641" y="460" class="body">从 1616 直接运行到 4538</text>
-  <circle cx="500" cy="510" r="12" fill="#38BDF8"/>
-  <circle cx="792" cy="510" r="12" fill="#0F172A" stroke="#F87171" stroke-width="3"/>
-  <path d="M784 502L800 518M800 502L784 518" stroke="#F87171" stroke-width="3"/>
-  <text x="432" y="544" class="small">state_1616</text><text x="676" y="544" class="small">没有 step 在 3232 结束，因此没有 state_3232</text>
-
-  <path d="M792 352V390" stroke="#FDE68A" stroke-width="3" marker-end="url(#arrow)"/>
-  <text x="822" y="374" class="body">未来命中也会回退，所以不再额外切一刀</text>
-  <rect x="190" y="604" width="820" height="56" rx="8" fill="#182638"/>
-  <text x="226" y="638" class="body">关键不是“计算经过了 3232”，而是“有没有一个 step 恰好结束在 3232”。</text>
 </svg>

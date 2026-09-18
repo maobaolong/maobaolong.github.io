@@ -12,6 +12,12 @@
   For generated narration videos, use macOS AVFoundation or `avconvert`; convert
   OpenAI Speech MP3 output to M4A before muxing if AVFoundation cannot discover
   the MP3 audio track.
+- For Chinese technical narration videos, avoid concatenating many short TTS
+  clips. Use one continuous Mandarin neural TTS pass with sentence-boundary
+  timestamps, then drive scene timing and subtitles from that timeline. Keep the
+  spoken script free of code punctuation and hard-to-read English labels; say
+  terms naturally, for example "检查点", "物理内存页", "逻辑槽位", "循环状态",
+  and reserve exact code identifiers for on-screen labels.
 - `pnpm check` is not currently a non-interactive validation path in this checkout:
   it prompts to install `@astrojs/check`. Do not count it as a passed check unless
   that dependency is intentionally added first.
