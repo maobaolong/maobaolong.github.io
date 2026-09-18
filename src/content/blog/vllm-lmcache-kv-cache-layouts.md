@@ -33,6 +33,15 @@ draft: false
 
 本文基于 2026-09-16 拉取的源码快照：vLLM [`8be5205`](https://github.com/vllm-project/vllm/tree/8be5205abbabf4c377c603d6c4180a99373f6415)，LMCache [`1b7dff2`](https://github.com/LMCache/LMCache/tree/1b7dff2cd83fc634326b5989eb71aa5f05b4f426)。如果你读到这篇时源码已经继续演进，优先看当前代码。
 
+如果你想先用几分钟建立整体直觉，可以先看这段配音讲解版。它按“轴顺序、选择时机、检测消歧、转换成本”的顺序，把下面四张动态图串成一个完整过程。
+
+<figure class="video-feature">
+  <video controls preload="metadata" poster="/videos/blog/kv-layouts/kv-layouts-explainer-poster.jpg">
+    <source src="/videos/blog/kv-layouts/kv-layouts-explainer.mp4" type="video/mp4" />
+  </video>
+  <figcaption>视频：4 分钟配音版，用动态图快速建立 KV layout 的整体直觉。</figcaption>
+</figure>
+
 <figure class="diagram-scroll">
   <a class="diagram-scroll__canvas" href="/images/blog/kv-layouts/axis-order.svg" aria-label="打开 KV layout 轴顺序动态图原图">
     <img src="/images/blog/kv-layouts/axis-order.svg" alt="NHD、HND、BLNHC、BLHNC 轴顺序和连续访问方式动态图" />

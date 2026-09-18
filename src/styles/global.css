@@ -262,6 +262,25 @@ main {
   text-align: center;
 }
 
+.video-feature {
+  margin: 2rem 0;
+}
+
+.video-feature video {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(4, 11, 22, 0.72);
+}
+
+.video-feature figcaption {
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .lmcache-anim {
   position: relative;
   z-index: 1;

@@ -8,6 +8,10 @@
   - `pnpm install && pnpm build`
 - `astro preview` serves the built `dist/` output. After changing files under
   `public/`, run `pnpm build` again before visual-checking previewed assets.
+- This desktop environment does not currently provide an `ffmpeg` executable.
+  For generated narration videos, use macOS AVFoundation or `avconvert`; convert
+  OpenAI Speech MP3 output to M4A before muxing if AVFoundation cannot discover
+  the MP3 audio track.
 - `pnpm check` is not currently a non-interactive validation path in this checkout:
   it prompts to install `@astrojs/check`. Do not count it as a passed check unless
   that dependency is intentionally added first.
