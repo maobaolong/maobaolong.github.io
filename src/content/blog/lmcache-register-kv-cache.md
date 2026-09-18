@@ -2,7 +2,7 @@
 title: "LMCache MP 注册路径详解：register_kv_cache 到底在干什么"
 description: "围绕 vLLM 调用 register_kv_caches 后传入的 KV cache、LMCache driven 多进程连接器的客户端处理、服务端注册、EngineGroupInfo 生成，以及普通 Attention、MLA、DeepSeek、Qwen 和 Mamba 等复杂模型布局，系统解释 LMCache 为什么需要这一层注册协议。"
 publishedAt: 2026-09-16
-updatedAt: 2026-09-16
+updatedAt: 2026-09-18
 category: AI Infra
 tags:
   - lmcache
@@ -41,6 +41,69 @@ draft: false
     <img src="/images/blog/lmcache-register-kv-cache/register-flow.svg" alt="LMCache driven register_kv_cache 从 vLLM worker 到 LMCache server 的流程图" />
   </a>
   <figcaption>图 1：LMCache driven 注册路径。客户端先标准化 tensor view、生成 EngineGroupInfo，再把 IPC wrapper 和 group metadata 发给服务端。</figcaption>
+</figure>
+
+<figure class="lmcache-anim lmcache-anim--register" data-lmcache-animation="register" data-step="0">
+  <div class="lmcache-anim__header">
+    <div>
+      <p class="lmcache-anim__kicker">动态图 1</p>
+      <h3>注册路径不是一次消息发送，而是逐步把 runtime 资源建模</h3>
+    </div>
+    <div class="lmcache-anim__step-label" data-anim-step-label>Step 1 / 6</div>
+  </div>
+  <p class="lmcache-anim__note" data-anim-copy>vLLM worker 先拿到真实的 KV tensor、KVCacheConfig 和 layout hints；后续所有轻量 STORE / RETRIEVE 都要依赖这次注册建立的契约。</p>
+  <div class="lmcache-anim__stage register-stage">
+    <div class="register-lane register-lane--worker">
+      <h4>vLLM worker</h4>
+      <div class="register-node is-visible" data-show-from="0" data-highlight-step="0">
+        <strong>输入三件套</strong>
+        <span>kv_caches + kv_cache_groups + layout_hints</span>
+      </div>
+      <div class="register-arrow" data-show-from="1"></div>
+      <div class="register-node" data-show-from="1" data-highlight-step="1">
+        <strong>zero-copy re-view</strong>
+        <span>把 sub-paged / Mamba 视图改成可按 block 搬运的 page</span>
+      </div>
+      <div class="register-arrow" data-show-from="2"></div>
+      <div class="register-node" data-show-from="2" data-highlight-step="2">
+        <strong>EngineGroupInfo</strong>
+        <span>把 vLLM group 语义和真实 tensor layout 合成协议</span>
+      </div>
+      <div class="register-arrow" data-show-from="3"></div>
+      <div class="register-node register-node--payload" data-show-from="3" data-highlight-step="3">
+        <strong>REGISTER_KV_CACHE payload</strong>
+        <span>DeviceIPCWrapper[] + model/world + layout_hints + group infos</span>
+      </div>
+    </div>
+    <div class="register-boundary">
+      <span>IPC boundary</span>
+      <div class="register-packet" data-show-from="3"></div>
+    </div>
+    <div class="register-lane register-lane--server">
+      <h4>LMCache server</h4>
+      <div class="register-node" data-show-from="4" data-highlight-step="4">
+        <strong>import IPC handles</strong>
+        <span>unwrap 成 server 进程可见的 tensor view</span>
+      </div>
+      <div class="register-arrow" data-show-from="4"></div>
+      <div class="register-node" data-show-from="4" data-highlight-step="4">
+        <strong>复现 format discovery</strong>
+        <span>按 EngineGroupInfo 指定的 layer index 重新检测 shape/stride</span>
+      </div>
+      <div class="register-arrow" data-show-from="5"></div>
+      <div class="register-node" data-show-from="5" data-highlight-step="5">
+        <strong>runtime transfer resources</strong>
+        <span>KVLayerGroupsManager + layout registry + context table</span>
+      </div>
+    </div>
+  </div>
+  <div class="lmcache-anim__controls" role="group" aria-label="注册路径动画控制">
+    <button type="button" class="lmcache-anim__button" data-anim-prev aria-label="上一步">‹</button>
+    <button type="button" class="lmcache-anim__button" data-anim-play aria-label="播放或暂停">▶</button>
+    <button type="button" class="lmcache-anim__button" data-anim-next aria-label="下一步">›</button>
+    <div class="lmcache-anim__dots" data-anim-dots aria-label="动画步骤"></div>
+  </div>
+  <figcaption>这段动画对应后文四层转换：内存所有权、布局、语义分组、存储对象描述。每一步少一项，server 后续都无法只凭 block ids 安全搬运。</figcaption>
 </figure>
 
 ## 一、先把场景放清楚
@@ -268,6 +331,69 @@ logical block 0
   <figcaption>补图 D：block id 是 logical / manager block 坐标；worker tensor 的第一维可能是 physical/kernel page 坐标。LMCache 注册前的 re-view 就是在这两个坐标系之间架桥。</figcaption>
 </figure>
 
+<figure class="lmcache-anim lmcache-anim--review" data-lmcache-animation="review" data-step="0">
+  <div class="lmcache-anim__header">
+    <div>
+      <p class="lmcache-anim__kicker">动态图 2</p>
+      <h3>17 个 physical/kernel pages 如何变成 1 个 logical block</h3>
+    </div>
+    <div class="lmcache-anim__step-label" data-anim-step-label>Step 1 / 5</div>
+  </div>
+  <p class="lmcache-anim__note" data-anim-copy>最开始 worker tensor 第一维数的是 kernel page，每个 page 只有 32 个 token slot；vLLM block id 还不能直接拿它当 544-token block 用。</p>
+  <div class="lmcache-anim__stage review-stage">
+    <div class="review-ruler" aria-label="17 个 physical kernel pages">
+      <span data-review-page="0">0</span>
+      <span data-review-page="1">1</span>
+      <span data-review-page="2">2</span>
+      <span data-review-page="3">3</span>
+      <span data-review-page="4">4</span>
+      <span data-review-page="5">5</span>
+      <span data-review-page="6">6</span>
+      <span data-review-page="7">7</span>
+      <span data-review-page="8">8</span>
+      <span data-review-page="9">9</span>
+      <span data-review-page="10">10</span>
+      <span data-review-page="11">11</span>
+      <span data-review-page="12">12</span>
+      <span data-review-page="13">13</span>
+      <span data-review-page="14">14</span>
+      <span data-review-page="15">15</span>
+      <span data-review-page="16">16</span>
+    </div>
+    <div class="review-label-row">
+      <span>physical pages: 17 × 32 slots</span>
+      <strong data-review-slots>0 / 544 slots selected</strong>
+    </div>
+    <div class="review-merge">
+      <div class="review-merge__fill"></div>
+      <span>logical block 0</span>
+    </div>
+    <div class="review-shapes">
+      <code>[N * 17, 2, 32, H, C]</code>
+      <span class="review-shapes__operator">view, no copy</span>
+      <code>[N, 2, 544, 1, C']</code>
+    </div>
+    <div class="review-address">
+      <span>block id 0</span>
+      <div>
+        <strong>before</strong>
+        <em>可能误指向 page 0 的 32 slots</em>
+      </div>
+      <div>
+        <strong>after</strong>
+        <em>稳定指向 pages 0..16 的 544 slots</em>
+      </div>
+    </div>
+  </div>
+  <div class="lmcache-anim__controls" role="group" aria-label="re-view 动画控制">
+    <button type="button" class="lmcache-anim__button" data-anim-prev aria-label="上一步">‹</button>
+    <button type="button" class="lmcache-anim__button" data-anim-play aria-label="播放或暂停">▶</button>
+    <button type="button" class="lmcache-anim__button" data-anim-next aria-label="下一步">›</button>
+    <div class="lmcache-anim__dots" data-anim-dots aria-label="动画步骤"></div>
+  </div>
+  <figcaption>这个动画故意不画 K/V 语义，而是画地址语义：LMCache 关心的是同一段 storage 如何被重新标成 vLLM block id 能理解的 byte range。</figcaption>
+</figure>
+
 这也是为什么 LMCache 注册时不能只看 raw tensor 的第一维。raw tensor 第一维可能是 kernel page 数，但 vLLM 传下来的 block id 属于 logical block 坐标系。LMCache 必须先把多个 physical pages 重新 view 成一个 logical page，否则后续 STORE / RETRIEVE 会用错 block id 到 byte range 的映射。
 
 ### 1. Sub-paged attention
@@ -367,6 +493,64 @@ LMCache 的 transfer path 更擅长处理“每个 block 一个 page”的 tenso
 
 这里的 `2` 也不是真正的 K/V，只是把一整页 bytes 切成 transfer kernel 能走的形状。PR #5042 还补了 unified Mamba view 对 `BLNHC` / `BLHNC` 的支持：blocks-first layout 和原来的 layers-first layout 在这条 view 里可以归约成同样的 inner shape 选择。
 
+<figure class="lmcache-anim lmcache-anim--mamba" data-lmcache-animation="mamba" data-step="0">
+  <div class="lmcache-anim__header">
+    <div>
+      <p class="lmcache-anim__kicker">动态图 3</p>
+      <h3>Mamba state 为什么也能走 register_kv_cache</h3>
+    </div>
+    <div class="lmcache-anim__step-label" data-anim-step-label>Step 1 / 5</div>
+  </div>
+  <p class="lmcache-anim__note" data-anim-copy>Mamba / linear attention 保存的是 recurrent state snapshot，不是每个 token 一份 K/V。这里先把 conv_state 和 ssm_state 当成两段不同形状的 bytes。</p>
+  <div class="lmcache-anim__stage mamba-stage">
+    <div class="mamba-state-source">
+      <h4>runtime state tensors</h4>
+      <div class="mamba-part mamba-part--conv is-visible" data-mamba-part="conv" data-show-from="0" data-highlight-step="0">
+        <strong>conv_state</strong>
+        <span>卷积侧短历史状态</span>
+      </div>
+      <div class="mamba-part mamba-part--ssm is-visible" data-mamba-part="ssm" data-show-from="0" data-highlight-step="0">
+        <strong>ssm_state</strong>
+        <span>state-space hidden state</span>
+      </div>
+    </div>
+    <div class="mamba-pack">
+      <h4>one recurrent page</h4>
+      <div class="mamba-page">
+        <span class="mamba-page__seg mamba-page__seg--conv" data-mamba-part="conv-page" data-show-from="1" data-highlight-step="1">conv bytes</span>
+        <span class="mamba-page__seg mamba-page__seg--ssm" data-mamba-part="ssm-page" data-show-from="1" data-highlight-step="1">ssm bytes</span>
+        <span class="mamba-page__seg mamba-page__seg--pad" data-mamba-part="padding" data-show-from="1" data-highlight-step="1">padding</span>
+      </div>
+      <div class="mamba-shape" data-mamba-part="raw-page" data-show-from="1">
+        <code>[num_blocks, page_bytes]</code>
+      </div>
+    </div>
+    <div class="mamba-transfer">
+      <h4>LMCache transfer view</h4>
+      <div class="mamba-transfer-shape" data-mamba-part="transfer" data-show-from="2" data-highlight-step="2">
+        <code>[num_blocks, 2, block_size, 1, head_size]</code>
+      </div>
+      <div class="mamba-axes">
+        <span data-mamba-axis="3"><strong>2</strong><em>synthetic split</em></span>
+        <span data-mamba-axis="3"><strong>1</strong><em>synthetic head</em></span>
+        <span data-mamba-axis="3"><strong>head_size</strong><em>page payload width</em></span>
+      </div>
+      <div class="mamba-window" data-mamba-window data-show-from="4">
+        <strong>EngineGroupInfo</strong>
+        <code>recurrent_state = true</code>
+        <code>sw_size_tokens = block_size</code>
+      </div>
+    </div>
+  </div>
+  <div class="lmcache-anim__controls" role="group" aria-label="Mamba state 动画控制">
+    <button type="button" class="lmcache-anim__button" data-anim-prev aria-label="上一步">‹</button>
+    <button type="button" class="lmcache-anim__button" data-anim-play aria-label="播放或暂停">▶</button>
+    <button type="button" class="lmcache-anim__button" data-anim-next aria-label="下一步">›</button>
+    <div class="lmcache-anim__dots" data-anim-dots aria-label="动画步骤"></div>
+  </div>
+  <figcaption>Mamba 的动画重点是“状态页”而不是“K/V 语义”：register 阶段把多段 state bytes 归一成可寻址 page，并把恢复语义写进 EngineGroupInfo。</figcaption>
+</figure>
+
 ## 五、客户端第二步：create_engine_group_infos_from_vllm 是整条链路的翻译器
 
 先把名字说清楚：`create_engine_group_info_from_engine` 不是这个 PR 当前代码里的函数名，更像讨论时容易说出口的“泛称”或旧式单数叫法。当前代码里的实际入口是：
@@ -439,7 +623,69 @@ per_layer_discoverable_kv_caches = list(kv_caches.values())
 layer_to_idx = {name: idx for idx, name in enumerate(kv_caches.keys())}
 ```
 
-后面所有 group metadata 都会从 layer name 转成 layer index。这样服务端收到 `EngineGroupInfo(layer_indices=(0, 2, 4))` 时，不需要认识 vLLM 的 layer name，只要按注册 tensor 列表的 index 工作。
+后面所有 group metadata 都会从 layer name 转成 layer index。比如注册列表里第 0、2、4 个 tensor 属于同一个 vLLM group，服务端收到 `EngineGroupInfo(layer_indices=(0, 2, 4))` 时，不需要认识 vLLM 的 layer name，只要按注册 tensor 列表的 index 工作。
+
+<figure class="lmcache-anim lmcache-anim--grouping" data-lmcache-animation="grouping" data-step="0">
+  <div class="lmcache-anim__header">
+    <div>
+      <p class="lmcache-anim__kicker">动态图 4</p>
+      <h3>从 layer name 到 layer index，再到 EngineGroupInfo</h3>
+    </div>
+    <div class="lmcache-anim__step-label" data-anim-step-label>Step 1 / 5</div>
+  </div>
+  <p class="lmcache-anim__note" data-anim-copy>先把有序 dict 摊平成 registered tensor list；从这一步之后，跨进程协议尽量只讲 index，不再要求 server 理解 vLLM layer name。</p>
+  <div class="lmcache-anim__stage grouping-stage">
+    <div class="grouping-column">
+      <h4>registered tensor list</h4>
+      <ol class="grouping-list">
+        <li data-group-layer data-role="main"><span>0</span><code>model.layers.0.self_attn.kv_cache</code><em>rank-5 K/V</em></li>
+        <li data-group-layer data-role="scratch"><span>1</span><code>model.layers.1.qsa_ring</code><em>prefix_cacheable = false</em></li>
+        <li data-group-layer data-role="main"><span>2</span><code>model.layers.2.self_attn.kv_cache</code><em>rank-5 K/V</em></li>
+        <li data-group-layer data-role="indexer"><span>3</span><code>model.layers.3.mla_indexer</code><em>rank-3 uint8</em></li>
+        <li data-group-layer data-role="main"><span>4</span><code>model.layers.4.self_attn.kv_cache</code><em>rank-5 K/V</em></li>
+      </ol>
+    </div>
+    <div class="grouping-column">
+      <h4>vLLM group metadata</h4>
+      <div class="grouping-spec" data-group-spec="main">
+        <strong>group 0: layer names</strong>
+        <code>[layer.0, layer.2, layer.4]</code>
+      </div>
+      <div class="grouping-spec" data-group-spec="scratch">
+        <strong>group 1: non-prefix-cacheable</strong>
+        <code>[layer.1] → tokens_per_block = 0</code>
+      </div>
+      <div class="grouping-spec" data-group-spec="indexer">
+        <strong>group 2: indexer layout</strong>
+        <code>[layer.3] → rank-3 / uint8</code>
+      </div>
+    </div>
+    <div class="grouping-column">
+      <h4>LMCache protocol view</h4>
+      <div class="grouping-info" data-group-info="main">
+        <strong>EngineGroupInfo 0</strong>
+        <code>engine_group_id = 0</code>
+        <code>layer_indices = (0, 2, 4)</code>
+      </div>
+      <div class="grouping-info grouping-info--excluded" data-group-info="scratch">
+        <strong>no EngineGroupInfo</strong>
+        <code>layer 1 stays EXCLUDED</code>
+      </div>
+      <div class="grouping-info" data-group-info="indexer">
+        <strong>EngineGroupInfo 1</strong>
+        <code>engine_group_id = 2</code>
+        <code>layer_indices = (3,)</code>
+      </div>
+    </div>
+  </div>
+  <div class="lmcache-anim__controls" role="group" aria-label="分组动画控制">
+    <button type="button" class="lmcache-anim__button" data-anim-prev aria-label="上一步">‹</button>
+    <button type="button" class="lmcache-anim__button" data-anim-play aria-label="播放或暂停">▶</button>
+    <button type="button" class="lmcache-anim__button" data-anim-next aria-label="下一步">›</button>
+    <div class="lmcache-anim__dots" data-anim-dots aria-label="动画步骤"></div>
+  </div>
+  <figcaption><code>(0, 2, 4)</code> 在这里就是这个小例子的结果：它来自 registered tensor list 的位置，不要求模型真实只注册偶数层。</figcaption>
+</figure>
 
 ### 2. 找出需要 format discovery 的 layer group
 
@@ -1074,6 +1320,42 @@ info 0 -> [10, 11]
 info 1 -> [20, 21]
 info 2 -> [10, 11]
 ```
+
+<figure class="lmcache-anim lmcache-anim--expand" data-lmcache-animation="expand" data-step="0">
+  <div class="lmcache-anim__header">
+    <div>
+      <p class="lmcache-anim__kicker">动态图 5</p>
+      <h3>同一个 engine group 的 block ids 如何分发给多个 kernel group</h3>
+    </div>
+    <div class="lmcache-anim__step-label" data-anim-step-label>Step 1 / 4</div>
+  </div>
+  <p class="lmcache-anim__note" data-anim-copy>vLLM 发来的是按 engine group 排列的 block ids；这个坐标系描述调度语义，不直接等于 server 要 launch 的 kernel group 顺序。</p>
+  <div class="lmcache-anim__stage expand-stage">
+    <div class="expand-source">
+      <h4>engine block ids from vLLM</h4>
+      <div class="expand-blocks" data-engine-blocks="0"><strong>group 0</strong><code>[10, 11]</code></div>
+      <div class="expand-blocks" data-engine-blocks="1"><strong>group 1</strong><code>[20, 21]</code></div>
+    </div>
+    <div class="expand-router" aria-hidden="true">
+      <span data-expand-line="0"></span>
+      <span data-expand-line="1"></span>
+      <span data-expand-line="2"></span>
+    </div>
+    <div class="expand-target">
+      <h4>kernel groups on server</h4>
+      <div class="expand-info" data-expand-info="0" data-engine="0"><strong>info 0</strong><span>layers [0, 2]</span><code>[10, 11]</code></div>
+      <div class="expand-info" data-expand-info="1" data-engine="1"><strong>info 1</strong><span>layers [1, 3]</span><code>[20, 21]</code></div>
+      <div class="expand-info" data-expand-info="2" data-engine="0"><strong>info 2</strong><span>layers [4]</span><code>[10, 11]</code></div>
+    </div>
+  </div>
+  <div class="lmcache-anim__controls" role="group" aria-label="block id 分发展示控制">
+    <button type="button" class="lmcache-anim__button" data-anim-prev aria-label="上一步">‹</button>
+    <button type="button" class="lmcache-anim__button" data-anim-play aria-label="播放或暂停">▶</button>
+    <button type="button" class="lmcache-anim__button" data-anim-next aria-label="下一步">›</button>
+    <div class="lmcache-anim__dots" data-anim-dots aria-label="动画步骤"></div>
+  </div>
+  <figcaption>这里最容易错的是把 engine group 顺序当成 kernel group 顺序。动画里 info 0 和 info 2 都复用 group 0 的 block ids，因为它们只是同一 block-id address space 下的不同 transfer identity。</figcaption>
+</figure>
 
 server 后续只要按 kernel group index 逐个跑 copy，就不会再关心 vLLM 的 layer name。
 
