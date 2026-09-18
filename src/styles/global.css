@@ -252,6 +252,7 @@ main {
 .diagram-scroll__canvas img {
   width: 100%;
   max-width: none;
+  margin: 0;
 }
 
 .diagram-scroll figcaption {

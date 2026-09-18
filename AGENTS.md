@@ -6,6 +6,8 @@
 - For local verification here, a reliable setup is:
   - `export PATH="/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/mbl/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:$PATH"`
   - `pnpm install && pnpm build`
+- `astro preview` serves the built `dist/` output. After changing files under
+  `public/`, run `pnpm build` again before visual-checking previewed assets.
 - `pnpm check` is not currently a non-interactive validation path in this checkout:
   it prompts to install `@astrojs/check`. Do not count it as a passed check unless
   that dependency is intentionally added first.

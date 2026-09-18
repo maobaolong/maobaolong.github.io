@@ -2,7 +2,7 @@
 title: "NHD、HND、BLHNC、BLNHC：vLLM 和 LMCache 的 KV Layout 到底在选什么"
 description: "从 vLLM 的 KVCacheLayout 解析、不同 attention backend 的偏好，到 LMCache 的 EngineKVFormat 探测与转换边界，系统解释为什么会有多种 KV layout。"
 publishedAt: 2026-09-16
-updatedAt: 2026-09-16
+updatedAt: 2026-09-18
 category: AI Infra
 tags:
   - vllm
@@ -33,7 +33,12 @@ draft: false
 
 本文基于 2026-09-16 拉取的源码快照：vLLM [`8be5205`](https://github.com/vllm-project/vllm/tree/8be5205abbabf4c377c603d6c4180a99373f6415)，LMCache [`1b7dff2`](https://github.com/LMCache/LMCache/tree/1b7dff2cd83fc634326b5989eb71aa5f05b4f426)。如果你读到这篇时源码已经继续演进，优先看当前代码。
 
-![KV layout axis order](/images/blog/kv-layouts/axis-order.svg)
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/kv-layouts/axis-order.svg" aria-label="打开 KV layout 轴顺序动态图原图">
+    <img src="/images/blog/kv-layouts/axis-order.svg" alt="NHD、HND、BLNHC、BLHNC 轴顺序和连续访问方式动态图" />
+  </a>
+  <figcaption>图 1：白色游标按物理轴顺序扫描；右侧小格按连续访问顺序亮起，用来区分 token-major、head-major 和 block-first。</figcaption>
+</figure>
 
 ## 先把名字拆开
 
@@ -111,7 +116,12 @@ head 7: token 0, token 1, ..., token 15
 
 vLLM 的选择流程现在集中在 engine core 解析阶段，而不是每个 worker 自己随便猜。
 
-![vLLM KV layout selection flow](/images/blog/kv-layouts/selection-flow.svg)
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/kv-layouts/selection-flow.svg" aria-label="打开 vLLM KV layout 选择流程动态图原图">
+    <img src="/images/blog/kv-layouts/selection-flow.svg" alt="vLLM 在 engine core 中解析 KV cache layout 的动态图" />
+  </a>
+  <figcaption>图 2：layout 先在 engine core 中解析并写入 CacheConfig，随后 worker 才按 resolved layout 创建 KV cache view。</figcaption>
+</figure>
 
 核心逻辑在 `resolve_kv_cache_layout`：
 
@@ -210,7 +220,12 @@ LMCache 不能只问“你是 HND 还是 NHD”，它还要知道：
 
 LMCache 的 design doc 明确要求 `normalize_kv_and_discover_format` 是唯一解析入口：它返回 `(EngineKVFormat, normalized_kv_caches)`，后面的 pointer、shape desc、kernel dispatch 都查询 format facts，而不是每个调用点重新按 shape 猜。参考 LMCache 的 [`layout-invariant.md`](https://github.com/LMCache/LMCache/blob/1b7dff2cd83fc634326b5989eb71aa5f05b4f426/docs/design/v1/gpu_connector/layout-invariant.md#L6-L15) 和 format map [`#L145-L161`](https://github.com/LMCache/LMCache/blob/1b7dff2cd83fc634326b5989eb71aa5f05b4f426/docs/design/v1/gpu_connector/layout-invariant.md#L145-L161)。
 
-![LMCache KV format detection](/images/blog/kv-layouts/lmcache-detection.svg)
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/kv-layouts/lmcache-detection.svg" aria-label="打开 LMCache KV format 检测动态图原图">
+    <img src="/images/blog/kv-layouts/lmcache-detection.svg" alt="LMCache 结合 raw tensor 和 resolved layout hint 消歧的动态图" />
+  </a>
+  <figcaption>图 3：LMCache 同时依赖 raw tensor 的 shape/stride/nesting 和 vLLM 的 resolved layout hint；shape 有歧义时，hint 负责消歧。</figcaption>
+</figure>
 
 ## LMCache 能自动探测吗？
 
@@ -241,7 +256,12 @@ LMCache 的检测分三步：
 
 要分四种情况。
 
-![KV layout conversion map](/images/blog/kv-layouts/conversion-map.svg)
+<figure class="diagram-scroll">
+  <a class="diagram-scroll__canvas" href="/images/blog/kv-layouts/conversion-map.svg" aria-label="打开 KV layout 转换成本动态图原图">
+    <img src="/images/blog/kv-layouts/conversion-map.svg" alt="KV layout 转换成本分类动态图" />
+  </a>
+  <figcaption>图 4：把“转换”拆成四类：metadata-only view、真实数据重排、命名翻译、以及当前 transfer kernel 不支持的碎片化布局。</figcaption>
+</figure>
 
 **第一种：只是 view 的转换，成本很低。**
 
