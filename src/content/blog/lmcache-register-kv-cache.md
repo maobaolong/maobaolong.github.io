@@ -261,12 +261,9 @@ shape: [num_blocks, 2, block_size, num_heads, head_size]
 
 一个 vLLM block 对应一个 tensor page。这时 LMCache 直接看 tensor shape，就能知道一个 page 里有多少 token slot。
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/config-slot-page.svg" aria-label="打开 attention 配置、page 和 slot 关系图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/config-slot-page.svg" alt="普通 attention 中配置、tensor page 和 token slot 的关系" />
-  </a>
-  <figcaption>补图 A：普通 attention 里，<code>block_size</code> 决定一个 page 里有多少 token slot；<code>page_size_bytes</code> 是这些 slot 里的 K/V 向量合起来占多少内存。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="config-slot" aria-label="补图 A：普通 attention 里的配置、page 和 slot">
+  <noscript>补图 A：普通 attention 里，block_size 决定一个 page 里有多少 token slot；page_size_bytes 是这些 slot 里的 K/V 向量合起来占多少内存。</noscript>
+</section>
 
 但 hybrid / MLA / Mamba 模型会打破这个直觉。
 
@@ -290,23 +287,17 @@ one-token attention bytes
 
 但 Mamba / recurrent layer 不一样。它缓存的不是“每个 token 一行 K/V”，而是一组递归状态快照，比如 conv state、SSM state，再加上可能的 padding。Mamba 这一页有多大，主要由这些 state tensor 的 shape 和 dtype 决定，不是简单把 attention 的 token 行数乘起来。
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/mamba-state-page.svg" aria-label="打开 attention page 与 Mamba state page 对比图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/mamba-state-page.svg" alt="Attention token slot page 与 Mamba recurrent state page 的对比" />
-  </a>
-  <figcaption>补图 B：attention page 像一排 token slots，每个 slot 里有 K/V；Mamba page 更像一个 recurrent state 快照，由 conv state、SSM state 和 padding 组成。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="mamba-state-page" aria-label="补图 B：attention page 与 Mamba state page 对比">
+  <noscript>补图 B：attention page 像一排 token slots，每个 slot 里有 K/V；Mamba page 更像一个 recurrent state 快照，由 conv state、SSM state 和 padding 组成。</noscript>
+</section>
 
 Mamba-hybrid 模型同时有 attention group 和 Mamba group。vLLM 的 hybrid memory allocator 要把这些 group 放进同一套 KV cache 分组、容量估算和 block table 体系里，所以希望不同 group 的 `page_size_bytes` 对齐。这里的“对齐”是 **bytes 级别的 page size 对齐**，不是要求每个 group 都覆盖相同 token 数。
 
 直观地说，allocator 和 scheduler 后面会不断问这类问题：每个 group 还能分配多少 page、一个 request 的第 N 个 block id 在各个 group 里对应哪一页、给定显存预算下还能承载多少并发。如果不同 group 的“一个 page”代表完全不同的 byte 量，统一估算和统一 block-id 账本就会变得很难维护，甚至容易把某个 group 的 page 数算错。
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/hybrid-page-size-alignment.svg" aria-label="打开 Mamba-hybrid page-size 对齐示意图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/hybrid-page-size-alignment.svg" alt="Mamba-hybrid 中 attention page size 与 Mamba state page size 的 byte 对齐" />
-  </a>
-  <figcaption>补图 C：page-size 对齐对齐的是 bytes 账本。Mamba state page 如果约等于 17 个 attention kernel pages，vLLM 就可能把 attention 的 manager block 放大到 17 * 32 = 544 token slots。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="hybrid-align" aria-label="补图 C：Mamba-hybrid page-size 对齐">
+  <noscript>补图 C：page-size 对齐对齐的是 bytes 账本。Mamba state page 如果约等于 17 个 attention kernel pages，vLLM 就可能把 attention 的 manager block 放大到 17 * 32 = 544 token slots。</noscript>
+</section>
 
 为什么会把 attention 的逻辑 block size 放大？因为 attention page bytes 可以通过增大 block size 来变大，而 Mamba state page bytes 往往已经由 state shape 决定了。假设 attention kernel 天然使用 32-token page，大小是 `X`；Mamba state page 大约是 `17X`。为了让两个 group 的 page size 对齐，vLLM 可以把 attention 的 manager block size 从 32 放大到 544：
 
@@ -332,12 +323,9 @@ logical block 0
   = 544 token slots
 ```
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/logical-physical-blocks.svg" aria-label="打开 logical block 和 physical kernel page 关系图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/logical-physical-blocks.svg" alt="一个 544-token logical block 由 17 个 32-token physical kernel pages 组成" />
-  </a>
-  <figcaption>补图 D：block id 是 logical / manager block 坐标；worker tensor 的第一维可能是 physical/kernel page 坐标。LMCache 注册前的 re-view 就是在这两个坐标系之间架桥。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="logical-physical" aria-label="补图 D：logical block 和 physical kernel page">
+  <noscript>补图 D：block id 是 logical / manager block 坐标；worker tensor 的第一维可能是 physical/kernel page 坐标。LMCache 注册前的 re-view 就是在这两个坐标系之间架桥。</noscript>
+</section>
 
 <figure class="lmcache-anim lmcache-anim--review" data-lmcache-animation="review" data-step="0">
   <div class="lmcache-anim__header">
@@ -431,12 +419,9 @@ logical block 1 = kernel pages 17..33
 [num_logical_blocks, 2, 544, 1, C']
 ```
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/subpaged-attention-review-shape.svg" aria-label="打开 sub-paged attention re-view 逐维解释图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/subpaged-attention-review-shape.svg" alt="Sub-paged attention re-view 中每个维度如何变化" />
-  </a>
-  <figcaption>补图 E：这个 re-view 的核心是元素数量守恒。17 个 kernel pages 被并成 1 个 logical block；原来的 head 维被折叠进新的 trailing width，所以 registered tensor 只保留 1 个 synthetic head。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="shape-review" aria-label="补图 E：Sub-paged attention re-view 逐维解释">
+  <noscript>补图 E：这个 re-view 的核心是元素数量守恒。17 个 kernel pages 被并成 1 个 logical block；原来的 head 维被折叠进新的 trailing width，所以 registered tensor 只保留 1 个 synthetic head。</noscript>
+</section>
 
 逐维拆开看：
 
@@ -615,12 +600,9 @@ LMCache 的 kernel group 关心的是搬运语义：
 
 所以 `create_engine_group_infos_from_vllm` 的职责不是“照抄 vLLM groups”，而是把两套信息合成一个服务端也能复现的协议。
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/group-info-conversion.svg" aria-label="打开 EngineGroupInfo 转换图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/group-info-conversion.svg" alt="create_engine_group_infos_from_vllm 把 vLLM metadata 和 tensor layout 转成 EngineGroupInfo" />
-  </a>
-  <figcaption>图 2：vLLM metadata 只说明 block-id 语义，真实 tensor 才能说明 transfer layout。EngineGroupInfo 把两者连起来。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="group-info" aria-label="图 2：EngineGroupInfo 转换过程">
+  <noscript>图 2：vLLM metadata 只说明 block-id 语义，真实 tensor 才能说明 transfer layout。EngineGroupInfo 把两者连起来。</noscript>
+</section>
 
 ### 1. 先建立 layer name 到 tensor index 的映射
 
@@ -879,12 +861,9 @@ EngineGroupInfo(
 
 ## 六、几个具体模型场景
 
-<figure class="diagram-scroll">
-  <a class="diagram-scroll__canvas" href="/images/blog/lmcache-register-kv-cache/model-layout-cases.svg" aria-label="打开模型布局案例图原图">
-    <img src="/images/blog/lmcache-register-kv-cache/model-layout-cases.svg" alt="普通 attention、sub-paged MLA、MLA indexer、scratch ring 和 Mamba state 的注册案例" />
-  </a>
-  <figcaption>图 3：不同模型家族在注册阶段暴露出来的问题不同，但最后都要进入同一个 EngineGroupInfo / KVLayerGroupsManager 协议。</figcaption>
-</figure>
+<section class="lmcache-deep-anim" data-lmcache-deep-anim="model-cases" aria-label="图 3：模型布局案例">
+  <noscript>图 3：不同模型家族在注册阶段暴露出来的问题不同，但最后都要进入同一个 EngineGroupInfo / KVLayerGroupsManager 协议。</noscript>
+</section>
 
 ### 1. 最普通的 attention
 
