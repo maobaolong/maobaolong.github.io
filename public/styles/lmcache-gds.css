@@ -6,6 +6,30 @@
   border-block: 1px solid #415054;
   margin-block: 32px;
 }
+.prose .gds-video { margin: 32px 0; }
+.gds-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #142322; }
+.prose .gds-video figcaption { margin-top: 12px; font-size: 14px; line-height: 1.7; text-align: left; }
+.gds-video-player { background: #142322; color: #e7eeeb; }
+.gds-video-controls { display: grid; grid-template-columns: 40px minmax(0, 1fr) 112px 66px 40px 80px 40px; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid #465853; }
+.gds-video-controls button { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 8px; border: 1px solid #55665e; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+.gds-video-controls button:hover { background: #31433b; }
+.gds-video-controls svg { width: 22px; height: 22px; }
+.gds-video-controls input { width: 100%; min-width: 0; margin: 0; accent-color: #67dfc1; }
+.gds-video-controls select { min-width: 0; height: 36px; padding: 4px; font: inherit; font-size: 13px; color: inherit; background: #24312f; border: 1px solid #55665e; border-radius: 4px; }
+.gds-video-time { white-space: nowrap; font-size: 13px; font-variant-numeric: tabular-nums; text-align: center; }
+.gds-video-controls :focus-visible, .gds-video video:focus-visible { outline: 2px solid #67dfc1; outline-offset: 2px; }
+.prose .gds-video-error:not([hidden]) { margin: 0; padding: 12px; color: #ff9c8e; font-size: 14px; }
+.gds-video-player :is([hidden]) { display: none; }
+.gds-video-player:fullscreen { display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; background: #142322; }
+.gds-video-player:fullscreen video { min-height: 0; flex: 1; width: 100%; object-fit: contain; }
+.gds-video-player:fullscreen .gds-video-controls { flex-shrink: 0; }
+@media (max-width: 700px) {
+  .gds-video-controls { grid-template-columns: 36px minmax(0, 1fr) 60px 36px 36px; gap: 6px; padding: 8px; }
+  .gds-video-seek { grid-column: 1 / -1; grid-row: 1; min-height: 24px; }
+  .gds-video-controls button { width: 36px; height: 36px; }
+  .gds-video-volume { display: none; }
+  .gds-video-time { font-size: 12px; }
+}
 body:has(.gds-toc) .header { position: relative; }
 body:has(.gds-toc) .article-title { letter-spacing: 0; }
 .prose:has(.gds-toc) { overflow-wrap: anywhere; }

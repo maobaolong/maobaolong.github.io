@@ -15,4 +15,4 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 Source: https://github.com/lucide-icons/lucide/tree/0.468.0/icons
-Icons: play, pause, chevron-left, chevron-right.
+Icons: play, pause, chevron-left, chevron-right, volume-2, volume-x, maximize, minimize.

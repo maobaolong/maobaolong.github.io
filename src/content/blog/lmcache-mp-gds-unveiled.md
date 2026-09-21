@@ -1,6 +1,6 @@
 ---
 title: "揭开 GDS 的神秘面纱：LMCache MP 如何把 KV Cache 放进 NVMe"
-description: "从 SSD、DMA、slab、stream 和 buffer 讲起，用七张可逐步播放的动画图，走通 LMCache MP 的初始化、STORE 与 RETRIEVE，再用 muFile 看清面向对象的 backend 扩展边界。"
+description: "从 SSD 控制器的 DMA、PCIe 地址映射和 GPU 注册区讲起，用七张动画图走通 LMCache MP 的初始化、STORE 与 RETRIEVE，再以 Phoenix 说明 backend 如何扩展。"
 publishedAt: 2026-09-21
 category: AI Infra
 tags:
@@ -22,9 +22,18 @@ GPU 算过的东西，为什么还要再算一遍？
 
 于是，我们自然会想到本地 NVMe SSD。接着又冒出一个问题：**如果每次从 SSD 读 KV 都要经过 CPU 内存，再搬进显存，存得下的收益会不会被搬运成本抵消？**
 
-GDS 就在这条路径上。但“SSD 直达 GPU”只有五个字，藏在背后的工作却不少。谁发起读写？内核还参与吗？为什么代码里仍然有临时 GPU buffer？Python 函数返回了，数据就真的到了吗？
+GDS 就在这条路径上。但在“SSD 直达 GPU”的背后，还有不少工作。谁发起读写？内核还参与吗？为什么代码里仍然有临时 GPU buffer？Python 函数返回了，数据就真的到了吗？
 
-本文以 **[PR #5271][pr5271] 合入后的 LMCache 结构**为基线，只沿 MP mode 中 `LMCacheDrivenTransferModule` 的读写路径展开。源码链接固定到 [`c9b51e42`][snapshot]，便于逐行对照；muFile 的对照固定到 [#5027 的 `aad13e21`][mu-snapshot]。后文讲的是这套新结构如何工作，而不是 PR 的评审过程。
+本文以 **[PR #5271][pr5271] 合入后的 LMCache 结构**为基线，只沿 MP mode 中 `LMCacheDrivenTransferModule` 的读写路径展开。源码链接固定到 [`c9b51e42`][snapshot]，便于逐行对照；扩展示例使用这份代码中的 Phoenix 实现。
+
+<figure class="gds-video">
+  <video controls playsinline preload="metadata" poster="/videos/blog/lmcache-mp-gds/poster.jpg" aria-label="揭开 GDS 的神秘面纱，中文动画讲解，内嵌字幕">
+    <source src="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4" type="video/mp4" />
+    <track kind="chapters" src="/videos/blog/lmcache-mp-gds/chapters.vtt" srclang="zh" label="章节" />
+    你的浏览器无法播放此视频，请使用下方下载链接。
+  </video>
+  <figcaption>视频版 · 16 分 27 秒 · 中文 AI 神经语音旁白，内嵌中文字幕。数据块移动演示 STORE / RETRIEVE，扩展示例为 Phoenix。<a href="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4">下载 MP4</a> · <a href="/videos/blog/lmcache-mp-gds/subtitles.vtt">字幕</a> · <a href="/videos/blog/lmcache-mp-gds/transcript.txt">讲稿与章节时间</a></figcaption>
+</figure>
 
 <nav class="gds-toc" aria-label="文章目录">
   <a href="#gds-basics">一、先看懂设备与术语</a>
@@ -33,7 +42,7 @@ GDS 就在这条路径上。但“SSD 直达 GPU”只有五个字，藏在背�
   <a href="#gds-store">四、STORE：从分页 KV 到 SSD</a>
   <a href="#gds-retrieve">五、RETRIEVE：从 SSD 回到分页 KV</a>
   <a href="#gds-async">六、async：谁在等谁</a>
-  <a href="#gds-extend">七、以 muFile 为例扩展</a>
+  <a href="#gds-extend">七、以 Phoenix 为例扩展</a>
   <a href="#gds-future">八、容量与可扩展性</a>
 </nav>
 
@@ -85,11 +94,13 @@ SSD ←→ GPU 显存
 
 1. **用户态程序运行在 CPU 上。** LMCache 的 Python、后面的 C/C++ 原生库都属于这层。它们决定读哪个文件、哪个 offset、多少字节、送到哪个 GPU buffer。
 2. **内核态代码也运行在 CPU 上。** 内核负责权限、文件和设备管理；驱动配合建立可供 DMA 使用的设备地址映射。文件系统还要把文件 offset 翻译成底层存储位置。用户态与内核态是权限边界，不是两块不同的处理器。
-3. **DMA 是设备搬运，不是 CPU 逐字节复制。** 存储控制器拿到命令和设备可访问的地址后，可以通过 PCIe 搬运有效载荷。GPU 的虚拟地址不能原封不动当作 SSD 的 DMA 地址使用，注册和映射正是为了解决这个问题。
-4. **GPU 保有数据与计算任务。** 读回的 KV 进入显存后，GPU 上的搬运 kernel 或计算 kernel 才能消费它。GPU 的显存对 PCIe 暴露哪些区域、拓扑能否 P2P，都影响这条路径。
+3. **真正搬运 payload 的是存储侧的 DMA 硬件。** 在本文的本地 NVMe 直接读取路径中，SSD 存储控制器里的 DMA 引擎取到数据后，发起带目标地址的 PCIe 写事务，把字节送到 GPU 端点映射出的指定地址。不是 CPU 用指令逐字节复制，也不是 GPU 的计算核心跑一个“读 SSD”kernel。
+4. **GPU 也是 PCIe 上可编址的设备。** 它通过 BAR（基址寄存器所描述的地址窗口）等映射机制，向其他设备暴露可访问的显存范围。驱动先把应用使用的 GPU 虚拟地址关联到可供 DMA 使用的地址，再由 PCIe 互连把事务路由到 GPU 端点，GPU 侧完成对应显存的访问。**Python 看到的 GPU 指针不能直接当作 SSD 使用的总线地址**，也不是任意 GPU 内存天然都能被任意 SSD 访问。
 5. **完成还要被观察和排序。** 设备报告 I/O 完成，原生库与 stream 机制把它衔接到后续任务，不能刚发命令就让计算去读尚未到达的数据。
 
 这是理解直接 I/O 的通用分工，不代表所有 backend 都走相同的内核调用链。例如 uGDS 的热路径在用户态组织 NVMe 命令，但设备接管与内存映射仍需要初始化支持。[GDS 设计说明][nvidia-design]、[uGDS 安装与设备绑定][ugds-install]
+
+反过来保存 KV 时，SSD 控制器可以发起对 GPU 映射地址的 PCIe 读请求，接收返回的数据，再写入存储介质。读写方向变了，存储侧 DMA 发起搬运这一点没有变。BAR 可见范围、P2P 路由、IOMMU/ACS 配置及驱动支持共同决定这条路径能否成立；“绕过 CPU DRAM”也不等于所有 PCIe 事务都绕过 CPU 所在的 root complex。这里说的是本地 NVMe 场景，远程存储的搬运发起者还可能是网卡的 DMA 引擎。
 
 ### 1.3 后面会反复出现的六个词
 
@@ -110,8 +121,19 @@ LMCache 不会为每份 KV 打开一个小文件。文件型 backend 在指定�
 
 例如某个缓存对象被分配到 `(offset=64 MiB, size=8 MiB)`，它的意思是：“这份 KV 的字节位于 slab 的这一段。”`GDSMemoryObject` 保存的正是这类元数据，**它不是一个装着 KV 的 CPU tensor**；它的 `tensor` 和 `raw_tensor` 都为 `None`。[对象实现][memory-src]、[slab 分配器][allocator-src]
 
+图中还有一套完全不同的坐标：**GPU buffer 的注册区**。先分配一块连续的 GPU staging buffer，再把其中的范围交给 GDS 库注册，库和驱动为这些范围建立 DMA 所需的映射。注册不会再复制一份 KV，也不是在 SSD 上分区。
+
+假设这块 buffer 有 32 MiB，起始 GPU 虚拟地址为 `B`。当前 LMCache 按至多 16 MiB 一段注册，为讲图方便，我们把前两段叫作 R0、R1，R 是 region 的缩写：
+
+| 图中名称 | 同一 allocation 中的 GPU 虚拟地址范围 | 交给 I/O 的注册基址 |
+| --- | --- | --- |
+| R0 | `[B, B + 16 MiB)` | `B` |
+| R1 | `[B + 16 MiB, B + 32 MiB)` | `B + 16 MiB` |
+
+**它们不是两块 GPU，不是 GPU 硬件上的两个固定分区，也不是两个 slab。** 是软件为了注册和寻址，把同一块显存划出的两段范围。表中的虚拟地址仍需由底层映射成设备可用的 DMA 地址。
+
 <figure class="gds-anim" data-gds-scene="slab" aria-label="slab 地址与 GPU 注册区域动画">
-  <figcaption>图 2：文件 offset 和 GPU buffer offset 是两套坐标。本例把 8 MiB 的对象分两笔传输，原因是 GPU 注册区域边界，不是换了两个缓存对象。</figcaption>
+  <figcaption>图 2：R0/R1 是同一 GPU buffer 的两个注册范围，各为 16 MiB。文件 offset 和 GPU buffer offset 是两套坐标；8 MiB 对象跨注册边界，才拆成两笔 I/O。</figcaption>
   <p class="gds-fallback">对象覆盖 slab 的 64–72 MiB。目标 GPU slice 从第一个 16 MiB 注册区内的 12 MiB 处开始：第一笔搬 4 MiB，第二笔从下一个注册区的起点再搬 4 MiB。</p>
 </figure>
 
@@ -147,16 +169,18 @@ lmcache server \
 | --- | --- | --- |
 | `cufile` | 文件系统 slab | NVIDIA GPU、匹配的 CUDA/GDS 栈、`libcufile.so`，以及能提供 `cufile.bindings` 的 Python binding。直接路径还取决于 GPU、驱动、文件系统和 PCIe 拓扑。 |
 | `hipfile` | 文件系统 slab | AMD GPU、ROCm/hipFile runtime 与 `libhipfile.so`。LMCache 自己绑定 C ABI，不依赖 hipFile 的 Python 包。fast path 要同时满足 kernel P2PDMA、runtime、amdgpu 和挂载卷条件。 |
-| `ugds` | 专用原始设备的前一段地址空间 | 匹配 CUDA 或 HIP 的 `libugds.so`、uGDS 内核模块、被接管的 NVMe 设备。路径是 `/dev/ugds_drvX`，不是目录；需要容量查询 API。**专用 SSD 的原有数据可能被破坏。** |
+| `ugds` | 专用原始设备的前一段地址空间 | **香港科技大学（广州）ScaleX Lab / ScaleX-IO 的开源软件栈，不是某种 SSD 硬件，也不是 NVIDIA/AMD 的厂商产品。** 包括用户态 `libugds.so` 和设备接管、映射所需的内核模块。当前公开实现支持 NVIDIA CUDA 与 AMD HIP/ROCm，本文 LMCache 封装也只接这两条路径；不是所有型号都自动可用。路径为 `/dev/ugds_drvX`，并需容量查询 API。**专用 SSD 原有数据可能被破坏。** |
 | `phx` | 文件系统 slab | 当前 LMCache 封装接受 CUDA/ROCm PyTorch 构建；还需 Phoenix 的 `phoenixfs` 内核模块、匹配加速器的用户态库，以及实际加载的 `libphxfile.so` shim，且须提供 stream-ordered 异步符号。通过 Python 检查不代表底层设备已被支持。 |
 
 “是不是要特定 kernel、OS patch？”不能给四行统一的答案。cuFile 的部分新 NVMe P2PDMA 部署已经可以不依赖 `nvidia-fs` 和定制 NVMe patch，但有明确的内核与驱动条件；hipFile 必须核验 fast path 所需能力，缺失时可能回退到 host-bounce；uGDS 需要接管设备；Phoenix 需要匹配运行内核编译模块，并有 IOMMU、BAR 映射等系统要求。**装一个 Python 包不能代替这些条件。** [NVIDIA 部署说明][nvidia-overview]、[hipFile 安装][hip-install]与[fast path 检查][hip-check]、[uGDS 安装][ugds-install]
+
+uGDS 的项目归属可见 [ScaleX-IO 组织介绍][ugds-org]，CUDA/HIP 两条实现路径可见 [uGDS 项目说明][ugds-project]。这里描述的是当前公开支持范围，不是说这项软件技术从原理上永远只能支持这两家。
 
 `auto` 的含义也很克制：当前默认选择在 CUDA 上使用 cuFile、在 ROCm 上使用 hipFile。它不是跑一次 benchmark 后挑最快的 backend，也不会因为 cuFile 失败就自动改用 Phoenix。uGDS 和 Phoenix 需要显式选择。
 
 ### 2.3 Phoenix 为什么值得单独说一句
 
-cuFile、hipFile、muFile 的名字天然带有厂商色彩；[Phoenix][phoenix] 的定位是更底层、面向多种 xPU 的开放 I/O 栈：上面接应用，下面通过用户态 connector 和内核 P2P backend 接不同加速器。它尝试让一套存储 I/O 设计被多种设备复用，而不只是再造一个 Python wrapper。
+cuFile、hipFile 的名字天然带有厂商色彩；[Phoenix][phoenix] 的定位是更底层、面向多种 xPU 的开放 I/O 栈：上面接应用，下面通过用户态 connector 和内核 P2P backend 接不同加速器。它尝试让一套存储 I/O 设计被多种设备复用，而不只是再造一个 Python wrapper。
 
 但“可统一”是架构方向，不是“所有卡、所有文件系统都已经验证”的承诺。Phoenix 的支持矩阵仍在演进，LMCache 的 `phx` 封装也有自己的平台检查。实际部署要同时满足两边的条件。[项目源码与说明][phoenix]、[安装指南][phx-install]；背景延伸阅读可看这篇[公众号文章](https://mp.weixin.qq.com/s/zgbhdjKZlH4gvLI22kKoGg)。
 
@@ -436,77 +460,66 @@ worker 拥有原始分页 KV allocation；LMCache 的设备 context 持有导入
 
 例如本文核对的 [Phoenix 安装指南][phx-install] 描述了 STAGING 与 FULL 两种 BAR 映射模式：STAGING 可经过 Phoenix 自己的 GPU pool 再做 D2D，FULL 则有不同的直接映射与 RDMA 共存约束。这与 LMCache 的布局 staging 不是同一层，也不能看到“无 CPU 中转”就宣称“零 D2D”。部署时应以所用 Phoenix 版本为准。
 
-<h2 id="gds-extend">七、以 muFile 为例，新增 backend 要改哪里</h2>
+<h2 id="gds-extend">七、以 Phoenix 为例，新增 backend 要改哪里</h2>
 
 ### 7.1 先沿接口分清工作，而不是照抄一个大文件
 
-假设现在把 [#5027 的 SmartIO muFile][pr5027] 迁移到这套结构中。最自然的新增位置是：
+Phoenix 已在这份代码中实现。我们把它当作一个完整的接入样本：假设它还不存在，一个使用现有设备接口的文件型 backend，应放在：
 
 ```text
-lmcache/v1/gpu_connector/gds_backends/mufile.py
-tests/v1/gpu_connector/gds_backends/test_mufile.py
+lmcache/v1/gpu_connector/gds_backends/phx.py
+tests/v1/gpu_connector/gds_backends/test_phx.py
 ```
 
-前一个模块导出 `Backend`，后一个测试它的原生 ABI、错误与资源处理。由于 muFile 使用文件型 slab，可以从 `FileGDSBackend` 继承文件准备流程；异步 handle 则继承 `GDSHandle`。
+前一个模块导出 `Backend`，后一个测试它的原生 ABI、错误与资源处理。Phoenix 使用文件型 slab，因此 `Backend` 继承 `FileGDSBackend`，复用文件准备流程；`AsyncHandle` 继承 `GDSHandle`，复用资源所有权和 fd 清理。
 
 不需要重新造一份统一分发器，也不需要在 `__init__.py` 写一张新的 backend 名单。
 
-<figure class="gds-anim" data-gds-scene="extension" aria-label="muFile 接入改动边界动画">
-  <figcaption>图 7：被删除的是中央登记工作，不是硬件适配工作。muFile 实现和测试仍要写；MUSA 的设备桥接也仍要补齐。</figcaption>
-  <p class="gds-fallback">原方案修改配置白名单、中央分发器、GDSContext 和 MUSA context；新结构免去前两处登记修改，backend 与测试进入各自目录，stream 和 buffer 的设备适配仍然保留。</p>
+<figure class="gds-anim" data-gds-scene="extension" aria-label="Phoenix 接入改动边界动画">
+  <figcaption>图 7：公共层不再登记 Phoenix 的名字。实现与测试留在 backend 目录，库加载、ABI 和 native 资源管理由 phx 对象负责。</figcaption>
+  <p class="gds-fallback">原 Phoenix 接入需要修改配置枚举和中央分发器；新结构按目录发现 phx.py，复用文件型父类，由 Phoenix backend 和 handle 对接 libphxfile。驱动安装和硬件验证仍然需要完成。</p>
 </figure>
 
 需要实现的操作可以按职责分成四组，而不必背一张方法清单：
 
-| 职责 | muFile 要负责什么 | 可以继承什么 |
+| 职责 | Phoenix 要负责什么 | 可以继承什么 |
 | --- | --- | --- |
-| 选择与环境 | 设置 `name="mufile"`，用 `validate_environment()` 检查 MUSA 环境；需要参与默认选择时再实现 `is_default()` | 通用目录发现、显式选择、默认不限制平台的父类行为 |
-| 存储与驱动 | 懒加载 `libmufile.so`、绑定 ABI；`open_handle()` 包装注册后的资源，`_open_driver/_close_driver` 接原生 API | 文件 slab 准备、按实例的 driver 状态、handle 的 fd 清理 |
-| 注册与注销 | 把文件、设备 buffer、stream 交给对应 `muFile*Register`，在合适时机解除注册 | 公共上下文安排注册时机、保留 tensor、分段与关闭顺序 |
-| 异步读写 | handle 的 `read_async/write_async` 把公共参数翻译为 muFile ABI，返回活得足够久的 Submission | 统一调用形状、上下文的 stream 分组与 Submission 生命周期跟踪 |
+| 选择与环境 | 设置 `name="phx"`，用 `validate_environment()` 检查当前封装支持的 CUDA/ROCm 构建；显式选择，不参与默认抢占 | 通用目录发现、显式选择、默认不限制平台的父类行为 |
+| 存储与驱动 | `library()` 首次使用时加载 `libphxfile.so` 并绑定 ABI；`open_handle()` 包装已注册 fd；`close_driver()` 清理已加载的 shim | 文件 slab 准备、handle 的 fd 清理；无需强行套用显式 driver-open 流程 |
+| 注册与注销 | 把文件、设备 buffer、stream 交给相应 `phxFile*` 接口，在完成后注销 | 公共上下文安排注册时机、保留 tensor、分段与关闭顺序 |
+| 异步读写 | handle 的 `read_async/write_async` 翻译公共参数，调用 shim，返回保留参数的 `Submission` | 统一调用形状、上下文的 stream 分组与 Submission 生命周期跟踪 |
 
-这里不是要把所有相似代码都抽成父类。库的查找方式、C 结构体、错误码、注册 flags、描述符保活要求都可能不同，应该继续留在 `mufile.py` 中。
+选择器只看接口；文件型父类只准备文件；Phoenix 子类只解释自己的 native API。普通的继承与多态已经够用，不需要把模块函数在运行时换来换去。[完整 Phoenix 实现][phx-src]
 
-### 7.2 muFile 的 ABI 不能当作 cuFile 的字符串替换
+### 7.2 Phoenix 不是把 cuFile 改个名字
 
-在对照版本中，muFile 有几处必须认真适配的区别：
+Phoenix 恰好展示了为什么 ABI 细节不应放进公共层：
 
-- stream 注册使用 `0x1`，不能照搬 cuFile/hipFile 的 `0x7`。
-- async 函数返回 `ssize_t` 状态，而完成字节数的出参是 `size_t*`；公共 `Submission.result` 使用有符号存储。应在 backend 内使用匹配 ABI 的结果字段，例如继承 `Submission` 增加 native result，再覆盖 `bytes_done` 的解释，不能仅因为两者在某平台同为 8 字节就直接混用指针。
-- 原封装按“native handle 引用调用方描述符”的约定保留 `MUFileDescr_t`。新实现应把这个生命周期归入 backend 或 handle，并确保 native deregister 返回之前描述符仍有效。
-- 4 KiB 的地址、长度、文件偏移与 buffer 偏移约束，需要在适当位置验证。[muFile 原生封装对照][mufile-src]
+- **库与符号。** 对接的是 `libphxfile.so`，不是直接调用 `libphoenix.so`。loader 检查 `phxFileReadAsync/WriteAsync` 是否存在，避免旧 shim 到真正搬数据时才暴露不兼容。
+- **参数与错误码。** shim 接受 fd 注册 handle；读写接受长度、两个 offset 和完成结果的指针，立即返回一个整数状态。Python 封装把负状态转成异常，不能照搬另一个库的错误结构体。
+- **偏移顺序。** shim 对外采用文件偏移在前、buffer 偏移在后的调用形状，而 Phoenix 核心库的顺序不同，转换留在 shim 内部。调用者不能看到名字相近就假设 ABI 相同。
+- **stream 与 driver。** `phxFileStreamRegister` 只有 stream 参数，没有 cuFile 那样的 flags；当前 shim 的注册为空操作，但每笔异步 I/O 仍携带 stream。封装沿用隐式初始化，不显式调用 driver open，关闭时再清理已加载的 shim。
 
-这些细节没有因为面向对象而消失。收益是**它们有了一个明确的归属**，不会扩散到 STORE、RETRIEVE 或公共分发代码里。
+这些差异仍然存在，只是有了明确归属。STORE 和 RETRIEVE 不需要知道它们；`GDSContext` 也不必为 Phoenix 单独写一条分支。
 
-### 7.3 不能回避的边界：新存储 backend 不等于新设备已接通
+### 7.3 改动减少在哪里
 
-这份基线的 `GDSContext` 仍通过 `stream.cuda_stream` 取得 raw stream，现有 MUSA 设备 context 也还没有完成这条 GDS staging 注册接入。因此，针对 **muFile + MUSA**，只添加 `mufile.py` 还不够。
+对照历史上 [Phoenix 接入的 PR #4673][pr4673]，固定到 `b771e5ef`，当时修改了五个文件，合计 `+971 / -26`：配置文档、两个已有生产文件，以及新增的 wrapper 和测试。[固定版本差异][phx-files]
 
-仍需补齐两类工作：
-
-1. 通过设备抽象统一取得 raw stream handle，使 GDSContext 不再依赖 CUDA 风格属性。MUSA 对应的是 `musa_stream` 等设备接口。这应当是一处通用设备能力，而不是在 context 中新增 `if backend.name == "mufile"`。
-2. 在 `MUSACacheContext` 中把自己的 staging allocation 注册给 GDS，并在同步后注销；同时保证部分初始化失败时的回滚与 IPC 资源清理正确。
-
-这区分了两种扩展：**新增一个使用已支持设备接口的存储库**，可以只扩展 backend；**接入一个尚未打通的设备平台**，还需要补全设备层。把两者混在一起，才会把“开放扩展”误写成“任何硬件零成本支持”。
-
-原 #5027 还把 4 KiB 和 16 MiB 改成两个返回固定值的 capability 查询。对当前 muFile 的相同约束，不必为了函数数量而照搬；未来出现确实不同的 backend 约束时，再让接口表达这种实际差异。
-
-### 7.4 改动减少了多少：用文件边界说清楚
-
-固定到 `aad13e21`，原 #5027 改了 7 个文件，合计 `+1158 / -28`：新增 native wrapper 与测试占了大头；同时修改了四个已有生产文件。
-
-| 已有生产文件 | 原 #5027 的工作 | 基于新结构的迁移 |
+| 工作 | 原接入方式 | 新结构中的位置 |
 | --- | --- | --- |
-| `distributed/config.py` | 把 `mufile` 加入类型/CLI 枚举，并补说明 | 名字不再受中央白名单限制；无需为接纳名称改代码，文档说明可独立补充 |
-| `_gds_async.py` | 增加导入分支、平台分支与能力转发 | 该模块已移除；发现、选择不需要增加 muFile 分支 |
-| `gds_context.py` | raw stream 适配、能力查询、关闭 driver | raw stream 的设备抽象仍需补；driver 收尾已有；相同常量不必重新转发 |
-| `platform/devices/musa/cache_context.py` | staging 注册、注销与生命周期接入 | 仍需要，这是 MUSA 设备桥接 |
+| 接纳 backend 名称 | 修改 `distributed/config.py` 的枚举等定义 | 目录发现已接纳模块名，无需改白名单；帮助文案可另补 |
+| 选择与调用实现 | 修改 `_gds_async.py` 的导入和分发分支 | 不需要改公共工厂或 `GDSContext` |
+| native 封装 | 新增 `_phx_async.py` | 新增 `gds_backends/phx.py`，继承公共类 |
+| 测试与使用说明 | 新增测试、更新文档 | 仍要做，测试放到对应目录 |
 
-所以可以精确地说：**两处已有核心文件的“backend 登记修改”消失了；按原 PR 的文件划分，四处已有生产文件修改可收敛为两处必要的设备桥接。** 若把 raw stream 接口放进新的公共设备 helper，文件总数会相应变化，不能把“两个”当作最终 patch 的硬性指标。
+所以，针对使用现有设备接口的这次 Phoenix 接入，**原本两个已有生产文件中的 backend 登记修改，可以变成零处必需的中央登记修改**。那两个旧文件合计 58 行增删，但其中也含帮助说明等内容；它不是新方案必然净删 58 行的承诺，更不是所有 native 代码都省掉了。
 
-原 PR 中 `config.py` 与 `_gds_async.py` 合计 66 行增删，是这两处旧修改的实际规模；它包含说明与能力转发，**不是承诺新 PR 净减少恰好 66 行**。616 行 native wrapper、364 行 backend 测试也不会凭空消失，只会在迁移时复用公共契约并去掉重复生命周期代码。[原 PR 文件差异][mu-files]
+收益主要在改动边界：review 集中检查 `phx.py` 的 native 契约和对应测试，不必让所有 backend 共用的调度代码随之改变。
 
-重构最重要的收益，不是漂亮的删行百分比，而是新增实现不再迫使所有 backend 共用的调度代码跟着变化。review 可以集中检查新的 ABI 和设备边界；原有 backend 的回归风险也更容易控制。
+### 7.4 接口可扩展，不等于硬件自动就绪
+
+Phoenix 的内核模块、用户态库和 shim 仍须安装并匹配硬件。当前 `phx.py` 接受 CUDA/ROCm 构建；如果以后接入另一种设备 runtime，还要补齐设备层的 raw stream、内存注册和生命周期接口。**新增存储库**与**接入新设备平台**是两件事，不能把目录发现宣传成“任何硬件零成本支持”。
 
 测试同样应该围绕边界：检查 native 参数与出参存活期、失败时清理、stream 顺序、首次使用才加载库、以及新模块能被发现。没有必要为每个子类重复测试 Python 自己的继承机制。
 
@@ -527,7 +540,7 @@ Phoenix 在更底层探索统一 storage-to-xPU 的 I/O 栈；LMCache 则在上�
 
 最后，GDS 可以还原成几件具体的事：**找对缓存区域，准备好可 DMA 的 GPU 内存，把读写排到正确的 stream，保存所有仍被原生代码引用的资源，完成后再发布或回收。**
 
-“SSD 直达 GPU”并不魔法。真正困难、也真正值得读懂的，是这条路径如何和推理引擎的分页 KV、MP 的进程边界以及异步生命周期严丝合缝地接起来。
+“SSD 直达 GPU”并不是魔法。真正困难、也真正值得读懂的，是这条路径如何和推理引擎的分页 KV、MP 的进程边界以及异步生命周期严丝合缝地接起来。
 
 ## 源码与延伸阅读
 
@@ -539,14 +552,12 @@ Phoenix 在更底层探索统一 storage-to-xPU 的 I/O 栈；LMCache 则在上�
 - [NVIDIA GDS 概览][nvidia-overview]、[设计说明][nvidia-design]、[cuFile API][nvidia-api]。
 - [hipFile 安装][hip-install]、[fast path 检查][hip-check]、[uGDS 安装][ugds-install]。
 - [Phoenix 项目][phoenix]、[安装指南][phx-install]、[架构说明][phx-arch]。
-- [muFile 原提案][pr5027]及其[固定版本差异][mu-files]。
+- [Phoenix 原接入 PR][pr4673]及其[固定版本差异][phx-files]。
 
 [pr5271]: https://github.com/LMCache/LMCache/pull/5271
 [snapshot]: https://github.com/LMCache/LMCache/tree/c9b51e424acf4d88d9c18ed95828bd234a205b5f
-[pr5027]: https://github.com/LMCache/LMCache/pull/5027
-[mu-snapshot]: https://github.com/LMCache/LMCache/tree/aad13e213f42d141def3021af29cee1054869386
-[mu-files]: https://github.com/LMCache/LMCache/compare/1a4b40b1d79b0e76244f127f96ee0982f8bd270f...aad13e213f42d141def3021af29cee1054869386
-[mufile-src]: https://github.com/LMCache/LMCache/blob/aad13e213f42d141def3021af29cee1054869386/lmcache/v1/gpu_connector/_mufile_async.py
+[pr4673]: https://github.com/LMCache/LMCache/pull/4673
+[phx-files]: https://github.com/LMCache/LMCache/compare/5f62d2814ec9a66db07549fdb194a96fdc2610a3...b771e5efc6ea1e600be6d93849760148b7a82148
 [base-src]: https://github.com/LMCache/LMCache/blob/c9b51e424acf4d88d9c18ed95828bd234a205b5f/lmcache/v1/gpu_connector/gds_backends/base.py
 [factory-src]: https://github.com/LMCache/LMCache/blob/c9b51e424acf4d88d9c18ed95828bd234a205b5f/lmcache/v1/gpu_connector/_gds_backends.py
 [file-src]: https://github.com/LMCache/LMCache/blob/c9b51e424acf4d88d9c18ed95828bd234a205b5f/lmcache/v1/gpu_connector/gds_backends/_file.py
@@ -572,6 +583,8 @@ Phoenix 在更底层探索统一 storage-to-xPU 的 I/O 栈；LMCache 则在上�
 [hip-install]: https://rocm.docs.amd.com/projects/hipFile/en/latest/install/install.html
 [hip-check]: https://rocm.docs.amd.com/projects/hipFile/en/latest/how-to/checking-system-compatibility.html
 [ugds-install]: https://github.com/ScaleX-IO/uGDS/blob/main/docs/installation.md
+[ugds-org]: https://github.com/ScaleX-IO
+[ugds-project]: https://github.com/ScaleX-IO/uGDS
 [phoenix]: https://github.com/xPU-IO/Phoenix
 [phx-install]: https://github.com/xPU-IO/Phoenix/blob/5c37071f3660a768d970dceb78a6c189c477af00/doc/install.md
 [phx-arch]: https://github.com/xPU-IO/Phoenix/blob/5c37071f3660a768d970dceb78a6c189c477af00/doc/architecture.md

@@ -3,7 +3,11 @@ const icons = {
   play: '<polygon points="6 3 20 12 6 21 6 3" />',
   pause: '<rect x="14" y="4" width="4" height="16" rx="1" /><rect x="6" y="4" width="4" height="16" rx="1" />',
   prev: '<path d="m15 18-6-6 6-6" />',
-  next: '<path d="m9 18 6-6-6-6" />'
+  next: '<path d="m9 18 6-6-6-6" />',
+  volume: '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>',
+  mute: '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/>',
+  maximize: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  minimize: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>'
 };
 const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
 const node = (id, kicker, title, body) => `<section class="gds-node" data-node="${id}"><div class="gds-kicker">${kicker}</div><div class="gds-title">${title}</div><div class="gds-node-body">${body}</div></section>`;
@@ -27,15 +31,15 @@ const scenes = {
     html: `<div class="gds-grid gds-physical">${
       node("user", "CPU · 用户态", "LMCache + 原生库", "决定 offset、长度和 GPU 目标" + status("user")) +
       node("kernel", "CPU · 内核态", "文件系统 + 驱动", "文件寻址、权限与 DMA 映射" + status("kernel")) +
-      node("ssd", "设备 · NVMe SSD", "存储控制器", "接收 I/O 命令，搬运字节" + status("ssd")) +
-      node("gpu", "设备 · GPU", "已注册 GPU buffer", "DMA 目标；完成后才能消费" + status("gpu")) +
+      node("ssd", "设备 · NVMe SSD", "控制器中的 DMA 硬件", "发起带目标地址的 PCIe 事务" + status("ssd")) +
+      node("gpu", "设备 · GPU PCIe 端点", "BAR 映射 → GPU buffer", "按设备地址路由，落入映射显存" + status("gpu")) +
       node("host", "", "CPU DRAM：直接路径不在这里中转 KV payload", "")
     }</div>`,
     steps: [
       step("1 · 用户态组织请求", "CPU 上的 LMCache 与原生库指定读哪段 slab、多少字节、写到哪个 GPU buffer。此时没有 KV 搬运。", ["user"]),
-      step("2 · 建立可访问的映射", "内核与驱动负责文件和设备管理，并准备设备可使用的 DMA 地址。用户态、内核态都由 CPU 执行。", ["user", "kernel"], [edge("user", "kernel", "control")]),
+      step("2 · 建立可访问的映射", "GPU 也是可编址的 PCIe 端点。驱动把应用的 GPU 虚拟地址关联到设备可访问的显存映射；两种地址不能直接混用。", ["user", "kernel"], [edge("user", "kernel", "control")]),
       step("3 · 设备收到命令", "控制信息告诉存储控制器从哪里读取、向哪里写入。不同 backend 的命令提交路径不同。", ["kernel", "ssd"], [edge("kernel", "ssd", "control")]),
-      step("4 · payload 经过 PCIe", "在直接路径中，SSD 与 GPU 交换有效载荷，跳过 CPU DRAM 的中转区。CPU 仍参与控制，不负责逐字节复制。", ["ssd", "gpu"], [edge("ssd", "gpu")]),
+      step("4 · SSD 控制器发起 DMA", "读取时，SSD 控制器的 DMA 硬件向 GPU 映射地址发送 PCIe 写事务。GPU 端点接收数据并访问对应显存，不经过 CPU DRAM 中转。", ["ssd", "gpu"], [edge("ssd", "gpu")]),
       step("5 · 完成进入执行顺序", "I/O 完成被原生库及 stream 机制观察，后续 GPU 工作才可消费数据。这与函数刚刚返回不是一回事。", ["gpu", "user"], [edge("ssd", "gpu")])
     ],
     update(v) {
@@ -46,14 +50,14 @@ const scenes = {
     }
   },
   slab: {
-    label: "同一个对象 · 两套地址 · 两笔 I/O",
+    label: "R = region · 同一 GPU buffer 的分段注册",
     html: `<div class="gds-grid gds-slab-grid">${
       node("file", "存储坐标", "slab 中的 8 MiB", field("对象", "offset 64 MiB") + '<div class="gds-address"><span data-segment="1">64–68</span><span data-segment="2">68–72</span></div>' + mono("file_offset / MiB") + status("file")) +
-      node("regions", "GPU 坐标", "跨注册边界的 slice", '<div class="gds-region"><b>R0：注册区 0–16 MiB</b><div class="gds-address"><span>0–4</span><span>4–8</span><span>8–12</span><span data-segment="1">12–16</span></div></div><div class="gds-region"><b>R1：注册区 16–32 MiB</b><div class="gds-address"><span data-segment="2">16–20</span><span>20–24</span><span>24–28</span><span>28–32</span></div></div>' + status("regions"))
+      node("regions", "一块 GPU allocation · 基址 B", "两个已注册范围", '<div class="gds-region"><b>R0：B + [0, 16 MiB)</b><div class="gds-address"><span>0–4</span><span>4–8</span><span>8–12</span><span data-segment="1">12–16</span></div></div><div class="gds-region"><b>R1：B + [16, 32 MiB)</b><div class="gds-address"><span data-segment="2">16–20</span><span>20–24</span><span>24–28</span><span>28–32</span></div></div>' + status("regions"))
     }</div>`,
     steps: [
       step("1 · 对象是 slab 的一个范围", "分配器给出 (64 MiB, 8 MiB)。GDSMemoryObject 保存位置和大小，不持有 CPU tensor。", ["file"]),
-      step("2 · GPU slice 跨越注册边界", "slice 从 R0 内的 12 MiB 开始，长度 8 MiB；而 R0 只剩 4 MiB。区间切分发生在 GPU 注册层。", ["regions"]),
+      step("2 · 一块显存，两个注册范围", "R0/R1 不是两块 GPU 或 SSD 分区。它们是同一 allocation 的前后两个 16 MiB 范围；12–20 MiB 的目标 slice 跨过两者边界。", ["regions"]),
       step("3 · 第一笔：R0 + 12 MiB", "file_offset=64 MiB，buf_base=R0，buf_offset=12 MiB，size=4 MiB。基址必须对应原先注册的区域。", ["file", "regions"], [edge("file", "regions")]),
       step("4 · 第二笔：R1 + 0", "file_offset=68 MiB，buf_base=R1，buf_offset=0，size=4 MiB。仍然是同一个 8 MiB 缓存对象。", ["file", "regions"], [edge("file", "regions")])
     ],
@@ -173,23 +177,23 @@ const scenes = {
     }
   },
   extension: {
-    label: "muFile · 省掉中央登记，保留真实适配",
+    label: "Phoenix · 继承公共流程，封装 native 差异",
     html: `<div class="gds-grid gds-extension">${
       node("central", "原方案 · 中央代码", "两处登记修改", '<div class="gds-field" data-central>config.py：名称白名单</div><div class="gds-field" data-central>_gds_async.py：backend 分支</div>' + status("central")) +
-      node("backend", "新结构 · 实现局部", "新增 backend 与测试", '<div class="gds-field">gds_backends/mufile.py</div><div class="gds-field">GDSBackend / GDSHandle</div><div class="gds-field">对应目录的 ABI / 生命周期测试</div>' + status("backend")) +
-      node("device", "仍需完成 · 设备边界", "MUSA 桥接", '<div class="gds-field">raw stream：设备接口</div><div class="gds-field">staging：注册与注销</div><div class="gds-field">失败回滚与设备验证</div>' + status("device"))
+      node("backend", "新结构 · 实现局部", "phx.py + 对应测试", '<div class="gds-field">Backend → FileGDSBackend</div><div class="gds-field">AsyncHandle → GDSHandle</div><div class="gds-field">懒加载 libphxfile.so</div>' + status("backend")) +
+      node("device", "PHOENIX · NATIVE 边界", "shim 与硬件契约", '<div class="gds-field">fd / buffer / stream 注册</div><div class="gds-field">异步参数与结果指针</div><div class="gds-field">隐式初始化及清理</div>' + status("device"))
     }</div>`,
     steps: [
-      step("1 · 原 PR 改了四个已有生产文件", "原 #5027 除新增 wrapper 与测试外，还改配置、中央分发器、GDSContext 和 MUSA cache context。", ["central", "device"]),
-      step("2 · 中央登记工作消失", "目录发现接纳模块名，公共代码调用对象接口。无需新增配置白名单，也无需在中央 dispatcher 加 muFile 分支。", ["central", "backend"]),
-      step("3 · 原生差异归 backend 所有", "libmufile 加载、ABI、stream flags、描述符保活与错误解释留在 mufile.py。它们没有消失，只是不再扩散。", ["backend"]),
-      step("4 · 新设备仍要接通", "raw stream 与 MUSA staging 生命周期仍需适配。按原文件边界是四处收敛为两处必要桥接，不是全工程只加一个文件。", ["device"])
+      step("1 · 原接入需要中央登记", "历史 Phoenix PR #4673 除实现、测试和文档外，还修改配置与中央分发器，把 phx 名称加入公共代码。", ["central"]),
+      step("2 · 新结构按目录发现", "phx.py 导出 Backend。显式选择才导入，公共工厂与 GDSContext 无需增加 Phoenix 分支。", ["central", "backend"]),
+      step("3 · 普通继承复用流程", "Backend 继承文件准备；AsyncHandle 继承 fd 清理。库加载、原生读写和错误解释由 Phoenix 子类负责。", ["backend"]),
+      step("4 · ABI 留在实现内部", "phx stream 注册没有 flags，当前 shim 注册为空操作，但每笔 I/O 仍传 stream。驱动安装、硬件验证和新设备适配不会自动消失。", ["device"])
     ],
     update(v) {
       v.el.querySelectorAll("[data-central]").forEach(el => el.toggleAttribute("data-eliminated", v.index >= 1));
       v.status("central", v.index === 0 ? "原方案需要逐处增加名称" : "无需修改中央登记代码");
-      v.status("backend", v.index < 2 ? "普通继承 + 惰性模块发现" : "依然需要实现和验证 native ABI");
-      v.status("device", v.index < 3 ? "独立于存储库名称的设备能力" : "仍需改动，不能省略");
+      v.status("backend", v.index < 2 ? "普通继承 + 惰性模块发现" : "公共流程继承，真实差异局部实现");
+      v.status("device", v.index < 3 ? "Python 通过 shim 对接 native" : "依赖和硬件仍须实际验证");
     }
   }
 };
@@ -365,4 +369,81 @@ class FlowFigure {
 
 document.querySelectorAll(".gds-anim[data-gds-scene]").forEach((el, i) => {
   if (!el.dataset.ready && scenes[el.dataset.gdsScene]) new FlowFigure(el, i);
+});
+
+document.querySelectorAll('.gds-video video').forEach(video => {
+  const player = document.createElement('div');
+  player.className = 'gds-video-player';
+  video.replaceWith(player);
+  player.append(video);
+  const controls = document.createElement('div');
+  controls.className = 'gds-video-controls';
+  controls.innerHTML = `<button type="button" data-video-action="play" aria-label="播放视频" title="播放视频">${icon('play')}</button>
+    <input class="gds-video-seek" type="range" min="0" max="1" step="0.1" value="0" aria-label="视频进度" disabled>
+    <span class="gds-video-time">0:00 / 16:27</span>
+    <select class="gds-video-speed" aria-label="播放速度" title="播放速度"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
+    <button type="button" data-video-action="mute" aria-label="静音" title="静音">${icon('volume')}</button>
+    <input class="gds-video-volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="音量" title="音量">
+    <button type="button" data-video-action="fullscreen" aria-label="全屏" title="全屏">${icon('maximize')}</button>`;
+  player.append(controls);
+  const error = document.createElement('p');
+  error.className = 'gds-video-error';
+  error.setAttribute('role', 'status');
+  error.hidden = true;
+  player.append(error);
+  const seek = controls.querySelector('.gds-video-seek');
+  const volume = controls.querySelector('.gds-video-volume');
+  const play = controls.querySelector('[data-video-action="play"]');
+  const mute = controls.querySelector('[data-video-action="mute"]');
+  const full = controls.querySelector('[data-video-action="fullscreen"]');
+  const time = value => `${Math.floor(value / 60)}:${String(Math.floor(value % 60)).padStart(2, '0')}`;
+  const label = (button, name, glyph) => {
+    button.innerHTML = icon(glyph);
+    button.title = name;
+    button.setAttribute('aria-label', name);
+  };
+  const sync = () => {
+    label(play, video.paused ? '播放视频' : '暂停视频', video.paused ? 'play' : 'pause');
+    label(mute, video.muted || video.volume === 0 ? '开启声音' : '静音', video.muted || video.volume === 0 ? 'mute' : 'volume');
+    if (Number.isFinite(video.duration)) {
+      seek.disabled = false;
+      seek.max = String(video.duration);
+      seek.value = String(video.currentTime);
+      seek.setAttribute('aria-valuetext', `${time(video.currentTime)} / ${time(video.duration)}`);
+      controls.querySelector('.gds-video-time').textContent = `${time(video.currentTime)} / ${time(video.duration)}`;
+    }
+    volume.value = String(video.muted ? 0 : video.volume);
+  };
+  const toggle = async () => {
+    error.hidden = true;
+    if (!video.paused) return video.pause();
+    try { await video.play(); }
+    catch { error.textContent = '暂时无法播放，可使用下方 MP4 下载链接。'; error.hidden = false; }
+  };
+  play.addEventListener('click', toggle);
+  video.addEventListener('click', toggle);
+  video.tabIndex = 0;
+  video.addEventListener('keydown', event => {
+    if (event.code === 'Space' || event.code === 'Enter') { event.preventDefault(); toggle(); }
+  });
+  seek.addEventListener('input', () => { video.currentTime = Number(seek.value); });
+  mute.addEventListener('click', () => {
+    if (video.muted || video.volume === 0) { video.muted = false; if (video.volume === 0) video.volume = 1; }
+    else video.muted = true;
+  });
+  volume.addEventListener('input', () => { video.volume = Number(volume.value); video.muted = false; });
+  controls.querySelector('.gds-video-speed').addEventListener('change', event => { video.playbackRate = Number(event.target.value); });
+  full.hidden = !player.requestFullscreen && !video.webkitEnterFullscreen;
+  full.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement === player) await document.exitFullscreen();
+      else if (player.requestFullscreen) await player.requestFullscreen();
+      else video.webkitEnterFullscreen();
+    } catch { /* The player remains usable if the browser denies fullscreen. */ }
+  });
+  document.addEventListener('fullscreenchange', () => label(full, document.fullscreenElement === player ? '退出全屏' : '全屏', document.fullscreenElement === player ? 'minimize' : 'maximize'));
+  ['loadedmetadata', 'timeupdate', 'play', 'pause', 'ended', 'volumechange'].forEach(event => video.addEventListener(event, sync));
+  video.addEventListener('error', () => { error.textContent = '视频加载失败，可使用下方 MP4 下载链接。'; error.hidden = false; });
+  video.controls = false;
+  sync();
 });
