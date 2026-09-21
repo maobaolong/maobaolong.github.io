@@ -380,7 +380,7 @@ document.querySelectorAll('.gds-video video').forEach(video => {
   controls.className = 'gds-video-controls';
   controls.innerHTML = `<button type="button" data-video-action="play" aria-label="播放视频" title="播放视频">${icon('play')}</button>
     <input class="gds-video-seek" type="range" min="0" max="1" step="0.1" value="0" aria-label="视频进度" disabled>
-    <span class="gds-video-time">0:00 / 16:27</span>
+    <span class="gds-video-time">0:00 / --:--</span>
     <select class="gds-video-speed" aria-label="播放速度" title="播放速度"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>
     <button type="button" data-video-action="mute" aria-label="静音" title="静音">${icon('volume')}</button>
     <input class="gds-video-volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="音量" title="音量">

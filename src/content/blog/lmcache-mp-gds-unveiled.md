@@ -28,11 +28,11 @@ GDS 就在这条路径上。但在“SSD 直达 GPU”的背后，还有不少�
 
 <figure class="gds-video">
   <video controls playsinline preload="metadata" poster="/videos/blog/lmcache-mp-gds/poster.jpg" aria-label="揭开 GDS 的神秘面纱，中文动画讲解，内嵌字幕">
-    <source src="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4" type="video/mp4" />
-    <track kind="chapters" src="/videos/blog/lmcache-mp-gds/chapters.vtt" srclang="zh" label="章节" />
+    <source src="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4?v=technical-terms" type="video/mp4" />
+    <track kind="chapters" src="/videos/blog/lmcache-mp-gds/chapters.vtt?v=technical-terms" srclang="zh" label="章节" />
     你的浏览器无法播放此视频，请使用下方下载链接。
   </video>
-  <figcaption>视频版 · 16 分 27 秒 · 中文 AI 神经语音旁白，内嵌中文字幕。数据块移动演示 STORE / RETRIEVE，扩展示例为 Phoenix。<a href="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4">下载 MP4</a> · <a href="/videos/blog/lmcache-mp-gds/subtitles.vtt">字幕</a> · <a href="/videos/blog/lmcache-mp-gds/transcript.txt">讲稿与章节时间</a></figcaption>
+  <figcaption>视频版 · 16 分 50 秒 · 中文 AI 神经语音旁白，内嵌字幕，技术术语保留英文。数据块移动演示 STORE / RETRIEVE，扩展示例为 Phoenix。<a href="/videos/blog/lmcache-mp-gds/lmcache-mp-gds-unveiled.mp4?v=technical-terms">下载 MP4</a> · <a href="/videos/blog/lmcache-mp-gds/subtitles.vtt?v=technical-terms">字幕</a> · <a href="/videos/blog/lmcache-mp-gds/transcript.txt?v=technical-terms">讲稿与章节时间</a></figcaption>
 </figure>
 
 <nav class="gds-toc" aria-label="文章目录">
