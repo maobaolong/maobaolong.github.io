@@ -62,6 +62,12 @@ const thread = commentThreads.find((item) => item.key === threadKey);
         {post.id === "lmcache-register-kv-cache" ? (
           <script type="module" src={withBase("/scripts/lmcache-register-kv-cache-animations.js")}></script>
         ) : null}
+        {post.id === "lmcache-mp-gds-unveiled" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-gds.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-gds.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
