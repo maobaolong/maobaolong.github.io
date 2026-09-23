@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GitHubThreadWidget from "../../components/GitHubThreadWidget.astro";
+import commentThreads from "../../config/comment-threads.json";
+import { siteText } from "../../config/i18n";
+
+const guestbookThread = commentThreads.find((thread) => thread.key === "guestbook");
+const site = siteText.en;
+---
+
+<BaseLayout title={`Guestbook | ${site.siteName}`} description="Leave Maobaolong a note, ask a question, or suggest a topic." locale="en">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Guestbook</span>
+      <h1 class="section-heading">Guestbook</h1>
+      <p class="section-copy">
+        A place for questions, quick hellos, article suggestions, or notes about systems and projects you are working on.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="guestbook-card glass">
+        <h3>How it works</h3>
+        <p>
+          Visitors participate with a GitHub account. The guestbook and article comments share GitHub Issues,
+          so there is no separate account system to maintain.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {
+        guestbookThread ? (
+          <GitHubThreadWidget
+            issueNumber={guestbookThread.issueNumber}
+            threadKey={guestbookThread.key}
+            kind="guestbook"
+            locale="en"
+          />
+        ) : (
+          <div class="notice">The guestbook thread has not been initialized yet.</div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

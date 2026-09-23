@@ -6,8 +6,65 @@ import {
   startDeviceFlowLogin
 } from "./github-auth.js";
 
-function formatDate(iso) {
-  return new Date(iso).toLocaleString("zh-CN", {
+const copy = {
+  zh: {
+    dateLocale: "zh-CN",
+    guest: "Guest",
+    guestHint: "登录 GitHub 后可以评论和点赞。",
+    loginHint: (device) => `请在新打开的 GitHub 页面完成授权，并输入验证码 <code>${device.user_code}</code>。如果没有弹出新页面，可以直接打开 <code>${device.verification_uri}</code>。`,
+    tokenSummary: "设备码登录异常？改用 GitHub Token",
+    tokenCopy: (kind) => `可使用 GitHub Personal Access Token 直接登录。${kind === "guestbook" ? "留言和点赞至少需要仓库 issue 写权限。" : "评论和点赞至少需要仓库 issue 写权限。"}`,
+    tokenLogin: "使用 Token 登录",
+    title: (kind) => kind === "guestbook" ? "留言板" : "评论与点赞",
+    loadFailed: "互动区加载失败",
+    empty: "还没有评论。欢迎成为第一个留言的人。",
+    intro: (kind) => kind === "guestbook" ? "每条留言都会写入 GitHub issue 评论。" : "每篇文章的评论线程都保存在仓库 issue 中。",
+    viewThread: "查看 GitHub 线程",
+    logout: "退出登录",
+    login: "使用 GitHub 登录后评论",
+    composerLabel: (kind) => kind === "guestbook" ? "写一条留言" : "写一条评论",
+    placeholder: "支持 Markdown。",
+    submit: "发布",
+    refresh: "刷新",
+    requireLogin: "需要先登录 GitHub 才能执行此操作。",
+    emptyComment: "请输入评论内容。",
+    posted: (kind) => kind === "guestbook" ? "留言已发布。" : "评论已发布。",
+    reacted: "点赞已提交。",
+    commentReacted: "评论点赞已提交。"
+  },
+  en: {
+    dateLocale: "en-US",
+    guest: "Guest",
+    guestHint: "Sign in with GitHub to comment and react.",
+    loginHint: (device) => `Complete authorization on the GitHub page that just opened, then enter code <code>${device.user_code}</code>. If no page opened, visit <code>${device.verification_uri}</code> directly.`,
+    tokenSummary: "Device login not working? Use a GitHub token",
+    tokenCopy: (kind) => `You can sign in directly with a GitHub Personal Access Token. ${kind === "guestbook" ? "Guestbook posts and reactions require issue write access on the repository." : "Comments and reactions require issue write access on the repository."}`,
+    tokenLogin: "Use token",
+    title: (kind) => kind === "guestbook" ? "Guestbook" : "Comments and Reactions",
+    loadFailed: "Discussion failed to load",
+    empty: "No comments yet. Be the first to leave one.",
+    intro: (kind) => kind === "guestbook" ? "Each message is stored as a GitHub issue comment." : "Each article discussion thread is stored in a repository issue.",
+    viewThread: "View GitHub thread",
+    logout: "Sign out",
+    login: "Sign in with GitHub to comment",
+    composerLabel: (kind) => kind === "guestbook" ? "Write a message" : "Write a comment",
+    placeholder: "Markdown is supported.",
+    submit: "Post",
+    refresh: "Refresh",
+    requireLogin: "You need to sign in with GitHub before doing this.",
+    emptyComment: "Please enter a comment.",
+    posted: (kind) => kind === "guestbook" ? "Message posted." : "Comment posted.",
+    reacted: "Reaction submitted.",
+    commentReacted: "Comment reaction submitted."
+  }
+};
+
+function messages(locale) {
+  return copy[locale] || copy.zh;
+}
+
+function formatDate(iso, locale) {
+  return new Date(iso).toLocaleString(messages(locale).dateLocale, {
     year: "numeric",
     month: "numeric",
     day: "numeric",
@@ -16,12 +73,12 @@ function formatDate(iso) {
   });
 }
 
-function renderUserBadge(session) {
+function renderUserBadge(session, text) {
   if (!session?.user) {
     return `
       <div class="github-user">
-        <span class="chip">Guest</span>
-        <p>登录 GitHub 后可以评论和点赞。</p>
+        <span class="chip">${text.guest}</span>
+        <p>${text.guestHint}</p>
       </div>
     `;
   }
@@ -37,26 +94,24 @@ function renderUserBadge(session) {
   `;
 }
 
-function loginHintMarkup(device) {
+function loginHintMarkup(device, text) {
   if (!device) {
     return "";
   }
 
   return `
     <div class="notice">
-      请在新打开的 GitHub 页面完成授权，并输入验证码 <code>${device.user_code}</code>。
-      如果没有弹出新页面，可以直接打开 <code>${device.verification_uri}</code>。
+      ${text.loginHint(device)}
     </div>
   `;
 }
 
-function tokenFallbackMarkup(kind) {
+function tokenFallbackMarkup(kind, text) {
   return `
     <details class="auth-fallback">
-      <summary>设备码登录异常？改用 GitHub Token</summary>
+      <summary>${text.tokenSummary}</summary>
       <p>
-        可使用 GitHub Personal Access Token 直接登录。
-        ${kind === "guestbook" ? "留言和点赞至少需要仓库 issue 写权限。" : "评论和点赞至少需要仓库 issue 写权限。"}
+        ${text.tokenCopy(kind)}
       </p>
       <label class="composer-label" for="token-login-${kind}">
         GitHub access token
@@ -69,7 +124,7 @@ function tokenFallbackMarkup(kind) {
         autocomplete="off"
       />
       <div class="button-row">
-        <button class="button button-secondary token-login" type="button">使用 Token 登录</button>
+        <button class="button button-secondary token-login" type="button">${text.tokenLogin}</button>
       </div>
     </details>
   `;
@@ -86,8 +141,10 @@ class GitHubThreadWidget {
       authBaseUrl: container.dataset.authBaseUrl,
       issueNumber: Number(container.dataset.issueNumber),
       threadKey: container.dataset.threadKey,
-      kind: container.dataset.kind
+      kind: container.dataset.kind,
+      locale: container.dataset.locale || "zh"
     };
+    this.text = messages(this.config.locale);
     this.issue = null;
     this.comments = [];
     this.session = null;
@@ -147,9 +204,9 @@ class GitHubThreadWidget {
       this.container.innerHTML = `
         <div class="github-thread__header">
           <span class="chip">GitHub Issues</span>
-          <h3>${this.config.kind === "guestbook" ? "留言板" : "评论与点赞"}</h3>
+          <h3>${this.text.title(this.config.kind)}</h3>
         </div>
-        <div class="notice">互动区加载失败：${this.loadError}</div>
+        <div class="notice">${this.text.loadFailed}：${this.loadError}</div>
       `;
       return;
     }
@@ -169,7 +226,7 @@ class GitHubThreadWidget {
                       <img src="${comment.user.avatar_url}" alt="${comment.user.login}" class="github-user__avatar" />
                       <div>
                         <strong>${comment.user.login}</strong>
-                        <p>${formatDate(comment.created_at)}</p>
+                        <p>${formatDate(comment.created_at, this.config.locale)}</p>
                       </div>
                     </div>
                     <button class="button button-secondary comment-react" data-comment-id="${comment.id}">
@@ -181,44 +238,44 @@ class GitHubThreadWidget {
               `
             )
             .join("")
-        : `<div class="notice">还没有评论。欢迎成为第一个留言的人。</div>`;
+        : `<div class="notice">${this.text.empty}</div>`;
 
     this.container.innerHTML = `
       <div class="github-thread__header">
         <div>
           <span class="chip">GitHub Issues</span>
-          <h3>${this.config.kind === "guestbook" ? "留言板" : "评论与点赞"}</h3>
-          <p>${this.config.kind === "guestbook" ? "每条留言都会写入 GitHub issue 评论。" : "每篇文章的评论线程都保存在仓库 issue 中。"} </p>
+          <h3>${this.text.title(this.config.kind)}</h3>
+          <p>${this.text.intro(this.config.kind)} </p>
         </div>
         <div class="button-row">
           <button class="button button-secondary thread-react">👍 ${issueLikes}</button>
-          <a class="button button-ghost" href="${this.issue.html_url}" target="_blank" rel="noreferrer">查看 GitHub 线程</a>
+          <a class="button button-ghost" href="${this.issue.html_url}" target="_blank" rel="noreferrer">${this.text.viewThread}</a>
         </div>
       </div>
 
       ${noticeMarkup}
       <div class="github-auth-panel">
-        ${renderUserBadge(this.session)}
+        ${renderUserBadge(this.session, this.text)}
         <div class="button-row">
           ${
             this.session
-              ? `<button class="button button-secondary thread-logout">退出登录</button>`
-              : `<button class="button button-primary thread-login">使用 GitHub 登录后评论</button>`
+              ? `<button class="button button-secondary thread-logout">${this.text.logout}</button>`
+              : `<button class="button button-primary thread-login">${this.text.login}</button>`
           }
         </div>
       </div>
 
-      ${loginHintMarkup(this.pendingDevice)}
-      ${this.session ? "" : tokenFallbackMarkup(this.config.kind)}
+      ${loginHintMarkup(this.pendingDevice, this.text)}
+      ${this.session ? "" : tokenFallbackMarkup(this.config.kind, this.text)}
 
       <div class="github-thread__composer">
         <label class="composer-label" for="thread-comment-${this.config.issueNumber}">
-          ${this.config.kind === "guestbook" ? "写一条留言" : "写一条评论"}
+          ${this.text.composerLabel(this.config.kind)}
         </label>
-        <textarea id="thread-comment-${this.config.issueNumber}" class="composer-input" rows="6" placeholder="支持 Markdown。"></textarea>
+        <textarea id="thread-comment-${this.config.issueNumber}" class="composer-input" rows="6" placeholder="${this.text.placeholder}"></textarea>
         <div class="button-row">
-          <button class="button button-primary thread-submit">发布</button>
-          <button class="button button-secondary thread-refresh">刷新</button>
+          <button class="button button-primary thread-submit">${this.text.submit}</button>
+          <button class="button button-secondary thread-refresh">${this.text.refresh}</button>
         </div>
       </div>
 
@@ -294,7 +351,7 @@ class GitHubThreadWidget {
     }
 
     if (!this.session) {
-      throw new Error("需要先登录 GitHub 才能执行此操作。");
+      throw new Error(this.text.requireLogin);
     }
   }
 
@@ -323,7 +380,7 @@ class GitHubThreadWidget {
       const textarea = this.container.querySelector(".composer-input");
       const body = textarea.value.trim();
       if (!body) {
-        throw new Error("请输入评论内容。");
+        throw new Error(this.text.emptyComment);
       }
 
       const createdComment = await githubJson(
@@ -338,10 +395,7 @@ class GitHubThreadWidget {
 
       textarea.value = "";
       this.comments = [...this.comments, createdComment];
-      this.setNotice(
-        this.config.kind === "guestbook" ? "留言已发布。" : "评论已发布。",
-        "info"
-      );
+      this.setNotice(this.text.posted(this.config.kind), "info");
       this.render();
       window.setTimeout(() => {
         this.reload({ bustCache: true }).catch(() => {});
@@ -364,7 +418,7 @@ class GitHubThreadWidget {
           body: { content: "+1" }
         }
       );
-      this.setNotice("点赞已提交。", "info");
+      this.setNotice(this.text.reacted, "info");
       await this.reload({ bustCache: true });
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");
@@ -384,7 +438,7 @@ class GitHubThreadWidget {
           body: { content: "+1" }
         }
       );
-      this.setNotice("评论点赞已提交。", "info");
+      this.setNotice(this.text.commentReacted, "info");
       await this.reload({ bustCache: true });
     } catch (error) {
       this.setNotice(error.message || String(error), "danger");

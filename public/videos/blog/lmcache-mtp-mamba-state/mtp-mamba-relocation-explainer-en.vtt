@@ -1,0 +1,214 @@
+WEBVTT
+
+00:00:00.100 --> 00:00:04.495
+In this episode, we discuss a very typical system issue: the code changes are minimal,
+
+00:00:04.495 --> 00:00:09.272
+but they are connected to model structure, inference scheduling, GPU memory paging, and external caching.
+
+00:00:09.272 --> 00:00:14.774
+The final error was a temporary draft state mistakenly treated as a valid prefix checkpoint,
+
+00:00:14.774 --> 00:00:19.138
+causing the model to continue generating from the erroneous state after the next request was restored.
+
+00:00:19.138 --> 00:00:21.505
+First, let's clarify the two types of caches.
+
+00:00:21.505 --> 00:00:25.035
+The attention cache stores keys and values for each token,
+
+00:00:25.035 --> 00:00:28.762
+while the recurrent layer maintains a continuously updated running state.
+
+00:00:28.762 --> 00:00:34.029
+Both are in GPU memory and may enter the chunk allocator, but their semantics are different.
+
+00:00:34.029 --> 00:00:37.294
+Layers like Mamba and Gated Delta Net
+
+00:00:37.294 --> 00:00:39.782
+compress history into a fixed-size recurrent state.
+
+00:00:39.782 --> 00:00:44.806
+To recover from a specific token boundary, there must be a corresponding state for that boundary.
+
+00:00:44.806 --> 00:00:48.395
+The inference engine places the recurrent state into physical memory pages,
+
+00:00:48.395 --> 00:00:52.184
+while using logical slots to represent checkpoint positions in the sequence.
+
+00:00:52.184 --> 00:00:56.768
+Here, the zero block is not a valid all-zero state; it indicates that
+
+00:00:56.768 --> 00:00:59.442
+there is no recoverable state at this position.
+
+00:00:59.442 --> 00:01:03.789
+The recurrent state has a hard constraint: wherever a computation ends,
+
+00:01:03.789 --> 00:01:06.687
+the system will naturally leave a state there.
+
+00:01:06.687 --> 00:01:10.888
+If a computation runs directly from 1616 to 4538,
+
+00:01:10.888 --> 00:01:13.151
+it indeed passed through 3232,
+
+00:01:13.151 --> 00:01:15.898
+but that does not mean a checkpoint was saved there.
+
+00:01:15.898 --> 00:01:21.068
+Multi-token prediction first drafts several candidate tokens, then lets the main model validate them in batches.
+
+00:01:21.068 --> 00:01:25.332
+The validated prefixes can be submitted, while the unaccepted candidates
+
+00:01:25.332 --> 00:01:27.464
+cannot prematurely pollute the official state.
+
+00:01:27.464 --> 00:01:30.985
+The key point here is that multi-token prediction does not just look at token IDs;
+
+00:01:30.985 --> 00:01:36.092
+it also requires the hidden states near the main model boundaries, as well as the draft module's own state.
+
+00:01:36.092 --> 00:01:40.592
+So when hitting a prefix, the inference engine deliberately skips the last block,
+
+00:01:40.592 --> 00:01:43.592
+allowing the current request to recompute that segment itself.
+
+00:01:43.592 --> 00:01:47.674
+The cache may indeed contain data for the first 3232 tokens,
+
+00:01:47.674 --> 00:01:52.998
+but for multi-token prediction recovery, it only reports that it can directly skip to 1616.
+
+00:01:52.998 --> 00:01:58.823
+This step may seem conservative, but it ensures the correct hidden state and draft state.
+
+00:01:58.823 --> 00:02:02.937
+Bringing this constraint back to pre-filled scheduling changes the checkpoint stop.
+
+00:02:02.937 --> 00:02:07.369
+After enabling multi-token prediction, 1616 is already the starting point for the second step,
+
+00:02:07.369 --> 00:02:10.267
+and it is no longer a future stopping point within the current computation.
+
+00:02:10.267 --> 00:02:15.180
+Thus, the second step will run directly from 1616 to 4538,
+
+00:02:15.180 --> 00:02:18.204
+naturally skipping over the 3232 in between.
+
+00:02:18.204 --> 00:02:22.112
+Meanwhile, candidate paths also require the recurrent state.
+
+00:02:22.112 --> 00:02:26.917
+Until the results are out, these states can only reside in temporary draft memory pages.
+
+00:02:26.917 --> 00:02:31.917
+Temporary pages can reuse GPU memory, but they are not a shareable prefix checkpoint.
+
+00:02:31.917 --> 00:02:36.544
+Then a relocation occurs: temporary page one leaves its logical position in the middle,
+
+00:02:36.544 --> 00:02:40.801
+the old position is zeroed out, and the same physical page is appended to the end for continued use.
+
+00:02:40.801 --> 00:02:43.131
+Note that there is no copying here.
+
+00:02:43.131 --> 00:02:48.289
+A non-zero physical number should not represent two valid positions within the same request simultaneously.
+
+00:02:48.289 --> 00:02:49.672
+Here comes the problem.
+
+00:02:49.672 --> 00:02:53.224
+The connector of the external cache receives tail append information,
+
+00:02:53.224 --> 00:02:56.402
+it sees the newly added temporary page one and the next page,
+
+00:02:56.402 --> 00:02:59.393
+but it has not received the information that the old position has been zeroed out.
+
+00:02:59.393 --> 00:03:02.985
+Thus, the tracking table and the real block table begin to diverge.
+
+00:03:02.985 --> 00:03:07.864
+In the real table, the old position is zero, but the old tracking table still retains temporary page one.
+
+00:03:07.864 --> 00:03:12.134
+At this point, seeing a duplicate non-zero number, it cannot be treated as a shared state,
+
+00:03:12.134 --> 00:03:15.692
+but should be considered as evidence of relocation: the old position has become invalid.
+
+00:03:15.692 --> 00:03:20.243
+If the old tracking table continues, the external cache will save this temporary page
+
+00:03:20.243 --> 00:03:24.066
+as a valid state for position 3232.
+
+00:03:24.066 --> 00:03:29.019
+The next time the same prefix hits, this erroneous state will be loaded back into GPU memory,
+
+00:03:29.019 --> 00:03:33.774
+and the model will continue generating from the misaligned recurrent state, leading to stable corruption of the output.
+
+00:03:33.774 --> 00:03:38.964
+The fix is quite restrained: if a newly reported non-zero number has already appeared in the tracking table,
+
+00:03:38.964 --> 00:03:42.184
+the old position is first changed to empty, then appended to the new position.
+
+00:03:42.184 --> 00:03:47.767
+Zero can be repeated, so only repeated non-zero numbers are relocation signals.
+
+00:03:47.767 --> 00:03:52.280
+After zeroing, this recurrent state group will be recognized as an all-empty segment,
+
+00:03:52.280 --> 00:03:56.007
+and the external cache will not fabricate a non-existent checkpoint.
+
+00:03:56.007 --> 00:03:59.454
+Missing a segment hit only requires a bit more computation.
+
+00:03:59.454 --> 00:04:02.755
+Restoring temporary states will compromise correctness.
+
+00:04:02.755 --> 00:04:07.379
+So this issue is not present in all mixed caches.
+
+00:04:07.379 --> 00:04:12.413
+It requires recurrent layers, alignment patterns, multi-token prediction, temporary page relocation,
+
+00:04:12.413 --> 00:04:14.721
+and external caching to occur simultaneously.
+
+00:04:14.836 --> 00:04:18.982
+Finally, let's compress the entire chain: recurrent states need real boundaries,
+
+00:04:18.982 --> 00:04:23.316
+multi-token prediction forces the last block to recompute, the scheduler skips over intermediate boundaries,
+
+00:04:23.316 --> 00:04:26.520
+temporary pages move to the end, and the tracking table only sees appends.
+
+00:04:26.520 --> 00:04:30.824
+The fix maintains not a regular list, but a more serious semantic:
+
+00:04:30.824 --> 00:04:35.816
+whether this token boundary truly has a recoverable, shareable model state.
+
+00:04:35.816 --> 00:04:40.816
+Just remember this: correctly formatted memory does not necessarily represent a correct state.
+
+00:04:40.816 --> 00:04:46.957
+The caching system is not just moving data; it is also keeping track of where the model has actually run.

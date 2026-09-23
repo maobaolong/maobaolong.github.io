@@ -1,0 +1,99 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="870" viewBox="0 0 1400 870" role="img" aria-labelledby="title desc">
+  <title id="title">Lazy offload from queued to in-flight to freed</title>
+  <desc id="desc">Queued metadata has not been submitted and can only enter in-flight during a positive token Step, without triggering keepalive. In-flight store has been submitted and holds GPU blocks, which can receive completion through a zero token Step, thus triggering keepalive. The Scheduler releases blocks after consuming completion, ending the state.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#111c35"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
+    </marker>
+    <style>
+      .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+      .title{font-size:36px;font-weight:760;fill:#f8fafc}
+      .subtitle{font-size:18px;fill:#94a3b8}
+      .boxTitle{font-size:26px;font-weight:740;fill:#f8fafc}
+      .body{font-size:17px;fill:#cbd5e1}
+      .small{font-size:15px;fill:#94a3b8}
+      .label{font-size:15px;font-weight:720}
+      .code{font-family:"SFMono-Regular",Consolas,monospace;font-size:15px;fill:#bfdbfe}
+    </style>
+  </defs>
+  <rect width="1400" height="870" rx="28" fill="url(#bg)"/>
+  <g class="sans">
+    <text x="70" y="68" class="title">Lazy offload has two types of pending, but only one should keep the Engine alive</text>
+    <text x="70" y="103" class="subtitle">The criterion is not "Is the state non-empty?", but "If we execute a zero token Step again, can the state progress?"</text>
+
+    <g filter="url(#shadow)">
+      <rect x="70" y="180" width="350" height="290" rx="28" fill="#172554" stroke="#3b82f6" stroke-width="2.5"/>
+      <rect x="100" y="210" width="122" height="34" rx="17" fill="#1d4ed8"/>
+      <text x="161" y="233" text-anchor="middle" class="label" fill="#dbeafe">STAGE 1</text>
+      <text x="105" y="289" class="boxTitle">QUEUED</text>
+      <text x="105" y="326" class="body">Only store metadata</text>
+      <text x="105" y="359" class="code">FIFO _pending_items</text>
+      <text x="105" y="402" class="body">Not yet submitted to worker</text>
+      <rect x="103" y="424" width="284" height="28" rx="10" fill="#1e3a8a"/>
+      <text x="245" y="444" text-anchor="middle" class="label" fill="#dbeafe">keepalive = False</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="525" y="180" width="350" height="290" rx="28" fill="#2b1d42" stroke="#a78bfa" stroke-width="2.5"/>
+      <rect x="555" y="210" width="122" height="34" rx="17" fill="#6d28d9"/>
+      <text x="616" y="233" text-anchor="middle" class="label" fill="#ede9fe">STAGE 2</text>
+      <text x="560" y="289" class="boxTitle">IN-FLIGHT</text>
+      <text x="560" y="326" class="body">STORE has been submitted to worker</text>
+      <text x="560" y="359" class="code">_request_block_ids</text>
+      <text x="560" y="402" class="body">Blocks have been touched, waiting for completion</text>
+      <rect x="558" y="424" width="284" height="28" rx="10" fill="#5b21b6"/>
+      <text x="700" y="444" text-anchor="middle" class="label" fill="#ede9fe">keepalive = True</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="980" y="180" width="350" height="290" rx="28" fill="#132a32" stroke="#14b8a6" stroke-width="2.5"/>
+      <rect x="1010" y="210" width="122" height="34" rx="17" fill="#0f766e"/>
+      <text x="1071" y="233" text-anchor="middle" class="label" fill="#ccfbf1">STAGE 3</text>
+      <text x="1015" y="289" class="boxTitle">FREED</text>
+      <text x="1015" y="326" class="body">Scheduler received completion</text>
+      <text x="1015" y="359" class="code">free_blocks()</text>
+      <text x="1015" y="402" class="body">Delete block ID records, can be reallocated</text>
+      <rect x="1013" y="424" width="284" height="28" rx="10" fill="#064e3b"/>
+      <text x="1155" y="444" text-anchor="middle" class="label" fill="#d1fae5">keepalive = False</text>
+    </g>
+
+    <path d="M420 320 C460 320 483 320 523 320" stroke="#60a5fa" stroke-width="4" marker-end="url(#blueArrow)"/>
+    <text x="472" y="271" text-anchor="middle" class="small">Threshold met</text>
+    <text x="472" y="295" text-anchor="middle" class="small">+ Positive token Step</text>
+    <path d="M875 320 C915 320 938 320 978 320" stroke="#34d399" stroke-width="4" marker-end="url(#greenArrow)"/>
+    <text x="928" y="271" text-anchor="middle" class="small">Worker completion</text>
+    <text x="928" y="295" text-anchor="middle" class="small">Returned with Output</text>
+
+    <g filter="url(#shadow)">
+      <rect x="70" y="570" width="590" height="210" rx="26" fill="#111d35" stroke="#3b82f6" stroke-width="2"/>
+      <text x="105" y="615" class="boxTitle">Only queued: waiting for the next real scheduling</text>
+      <text x="105" y="654" class="body">Zero token Step cannot submit FIFO items to worker;</text>
+      <text x="105" y="687" class="body">Forcing keepalive will only repeatedly check the same metadata.</text>
+      <rect x="103" y="714" width="524" height="39" rx="12" fill="#172554"/>
+      <text x="365" y="740" text-anchor="middle" class="code">queued → Next positive token Step → in-flight</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="740" y="570" width="590" height="210" rx="26" fill="#142820" stroke="#34d399" stroke-width="2"/>
+      <text x="775" y="615" class="boxTitle">Already in-flight: empty Step can complete the wrap-up</text>
+      <text x="775" y="654" class="body">Worker future will complete, connector-only Step can receive acknowledgment;</text>
+      <text x="775" y="687" class="body">Thus, there is an opportunity to progress from "waiting" to "freed" in each round.</text>
+      <rect x="773" y="714" width="524" height="39" rx="12" fill="#064e3b"/>
+      <text x="1035" y="740" text-anchor="middle" class="code">in-flight → Zero token Step → freed</text>
+    </g>
+
+    <text x="700" y="831" text-anchor="middle" class="body">PR #4998 only covers the purple stage: it fixes the completion wrap-up, without committing to actively drain FIFO when idle</text>
+  </g>
+</svg>
+```

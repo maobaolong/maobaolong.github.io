@@ -1,0 +1,57 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC compatibility rules</title>
+  <desc id="desc">Compatibility rules for adding services, RPCs, message types, and fields in LMCache gRPC transport.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .ok { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.7; }
+      .warn { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.7; }
+      .bad { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.7; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="20" />
+  <text class="title" x="50" y="58">Compatibility Maintenance: Current Three Accounts, Future Convergence to gRPC-first</text>
+  <text class="muted" x="50" y="88">During the dual-stack phase, maintain proto, Python contract, and historical ZMQ RequestType simultaneously; after removing ZMQ, the enum bridging layer can be deleted.</text>
+
+  <rect class="ok" x="60" y="132" width="360" height="176" rx="16" />
+  <text class="heading" x="86" y="168">Safe to Add</text>
+  <text class="text" x="86" y="202">1. New optional/default fields should be placed at the end of the message</text>
+  <text class="text" x="86" y="232">2. New RPCs should use new request/response messages</text>
+  <text class="text" x="86" y="262">3. During the dual-stack period, new RequestTypes should only be appended</text>
+  <text class="code" x="86" y="290">field numbers should never be reused</text>
+
+  <rect class="warn" x="460" y="132" width="360" height="176" rx="16" />
+  <text class="heading" x="486" y="168">Migration Window Needed</text>
+  <text class="text" x="486" y="202">1. Old fields should stop being used but retain their tags</text>
+  <text class="text" x="486" y="232">2. Python dataclass should add default values</text>
+  <text class="text" x="486" y="262">3. Old clients may only send the old field set</text>
+  <text class="code" x="486" y="290">absence should be expressible as None/default</text>
+
+  <rect class="bad" x="860" y="132" width="360" height="176" rx="16" />
+  <text class="heading" x="886" y="168">Do Not Change This Way</text>
+  <text class="text" x="886" y="202">1. Change existing field tags or wire types</text>
+  <text class="text" x="886" y="232">2. Reuse field numbers after deletion</text>
+  <text class="text" x="886" y="262">3. Insert RequestType enums during the dual-stack period</text>
+  <text class="code" x="886" y="290">if payload shape changes, create a new RPC</text>
+
+  <rect class="card" x="80" y="370" width="1120" height="270" rx="18" />
+  <text class="heading" x="112" y="410">Current Checklist for Adding a New RPC</text>
+  <text class="text" x="112" y="446">A. Add Request/Response messages and RPCs in the appropriate *_service.proto; new message fields should start from unused tags.</text>
+  <text class="text" x="112" y="480">B. During the dual-stack phase, append RequestType and add ProtocolDefinition to connect Python types and handlers.</text>
+  <text class="text" x="112" y="514">C. Add @request_handler to the business module; parameters and return annotations must match the Python types in ProtocolDefinition.</text>
+  <text class="text" x="112" y="548">D. Structured types should go through the structural codec; non-structured objects like DeviceIPCWrapper, torch.Size</text>
+  <text class="text" x="112" y="572">   need to register an explicit codec.</text>
+  <text class="text" x="112" y="602">E. Regenerate protobuf bindings, supplement registry / E2E / frozen wire id tests; ZMQ validation can be removed after going gRPC-only.</text>
+
+  <rect class="card" x="160" y="670" width="960" height="64" rx="14" />
+  <text class="heading" x="190" y="696">Judgment Criteria: When running old and new versions together, unknown fields are ignored, missing fields can default, and existing semantics remain unchanged;</text>
+  <text class="heading" x="190" y="720">After going gRPC-only in the future, the intermediate layer can continue to converge.</text>
+</svg>
+```

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="760" viewBox="0 0 1160 760" role="img" aria-labelledby="title desc">
+  <title id="title">KV cache model layout cases</title>
+  <desc id="desc">Common, MLA, indexer, scratch, and Mamba registration cases.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .attn { fill: #dbeafe; stroke: #2563eb; stroke-width: 1.3; }
+      .mla { fill: #dcfce7; stroke: #16a34a; stroke-width: 1.3; }
+      .idx { fill: #ffedd5; stroke: #ea580c; stroke-width: 1.3; }
+      .scratch { fill: #fee2e2; stroke: #dc2626; stroke-width: 1.3; }
+      .mamba { fill: #ede9fe; stroke: #7c3aed; stroke-width: 1.3; }
+      .text { fill: #0f172a; font: 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .title { fill: #0f172a; font: 700 22px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { fill: #334155; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#334155" />
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1160" height="760" rx="18" />
+  <text class="title" x="40" y="48">What registration has to normalize across model families</text>
+  <text class="muted" x="40" y="76">The same REGISTER_KV_CACHE protocol covers simple attention, MLA, compressed indexers, scratch buffers, and recurrent-state pages.</text>
+
+  <rect class="card" x="40" y="118" width="1080" height="106" rx="14" />
+  <rect class="attn" x="70" y="150" width="230" height="46" rx="8" />
+  <text class="text" x="88" y="179">ordinary attention</text>
+  <text class="small" x="330" y="158">tensor page: [NB, 2, block_size, NH, HS]</text>
+  <text class="small" x="330" y="182">one vLLM block id selects one physical tensor page</text>
+  <text class="small" x="330" y="206">tokens_per_block == slots_per_block</text>
+
+  <rect class="card" x="40" y="252" width="1080" height="126" rx="14" />
+  <rect class="mla" x="70" y="292" width="230" height="46" rx="8" />
+  <text class="text" x="88" y="321">sub-paged MLA</text>
+  <text class="small" x="330" y="286">kernel pages: [N * 12, 64, C]</text>
+  <path class="arrow" d="M566 289 L640 289" />
+  <text class="small" x="662" y="286">logical view: [N, 768, C]</text>
+  <text class="small" x="330" y="314">the first dimension shrinks; the states dimension grows</text>
+  <text class="small" x="330" y="342">bytes are unchanged, only shape/stride metadata changes</text>
+
+  <rect class="card" x="40" y="406" width="1080" height="126" rx="14" />
+  <rect class="idx" x="70" y="446" width="230" height="46" rx="8" />
+  <text class="text" x="88" y="475">MLA + indexer</text>
+  <text class="small" x="330" y="440">one vLLM UniformType group may contain two physical formats</text>
+  <text class="small" x="330" y="468">main MLA: states=1152, dtype=bf16, width=512</text>
+  <text class="small" x="330" y="496">indexer: states=288, dtype=uint8, width=132, tokens_per_state=4</text>
+
+  <rect class="card" x="40" y="560" width="520" height="126" rx="14" />
+  <rect class="scratch" x="70" y="600" width="178" height="46" rx="8" />
+  <text class="text" x="88" y="629">scratch ring</text>
+  <text class="small" x="270" y="600">prefix_cacheable = false</text>
+  <text class="small" x="270" y="626">tokens_per_block = 0</text>
+  <text class="small" x="270" y="652">excluded from group infos</text>
+
+  <rect class="card" x="600" y="560" width="520" height="126" rx="14" />
+  <rect class="mamba" x="630" y="600" width="178" height="46" rx="8" />
+  <text class="text" x="648" y="629">Mamba state</text>
+  <text class="small" x="830" y="600">conv | ssm | padding</text>
+  <text class="small" x="830" y="626">viewed as opaque pages</text>
+  <text class="small" x="830" y="652">one-block recurrent window</text>
+</svg>

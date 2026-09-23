@@ -1,0 +1,96 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GitHubThreadWidget from "../../../components/GitHubThreadWidget.astro";
+import commentThreads from "../../../config/comment-threads.json";
+import { siteText } from "../../../config/i18n";
+import { withBase } from "../../../utils/with-base";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blogEn");
+
+  return posts.filter((post) => !post.data.draft).map((post) => ({
+    params: { slug: post.id },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const threadKey = `/blog/${post.id}/`;
+const thread = commentThreads.find((item) => item.key === threadKey);
+const site = siteText.en;
+---
+
+<BaseLayout title={`${post.data.title} | ${site.siteName}`} description={post.data.description} locale="en">
+  <section class="page-hero">
+    <div class="container article-shell">
+      <article class="article-card glass">
+        <span class="chip">{post.data.category}</span>
+        <h1 class="article-title">{post.data.title}</h1>
+        <p class="section-copy">{post.data.description}</p>
+        <div class="meta" style="margin-top: 1rem;">
+          <span>{post.data.author}</span>
+          <span>{post.data.publishedAt.toLocaleDateString("en-US")}</span>
+          {post.data.updatedAt ? (
+            <span>Updated {post.data.updatedAt.toLocaleDateString("en-US")}</span>
+          ) : null}
+          <span>{post.data.readingTime}</span>
+        </div>
+      </article>
+
+      <aside class="article-sidebar">
+        <div class="glass text-card">
+          <h3>Tags</h3>
+          <div class="tags">
+            {post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}
+          </div>
+        </div>
+        <div class="glass text-card">
+          <h3>Discussion</h3>
+          <p>Comments and reactions are backed by GitHub Issues and Reactions.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <article class="article-card glass prose">
+        <Content />
+        {post.id === "lmcache-register-kv-cache" ? (
+          <script type="module" src={withBase("/scripts/lmcache-register-kv-cache-animations-en.js")}></script>
+        ) : null}
+        {post.id === "lmcache-mp-gds-unveiled" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-gds.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-gds-en.js")}></script>
+          </>
+        ) : null}
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Discussion</span>
+          <h2 class="section-heading">Comments and Reactions</h2>
+        </div>
+      </div>
+      {
+        thread ? (
+          <GitHubThreadWidget
+            issueNumber={thread.issueNumber}
+            threadKey={thread.key}
+            kind="article"
+            locale="en"
+          />
+        ) : (
+          <div class="notice">This article does not have an initialized discussion thread yet.</div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

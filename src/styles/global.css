@@ -2183,6 +2183,11 @@ main {
   background: rgba(255, 255, 255, 0.06);
 }
 
+.language-toggle {
+  min-width: 96px;
+  cursor: pointer;
+}
+
 .hero {
   padding: 3.4rem 0 2.4rem;
 }
@@ -2752,6 +2757,10 @@ select:focus {
   }
 
   .button {
+    width: 100%;
+  }
+
+  .header .button-row {
     width: 100%;
   }
 

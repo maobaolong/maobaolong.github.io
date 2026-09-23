@@ -1,13 +1,17 @@
 ---
 import site from "../config/site.json";
-import navigation from "../config/navigation.json";
 import { withBase } from "../utils/with-base";
+import { isCurrentPath, localeLabels, navigationText, siteText, type Locale } from "../config/i18n";
 
 interface Props {
   currentPath: string;
+  locale: Locale;
+  alternatePath: string;
 }
 
-const { currentPath } = Astro.props;
+const { currentPath, locale } = Astro.props;
+const text = siteText[locale];
+const alternateLocale = locale === "zh" ? "en" : "zh";
 ---
 
 <header class="header">
@@ -16,17 +20,15 @@ const { currentPath } = Astro.props;
       <a class="brand" href={withBase("/")}>
         <span class="brand-mark">MB</span>
         <span class="brand-copy">
-          <strong>{site.siteName}</strong>
-          <span>{site.tagline}</span>
+          <strong>{text.siteName}</strong>
+          <span>{text.tagline}</span>
         </span>
       </a>
 
-      <nav class="nav-links" aria-label="主导航">
-        {navigation.items.map((item) => {
+      <nav class="nav-links" aria-label={text.navLabel}>
+        {navigationText[locale].map((item) => {
           const href = withBase(item.href);
-          const isCurrent =
-            currentPath === href ||
-            (item.href !== "/" && currentPath.startsWith(href));
+          const isCurrent = isCurrentPath(currentPath, href);
 
           return (
             <a href={href} aria-current={isCurrent ? "page" : undefined}>
@@ -37,11 +39,21 @@ const { currentPath } = Astro.props;
       </nav>
 
       <div class="button-row">
+        <button
+          class="button button-secondary language-toggle"
+          type="button"
+          data-language-toggle
+          data-target-locale={alternateLocale}
+          aria-label={`${locale === "zh" ? "Switch to English" : "切换到中文"}`}
+          title={`${locale === "zh" ? "Switch to English" : "切换到中文"}`}
+        >
+          {localeLabels[alternateLocale]}
+        </button>
         <a class="button button-secondary" href={site.githubProfile} target="_blank" rel="noreferrer">
-          GitHub
+          {text.github}
         </a>
-        <a class="button button-primary" href={withBase("/admin/")}>
-          后台管理
+        <a class="button button-primary" href={withBase(locale === "en" ? "/en/admin/" : "/admin/")}>
+          {text.admin}
         </a>
       </div>
     </div>

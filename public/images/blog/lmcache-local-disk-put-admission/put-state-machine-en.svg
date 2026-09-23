@@ -1,0 +1,61 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">LocalDiskBackend Put State Machine</title>
+  <desc id="desc">Demonstrates the changes of a key between non-existent, in-flight, resident, and handover states, as well as the correspondence between capacity count and marker.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#101b33"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      .title { font: 700 36px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .head { font: 700 25px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #f8fafc; }
+      .body { font: 500 19px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #cbd5e1; }
+      .small { font: 500 16px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; fill: #94a3b8; }
+      .mono { font: 600 17px "SFMono-Regular",Consolas,monospace; fill: #dbeafe; }
+    </style>
+  </defs>
+  <rect width="1280" height="720" rx="28" fill="url(#bg)"/>
+  <text x="640" y="62" text-anchor="middle" class="title">Put State Machine of a Disk Cache Key</text>
+
+  <rect x="65" y="145" width="245" height="270" rx="22" fill="#0b1528" stroke="#475569" stroke-width="2"/>
+  <text x="188" y="194" text-anchor="middle" class="head">Non-existent</text>
+  <text x="188" y="252" text-anchor="middle" class="mono">dict: false</text>
+  <text x="188" y="288" text-anchor="middle" class="mono">put_tasks: false</text>
+  <text x="188" y="345" text-anchor="middle" class="small">Capacity not yet occupied</text>
+
+  <rect x="375" y="145" width="245" height="270" rx="22" fill="#102438" stroke="#38bdf8" stroke-width="2"/>
+  <text x="498" y="194" text-anchor="middle" class="head">In-flight</text>
+  <text x="498" y="252" text-anchor="middle" class="mono">dict: false</text>
+  <text x="498" y="288" text-anchor="middle" class="mono">put_tasks: true</text>
+  <text x="498" y="345" text-anchor="middle" class="small">Capacity has been reserved</text>
+
+  <rect x="685" y="145" width="245" height="270" rx="22" fill="#18213a" stroke="#a78bfa" stroke-width="2"/>
+  <text x="808" y="194" text-anchor="middle" class="head">Handover State</text>
+  <text x="808" y="252" text-anchor="middle" class="mono">dict: true</text>
+  <text x="808" y="288" text-anchor="middle" class="mono">put_tasks: true</text>
+  <text x="808" y="334" text-anchor="middle" class="small">insert_key() has completed</text>
+  <text x="808" y="361" text-anchor="middle" class="small">marker not yet deleted</text>
+
+  <rect x="995" y="145" width="220" height="270" rx="22" fill="#102b35" stroke="#2dd4bf" stroke-width="2"/>
+  <text x="1105" y="194" text-anchor="middle" class="head">Resident</text>
+  <text x="1105" y="252" text-anchor="middle" class="mono">dict: true</text>
+  <text x="1105" y="288" text-anchor="middle" class="mono">put_tasks: false</text>
+  <text x="1105" y="345" text-anchor="middle" class="small">Readable, should not be written again</text>
+
+  <path d="M310 280H361" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="335" y="252" text-anchor="middle" class="small">Admission</text>
+  <path d="M620 280H671" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="645" y="252" text-anchor="middle" class="small">Write Complete</text>
+  <path d="M930 280H981" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="955" y="252" text-anchor="middle" class="small">Delete Marker</text>
+
+  <rect x="112" y="486" width="1056" height="145" rx="22" fill="#111b2f" stroke="#334155" stroke-width="2"/>
+  <text x="640" y="527" text-anchor="middle" class="head">Business Invariants That Need Joint Maintenance</text>
+  <text x="640" y="568" text-anchor="middle" class="body">Resident key must not re-enter new write tasks · At most one valid write for the same key</text>
+  <text x="640" y="602" text-anchor="middle" class="body">Only the owner of the marker can roll back · current_cache_size increases only once per admission</text>
+</svg>
+```

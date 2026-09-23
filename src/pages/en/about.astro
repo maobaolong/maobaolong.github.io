@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { siteText } from "../../config/i18n";
+
+const site = siteText.en;
+const focuses = [
+  "AI infrastructure",
+  "Distributed systems",
+  "Databases and caching",
+  "Performance optimization",
+  "Engineering retrospectives"
+];
+---
+
+<BaseLayout title={`About | ${site.siteName}`} description="A lightweight content system for technical writing, project communication, and GitHub-backed collaboration." locale="en">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">About</span>
+      <h1 class="section-heading">About This Site</h1>
+      <p class="section-copy">
+        This is not just a showcase homepage. It is a lightweight content system built around technical writing,
+        project communication, and GitHub collaboration.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container three-grid">
+      <article class="about-card glass">
+        <h3>Positioning</h3>
+        <p>
+          The site is designed for technical blogging, project presentation, and durable knowledge capture.
+          The home page feels closer to a research or engineering product page, while the blog carries ongoing output.
+        </p>
+      </article>
+      <article class="about-card glass">
+        <h3>Publishing Flow</h3>
+        <p>
+          The update path should stay low-friction. The site keeps static performance and portability while adding
+          a GitHub-backed admin surface for routine content edits.
+        </p>
+      </article>
+      <article class="about-card glass">
+        <h3>Interaction Model</h3>
+        <p>
+          Comments, reactions, and the guestbook all live in GitHub Issues and Reactions, reducing backend maintenance
+          while keeping the interaction history auditable and portable.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="glass article-card">
+        <h2 class="section-heading">Long-term Focus Areas</h2>
+        <div class="tags">
+          {focuses.map((focus) => <span class="tag">{focus}</span>)}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

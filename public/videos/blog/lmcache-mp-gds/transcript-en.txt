@@ -1,0 +1,182 @@
+Unveiling GDS: LMCache MP
+
+Article: https://maobaolong.github.io/blog/lmcache-mp-gds-unveiled/
+Source: LMCache c9b51e424acf4d88d9c18ed95828bd234a205b5f
+Narration: Chinese AI neural voice; capacities, addresses, and block IDs in the diagrams are teaching examples.
+
+[00:00:00.000] 01 Why GDS is Needed / Why Calculate KV Again?
+A long context has already been calculated by the model once. When encountering the same prefix again, can it be reused directly? Yes, but first, we need to answer a more practical question: where should these caches be stored?
+
+[00:00:14.345] 01 Why GDS is Needed / Capacity is Not Just About One Request
+Let's look at a scale. Assuming each token requires 128 KiB of KV Cache, then around 130,000 tokens would be close to 16 GiB. Sixty-four non-shared contexts together would be about 1 TiB.
+
+[00:00:29.267] 01 Why GDS is Needed / NVMe SSD Expands Capacity, GDS Changes Path
+Video memory needs to be reserved for the model and the requests being executed, and host memory also has cost and capacity limits. Local NVMe SSDs are suitable for retaining more potentially reusable caches, while GDS addresses how to efficiently send them back to the GPU.
+
+[00:00:46.625] 01 Why GDS is Needed / This Article Only Explores the MP Read/Write Path
+Next, we will deconstruct the multi-process read/write path of the cache service layer by layer, based on the restructured components that have been merged. First, we will look at the hardware, then the code, and finally use the Phoenix backend to illustrate how this design integrates with new implementations.
+
+[00:01:02.888] 02 Who Moves the Data / Normal Read: Through Host Intermediary
+The common path for normal reads is to first place the SSD data into host memory and then copy it to video memory. Here, the host memory acts as a data transfer station. GDS aims to eliminate this intermediary step.
+
+[00:01:17.553] 02 Who Moves the Data / CPU Still Responsible for Organization
+But this does not mean the CPU disappears. User-space programs decide what to read, how much to read, and where to place it; the kernel and drivers handle permissions, file locations, and device mappings. Both user-space and kernel-space code still run on the CPU.
+
+[00:01:34.796] 02 Who Moves the Data / GPU is Also an Addressable PCIe Endpoint
+The GPU is also an addressable device on the PCIe bus. The driver maps the video memory range into an address window accessible by other devices. However, the virtual pointer to video memory obtained by the program does not equal the DMA address directly used by the SSD.
+
+[00:01:52.399] 02 Who Moves the Data / Reading: SSD Controller Initiates DMA
+Who actually moves the data? In local direct reads, it is the DMA hardware within the SSD storage controller. It initiates a PCIe write transaction with a target address, sending the data to the GPU endpoint, which then lands in the corresponding video memory.
+
+[00:02:08.842] 02 Who Moves the Data / Saving: SSD Controller Reads GPU Data
+When saving, the direction reverses. The storage controller issues a read request to the GPU mapped address, receives the returned data, and writes it to the storage medium. This is not a byte-by-byte copy by the CPU, nor is it the GPU's compute core running a program to read from the SSD.
+
+[00:02:27.592] 02 Who Moves the Data / Calling an API Does Not Mean Direct Path is Taken
+Of course, this path requires support from devices, drivers, address mappings, and bus topology. Calling an interface does not confirm that direct transfer has occurred. When conditions are insufficient, some implementations may still fall back to host memory intermediaries.
+
+[00:02:44.306] 03 Two Sets of Addresses and Three Resources / Slab: Prepare Large Space First, Then Allocate Offset
+Now let's look at how the cache is arranged. The server first prepares a large storage space called a slab. Each cache object occupies only a segment of it, described by offset and size indicating the starting position and length. The object itself records its position, not the CPU tensor containing the data.
+
+[00:03:03.301] 03 Two Sets of Addresses and Three Resources / GPU Staging Buffer is Another Space
+On the GPU side, the server has another GPU staging buffer to hold a batch of data being transported. It can be reused repeatedly, so even if the SSD cache is large, there is no need to allocate the same size of video memory.
+
+[00:03:18.687] 03 Two Sets of Addresses and Three Resources / What are R0 and R1?
+In the diagram, R0 and R1, where R stands for region, refer to registered ranges. They are not two separate GPUs or two SSD partitions, but two segments within the same video memory allocation. The software registers them in segments according to the current implementation's 16 MiB limit.
+
+[00:03:36.355] 03 Two Sets of Addresses and Three Resources / Registration: Establish Mapping, Not Copy Data
+Registration allows the repository and driver to recognize these video memory ranges, preparing the necessary mappings for direct transfer. It does not copy a cache. In future reads and writes, the base address of the registered area must be found, plus the offset within the area.
+
+[00:03:52.270] 03 Two Sets of Addresses and Three Resources / Across Registration Boundaries: 8 MiB Split into Two 4 MiB
+For example, 8 MiB of data starts at the 12 MiB position of the first registered area. The first 4 MiB remains in this area, while the next 4 MiB enters the next area, thus splitting into two read/write operations. File offset and buffer offset are two different coordinate systems.
+
+[00:04:09.912] 03 Two Sets of Addresses and Three Resources / Handle: Library Recognizes Which Storage Resource
+Three terms need to be distinguished. Handle refers to a reference to a resource that has been opened or registered. The operating system's file descriptor (fd) tells the process which file has been opened; the GDS library's handle indicates that this resource has been integrated into its read/write mechanism.
+
+[00:04:26.033] 03 Two Sets of Addresses and Three Resources / Buffer: Memory Range for Storing Data
+Buffer is the actual memory where data is stored. The temporary buffer here is on the GPU, not in host memory. Another object called Submission only retains the parameters and result locations of the native call, without storing the entire cache.
+
+[00:04:41.535] 03 Two Sets of Addresses and Three Resources / Stream: Scheduling Work in Order
+Stream can be understood as a sequential work queue. Layout transformations, storage reads/writes, and completion events can all be placed in the same queue, constraining the order of execution. It is not an application thread, nor is it a dedicated data line.
+
+[00:04:57.437] 04 Configuration and Backend / Server Chooses GDS L1
+When in use, the server specifies the storage path, cache capacity, and backend name to select this level 1 cache path. The configured capacity refers to the slab size, not the same size of host memory. Matching drivers and runtime libraries must still be prepared before deployment.
+
+[00:05:16.018] 04 Configuration and Backend / cuFile and hipFile
+cuFile and hipFile correspond to the runtime environments of NVIDIA CUDA and AMD ROCm, respectively. In addition to user-space libraries, kernel capabilities, drivers, file systems, and device topologies must also be verified. Installing a Python binding does not replace these prerequisites.
+
+[00:05:34.344] 04 Configuration and Backend / uGDS: Open Source Software, Not a Piece of Hardware
+Next, uGDS, which comes from the ScaleX Lab at the Hong Kong University of Science and Technology in Guangzhou, is an open-source software stack, not a dedicated SSD. The currently public implementations have two paths: CUDA and HIP, using dedicated raw devices here and requiring kernel module cooperation.
+
+[00:05:52.630] 04 Configuration and Backend / Phoenix: I/O Stack for Various xPUs
+Phoenix has a somewhat different positioning. It aims to unify storage reads and writes for various xPUs at a lower level. Below the application, user-space connectors and kernel P2P backends adapt to devices. However, unification is an architectural direction and does not imply that all hardware is already available.
+
+[00:06:12.720] 04 Configuration and Backend / Auto Select Default Options, No Speed Testing or Failover
+Automatic selection is also quite restrained. The current two runtime environments each choose their corresponding default backend. It does not perform speed tests first, nor does it quietly switch to Phoenix after one implementation fails. Both dedicated device backends and Phoenix need to be explicitly selected.
+
+[00:06:31.135] 05 Initialization and Lazy Loading / Discover Names in Directory, Do Not Import All Implementations
+Now we enter the code. The factory first scans the backend directory to discover available module names. This step does not execute the code of each implementation. The generic scheduling layer does not need to list all vendor names.
+
+[00:06:45.504] 05 Initialization and Lazy Loading / Explicit phx: Only Import Selected Modules
+Assuming the configuration selects Phoenix, it will then import its modules, confirm that the backend class inherits from a common parent class, construct objects, and check the environment. Discovering names, importing implementations, and creating objects are three distinct actions.
+
+[00:07:01.367] 05 Initialization and Lazy Loading / open_slab(): Storage Resources Interpreted by Backend
+Then, the upper layer simply says to open the slab. The file-type parent class is responsible for creating files and pre-allocating capacity; the raw device implementation checks the device and capacity. The upper layer does not need to guess whether to create a file or open a device based on the backend name.
+
+[00:07:18.751] 05 Initialization and Lazy Loading / Native Library Loaded Only on First Use
+The native library is only loaded when the file resource is truly registered. Here, the file interface adaptation library is loaded; it is not sufficient to just find the Phoenix core library. Optional implementations without selection should not affect the generic code due to missing libraries.
+
+[00:07:36.766] 05 Initialization and Lazy Loading / Binding ABI: Tell Python How to Call C
+After loading, it is also necessary to declare the parameters and return types of each native function. Which are pointers, which are integers, and which are addresses of integers must be precise. Otherwise, it may truncate an address or cause the underlying layer to read the wrong memory.
+
+[00:07:53.790] 05 Initialization and Lazy Loading / Handle, GPU Buffer, Stream Ready
+Once the file handle is prepared, the GPU staging buffer and stream are handed over to the backend for registration. The common layer is responsible for the order of calls, while the specific implementation handles the underlying details. Some stream registrations are actual operations, while others are no-ops, but each read/write will still carry the stream.
+
+[00:08:13.197] 05 Initialization and Lazy Loading / Worker Owns KV, Server Accesses via IPC Mapping
+Between multiple processes, the original KV Cache's video memory still belongs to the inference worker. The LMCache server imports the IPC handle to establish cross-process mapping, rather than copying entire blocks of data through messages. Only that GPU staging buffer is allocated and managed by LMCache itself.
+
+[00:08:33.519] 06 STORE: From Paging KV to SSD / store() Receives Not a Continuous KV Block
+The key point arrives. The save entry receives a set of cache keys, token ranges, and actual block IDs. The KV Cache of the inference engine is placed on the GPU in a paged manner. A logically continuous context does not guarantee physical continuity in layout.
+
+[00:08:51.638] 06 STORE: From Paging KV to SSD / Wait for Producer First, Then Obtain Writable Object
+Therefore, we must first wait for the producer to finish; we cannot read while the engine has not completed writing. The storage manager then reserves space for the writable cache object. For this path, the obtained object records the slab offset, not the CPU tensor.
+
+[00:09:08.777] 06 STORE: From Paging KV to SSD / Encounter GDSMemoryObject: Choose GDS Branch
+Upon entering the method for transferring by object group, the code identifies the GDS object based on its type and selects the corresponding branch. It will not treat it as a normal host cache to obtain a CPU tensor address.
+
+[00:09:23.236] 06 STORE: From Paging KV to SSD / First Gather: Organize Dispersed KV into Continuous Bytes
+Next, a gather operation is performed internally on the GPU to organize the layout. The four pieces of logical data in the diagram are scattered across different blocks. The transport kernel collects them into the server's GPU staging buffer according to block IDs, forming a suitable segment of continuous bytes for storage.
+
+[00:09:41.354] 06 STORE: From Paging KV to SSD / Why Can't We Write Directly to the Engine's KV Pages?
+Why can't SSDs read those pages from the engine directly? Because the storage interface handles continuous addresses and lengths, and does not understand tokens, layers, and block IDs. The GPU staging buffer simultaneously addresses layout conversion, batch read/write, and registration lifecycle, separating the engine layout from the storage interface.
+
+[00:10:01.986] 06 STORE: From Paging KV to SSD / GPU Staging, Not CPU DRAM Staging
+Note that this staging occurs on the GPU and does not route the entire cache back to the host memory. Different views for layout conversion and storage read/write point to the same GPU memory allocation, and creating a new view does not involve copying again.
+
+[00:10:18.562] 06 STORE: From Paging KV to SSD / GDSContext Computes Registration Area and Two Sets of Offsets
+Once the data is organized, the storage context finds the registration base address and the offset within the area based on the GPU memory slices; combined with the slab offset of the cache object, it determines how much to write, where to read from, and where to write to. When crossing registration areas, it splits into multiple submissions.
+
+[00:10:35.973] 06 STORE: From Paging KV to SSD / handle.write_async() Submits Native Writes
+The handle object then calls the asynchronous write of the specific backend. The earlier gather and the write here have an order in the transport stream, so the storage device will not prematurely read from the GPU staging buffer that has not yet been organized.
+
+[00:10:51.153] 06 STORE: From Paging KV to SSD / Release Cache After Completion and Allow Resource Reuse
+After the write is complete, the event and callback connect the final process, and the storage manager updates the write status. At this point, the cache object is only released, and the related buffer can be reused as agreed. The function has returned, and the device has completed writing; these are two different matters.
+
+[00:11:10.200] 07 RETRIEVE: From SSD Back to Paging KV / retrieve(): Find Cache and Target Block for This Request
+When retrieving, first find the hit cache and the target block IDs for this request. The target block may be completely different from the last one, so the physical address saved cannot be directly used as the recovery location.
+
+[00:11:24.646] 07 RETRIEVE: From SSD Back to Paging KV / Lock Hit Objects to Avoid Being Evicted During Read
+The storage manager hands over the prefetch results and retains these objects during the read to avoid eviction or reuse of cache locations before the bytes have been fully moved. The stream will also establish a dependency with the producer.
+
+[00:11:38.988] 07 RETRIEVE: From SSD Back to Paging KV / First Read to Registered Continuous GPU Buffer
+Then, the handle submits an asynchronous read, sending the continuous bytes from the slab into the already registered GPU staging buffer. The SSD only needs to recognize the address, offset, and length, without needing to know which layer of attention these bytes belong to.
+
+[00:11:55.213] 07 RETRIEVE: From SSD Back to Paging KV / Then Scatter: Write Back According to This Block IDs
+Once the read is complete on the stream, the layout transport kernel performs a scatter, writing the data from the GPU staging buffer into this target block. The logical order in the diagram remains unchanged, but the actual block IDs have been replaced with new locations.
+
+[00:12:11.733] 07 RETRIEVE: From SSD Back to Paging KV / Why Can't Reads Directly Go to the Final Location?
+This is why reading also requires a GPU staging buffer. A clear conversion is needed between the continuously stored bytes and the engine's paging layout. The transport must also adhere to object grouping and ranges to skip, avoiding overwriting tokens that should be preserved.
+
+[00:12:28.679] 07 RETRIEVE: From SSD Back to Paging KV / Only After Completion Event Can Protection Be Consumed and Released
+Finally, the completion event informs subsequent work that the target cache is ready; the read finalization process then releases object protection. You cannot let the model use data that has not yet arrived just after sending the read command, nor can you allow the storage area to be overwritten prematurely.
+
+[00:12:46.089] 08 async: Who is Waiting for Whom / Asynchronous Return Only Indicates Submission Completion
+Let’s separate out the asynchronous aspect. The upper layer call returning only indicates that the request has been submitted, not that the data has been fully moved. The CPU can continue scheduling work, while the GPU and storage devices complete subsequent tasks along the dependency chain.
+
+[00:13:02.558] 08 async: Who is Waiting for Whom / The Same Stream Guarantees Order, Not Parallelism
+During saving, the order is gather first, then write to disk, and finally record the completion event. During retrieval, it is read from disk first, then scatter, and then record the event. Ordered does not mean parallel; async does not automatically make all steps happen simultaneously.
+
+[00:13:18.782] 08 async: Who is Waiting for Whom / Submission: Parameters Must Live Until Call Ends
+Another easily overlooked lifecycle aspect: the underlying asynchronous function may continue to use the addresses of the parameters. Submission must keep these lengths, offsets, and result variables alive. Otherwise, if the data has not been fully moved, the parameter memory may have already been reclaimed.
+
+[00:13:36.231] 08 async: Who is Waiting for Whom / Completion Event, I/O Success, and Persistence Are Not the Same Thing
+The current implementation uses checkpoints to reclaim completed submissions, but this does not equate to verifying the actual number of bytes transmitted for each submission. Completion of execution, successful read/write, and data persistence are different levels of issues and cannot be conflated based on a single event.
+
+[00:13:53.383] 09 Using Phoenix to See How to Extend / Putting Changes Back into Concrete Implementation
+Finally, let’s look at extension. Taking the existing Phoenix implementation as an example, if we were to re-integrate it today, the core is not to add another check to the general scheduler, but to add a new implementation module in the backend directory.
+
+[00:14:07.803] 09 Using Phoenix to See How to Extend / Inherit File-Type Parent Class, Reuse Common Resource Management
+Its backend class inherits from the file-type parent class, reusing the preparation process for storage files; its asynchronous handle inherits from the common handle, taking on specific read/write tasks. Shared driver states and resource releases can be placed in the parent class for the required implementations to use directly.
+
+[00:14:25.251] 09 Using Phoenix to See How to Extend / Three Sets of Responsibilities Clarify the Interface
+The interface can be understood in three groups. The first group checks the environment, prepares storage and drivers; the second group registers buffers and streams; the third group is responsible for asynchronous read/write and release. The common layer calls these capabilities instead of guessing the backend names.
+
+[00:14:41.359] 09 Using Phoenix to See How to Extend / Phoenix's Differences Are Handled in phx.py
+Phoenix's own differences are handled within its own module: loading the adaptation library upon first use, checking asynchronous symbols, binding function signatures, and interpreting error codes and offset parameters. Adding a new backend does not require modifications to all upper-layer callers.
+
+[00:14:58.370] 09 Using Phoenix to See How to Extend / Not Imposing Other Backends' Habits on Phoenix
+The lifecycle does not need to be forced into uniformity. Currently, Phoenix encapsulates implicit driver initialization, stream registration does not accept flags, and allows for no-operation. It does not need to replicate the numeric constants of other libraries, but each asynchronous read/write still requires passing in the stream.
+
+[00:15:16.690] 09 Using Phoenix to See How to Extend / Extension Benefits: Central Registration Becomes Non-Essential
+In comparison to the initial changes made when integrating Phoenix, which required modifying two central files for configuration and scheduling, now, under the premise of existing device platforms, new modules can be discovered through directories without needing to modify these two areas. The benefit is reducing interdependencies rather than eliminating implementation code.
+
+[00:15:36.163] 09 Using Phoenix to See How to Extend / Less Modification to the Common Layer Does Not Mean Skipping Validation
+Native interface adaptation, targeted testing, dependency documentation, and hardware validation are still necessary. Especially for new devices that lack support at the lower level, you cannot claim usability just by adding a module. Software extensibility and hardware validation must be discussed separately.
+
+[00:15:53.585] 10 Returning to the Value of GDS / Leaving More KV, Reducing Redundant Computation
+Thus, the value of GDS is not turning SSDs into GPU memory, but using larger capacity to retain more reusable caches and then sending them back to computation through appropriate paths. Ultimately, whether it is cost-effective depends on hit rates, bandwidth, access granularity, and the cost of recomputation.
+
+[00:16:12.619] 10 Returning to the Value of GDS / One Layer of Unified I/O, One Layer of Unified Cache Semantics
+Phoenix attempts to unify various accelerators at the device read/write layer, while the caching framework at a higher level unifies cache objects and transport processes. Both must maintain their boundaries to allow different devices to share the same clear caching logic.
+
+[00:16:29.397] 10 Returning to the Value of GDS / How Data Flows, Who is Responsible for Resources, Who Notifies Completion
+Looking back, the mystery actually comes from several concepts layered together. By separating data paths, resource ownership, and completion order, and using inheritance and polymorphism to encapsulate backend differences, this caching path from SSD to GPU becomes understandable and extensible.

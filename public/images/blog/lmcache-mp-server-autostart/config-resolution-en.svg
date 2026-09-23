@@ -1,0 +1,54 @@
+```xml
+<svg width="1200" height="660" viewBox="0 0 1200 660" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache MP autostart configuration resolution</title>
+  <desc id="desc">A flowchart explaining server URL precedence, local endpoint validation, and launcher command construction.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="660" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#091421"/>
+      <stop offset="1" stop-color="#0F2538"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#BAE6FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .title{font:700 34px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#F8FAFC}
+      .boxTitle{font:700 18px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#E0F2FE}
+      .body{font:500 16px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#CFE8FF}
+      .mono{font:700 15px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;fill:#DCFCE7}
+      .danger{font:700 15px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#FECACA}
+    </style>
+  </defs>
+  <rect width="1200" height="660" rx="36" fill="url(#bg)"/>
+  <text x="70" y="70" class="title">Where does the port come from? First parse the connector endpoint, then hand it to the launcher</text>
+  <rect x="80" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#38BDF8"/>
+  <text x="110" y="165" class="boxTitle">1. First check server_urls</text>
+  <text x="110" y="196" class="mono">lmcache.mp.server_urls</text>
+  <text x="110" y="224" class="body">Highest priority when present</text>
+  <rect x="457" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#38BDF8"/>
+  <text x="487" y="165" class="boxTitle">2. Otherwise, construct host/port</text>
+  <text x="487" y="196" class="mono">host = tcp://localhost</text>
+  <text x="487" y="224" class="mono">port = 5555</text>
+  <rect x="834" y="130" width="286" height="118" rx="22" fill="#10243A" stroke="#34D399"/>
+  <text x="864" y="165" class="boxTitle">3. Obtain unique URL</text>
+  <text x="864" y="196" class="mono">tcp://localhost:5555</text>
+  <text x="864" y="224" class="body">Worker adapter uses it to connect</text>
+  <path d="M366 189H453" stroke="#BAE6FD" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M743 189H830" stroke="#BAE6FD" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="166" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="196" y="354" class="boxTitle">Multiple endpoints?</text>
+  <text x="196" y="383" class="danger">Direct error when autostart=true</text>
+  <text x="196" y="405" class="body">Multiple servers need external management</text>
+  <rect x="475" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="505" y="354" class="boxTitle">Non-local / IPv6?</text>
+  <text x="505" y="383" class="danger">Only accepts localhost / 127.0.0.1</text>
+  <text x="505" y="405" class="body">::1 will also be rejected</text>
+  <rect x="784" y="320" width="250" height="104" rx="20" fill="#321B28" stroke="#F87171"/>
+  <text x="814" y="354" class="boxTitle">Does server_args override endpoint?</text>
+  <text x="814" y="383" class="danger">--host / --port / --http-host are rejected</text>
+  <text x="814" y="405" class="body">Avoid inconsistencies between connection and startup</text>
+  <path d="M977 248C977 292 931 305 909 316" stroke="#FCA5A5" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <rect x="218" y="500" width="764" height="76" rx="20" fill="#112D3D" stroke="#34D399"/>
+  <text x="250" y="532" class="boxTitle">Final command</text>
+  <text x="250" y="558" class="mono">python -m lmcache.v1.multiprocess.http_server --host localhost --port 5555 --http-host localhost ...</text>
+</svg>
+```

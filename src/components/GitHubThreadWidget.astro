@@ -1,15 +1,19 @@
 ---
 import site from "../config/site.json";
+import type { Locale } from "../config/i18n";
 import { withBase } from "../utils/with-base";
 
 interface Props {
   issueNumber: number;
   threadKey: string;
   kind: "article" | "guestbook";
+  locale?: Locale;
 }
 
-const { issueNumber, threadKey, kind } = Astro.props;
+const { issueNumber, threadKey, kind, locale = "zh" } = Astro.props;
 const [owner, repo] = site.githubRepo.split("/");
+const loadingTitle = locale === "en" ? (kind === "guestbook" ? "Guestbook" : "Comments and Reactions") : (kind === "guestbook" ? "留言板" : "评论与点赞");
+const loadingCopy = locale === "en" ? "Loading discussion..." : "正在加载互动内容...";
 ---
 
 <section
@@ -23,11 +27,12 @@ const [owner, repo] = site.githubRepo.split("/");
   data-issue-number={issueNumber}
   data-thread-key={threadKey}
   data-kind={kind}
+  data-locale={locale}
 >
   <div class="github-thread__loading">
     <span class="chip">GitHub</span>
-    <h3>{kind === "guestbook" ? "留言板" : "评论与点赞"}</h3>
-    <p>正在加载互动内容...</p>
+    <h3>{loadingTitle}</h3>
+    <p>{loadingCopy}</p>
   </div>
 </section>
 

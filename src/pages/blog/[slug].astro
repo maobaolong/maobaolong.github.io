@@ -21,7 +21,7 @@ const threadKey = `/blog/${post.id}/`;
 const thread = commentThreads.find((item) => item.key === threadKey);
 ---
 
-<BaseLayout title={`${post.data.title} | ${site.siteName}`} description={post.data.description}>
+<BaseLayout title={`${post.data.title} | ${site.siteName}`} description={post.data.description} locale="zh">
   <section class="page-hero">
     <div class="container article-shell">
       <article class="article-card glass">
@@ -86,6 +86,7 @@ const thread = commentThreads.find((item) => item.key === threadKey);
             issueNumber={thread.issueNumber}
             threadKey={thread.key}
             kind="article"
+            locale="zh"
           />
         ) : (
           <div class="notice">当前文章的评论线程还没有初始化。</div>

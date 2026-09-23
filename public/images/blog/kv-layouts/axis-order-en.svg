@@ -1,0 +1,199 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="700" viewBox="0 0 1180 700" role="img" aria-labelledby="title desc">
+  <title id="title">KV layout axis order animation</title>
+  <desc id="desc">Animated comparison of NHD, HND, BLNHC, and BLHNC axis order. The bright cursor shows the physical scan order and the memory strip lights up in the same order.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#151922"/>
+      <stop offset="0.58" stop-color="#20272f"/>
+      <stop offset="1" stop-color="#10151d"/>
+    </linearGradient>
+    <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .bg { fill: url(#bg); }
+      .title { fill: #f7fafc; font: 700 31px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .subtitle { fill: #aeb8c5; font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .row-label { fill: #0e141b; font: 800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { fill: #c6d1dc; font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .axis-text { fill: #f9fbfd; font: 800 24px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .hint { fill: #dce5ed; font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .label-bg { fill: #e2f4ff; }
+      .axis { fill: #2c3642; stroke: #5f7387; stroke-width: 1.2; }
+      .axis.n { fill: #24536b; stroke: #6eb6d2; }
+      .axis.h { fill: #4c345e; stroke: #b990da; }
+      .axis.d { fill: #36512f; stroke: #9fd27e; }
+      .axis.b { fill: #59442c; stroke: #e3b76d; }
+      .axis.l { fill: #31515c; stroke: #80d7e4; }
+      .axis.c { fill: #5a3030; stroke: #e89a93; }
+      .track { fill: #18202a; stroke: #40505e; stroke-width: 1; }
+      .cell { fill: #354050; stroke: #566574; stroke-width: 1; }
+      .cell-on { fill: #d8f3ff; filter: url(#soft-glow); opacity: 0; }
+      .cursor { fill: none; stroke: #f8fbff; stroke-width: 4; rx: 14; filter: url(#soft-glow); }
+      .arrow { stroke: #718094; stroke-width: 2; stroke-linecap: round; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#718094"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1180" height="700" rx="28"/>
+  <text class="title" x="54" y="58">Four names essentially answer: Which axis does the KV tensor arrange continuously first?</text>
+  <text class="subtitle" x="56" y="88">The earlier the axis the cursor sweeps over, the sooner the corresponding adjacent elements appear continuously in the memory strip on the right.</text>
+
+  <g transform="translate(0,0)">
+    <text class="hint" x="178" y="119">Physical dimension order</text>
+    <line class="arrow" x1="286" y1="114" x2="760" y2="114"/>
+    <text class="hint" x="823" y="119">Continuous memory access</text>
+  </g>
+
+  <g id="row-nhd" transform="translate(54,137)">
+    <rect class="label-bg" x="0" y="24" width="104" height="64" rx="16"/>
+    <text class="row-label" x="52" y="63" text-anchor="middle">NHD</text>
+    <text class="small" x="0" y="112">token → head → dim</text>
+    <g transform="translate(142,0)">
+      <rect class="axis n" x="0" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="67" y="66" text-anchor="middle">N</text>
+      <rect class="axis h" x="156" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="223" y="66" text-anchor="middle">H</text>
+      <rect class="axis d" x="312" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="379" y="66" text-anchor="middle">D</text>
+      <rect class="cursor" x="-2" y="14" width="138" height="88" rx="15">
+        <animate attributeName="x" values="-2;154;310;-2" keyTimes="0;0.34;0.68;1" dur="4.8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g transform="translate(764,23)">
+      <rect class="track" x="0" y="0" width="298" height="64" rx="14"/>
+      <g>
+        <rect class="cell" x="15" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="53" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="91" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="129" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="167" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="205" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="243" y="15" width="28" height="34" rx="6"/>
+      </g>
+      <g>
+        <rect class="cell-on" x="15" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="53" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.2s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="91" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.4s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="129" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.6s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="167" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.8s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="205" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.0s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="243" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.2s" dur="1.2s" repeatCount="indefinite"/></rect>
+      </g>
+    </g>
+  </g>
+
+  <g id="row-hnd" transform="translate(54,270)">
+    <rect class="label-bg" x="0" y="24" width="104" height="64" rx="16"/>
+    <text class="row-label" x="52" y="63" text-anchor="middle">HND</text>
+    <text class="small" x="0" y="112">head → token → dim</text>
+    <g transform="translate(142,0)">
+      <rect class="axis h" x="0" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="67" y="66" text-anchor="middle">H</text>
+      <rect class="axis n" x="156" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="223" y="66" text-anchor="middle">N</text>
+      <rect class="axis d" x="312" y="16" width="134" height="84" rx="14"/><text class="axis-text" x="379" y="66" text-anchor="middle">D</text>
+      <rect class="cursor" x="-2" y="14" width="138" height="88" rx="15">
+        <animate attributeName="x" values="-2;154;310;-2" keyTimes="0;0.34;0.68;1" begin="0.6s" dur="4.8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g transform="translate(764,23)">
+      <rect class="track" x="0" y="0" width="298" height="64" rx="14"/>
+      <g>
+        <rect class="cell" x="15" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="53" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="91" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="129" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="167" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="205" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="243" y="15" width="28" height="34" rx="6"/>
+      </g>
+      <g>
+        <rect class="cell-on" x="15" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.6s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="53" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.8s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="91" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.0s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="129" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.2s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="167" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.4s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="205" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.6s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="243" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.8s" dur="1.2s" repeatCount="indefinite"/></rect>
+      </g>
+    </g>
+  </g>
+
+  <g id="row-blnhc" transform="translate(54,403)">
+    <rect class="label-bg" x="0" y="24" width="104" height="64" rx="16"/>
+    <text class="row-label" x="52" y="63" text-anchor="middle">BLNHC</text>
+    <text class="small" x="0" y="112">block first, N before H</text>
+    <g transform="translate(142,0)">
+      <rect class="axis b" x="0" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="38" y="66" text-anchor="middle">B</text>
+      <rect class="axis l" x="92" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="130" y="66" text-anchor="middle">L</text>
+      <rect class="axis n" x="184" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="222" y="66" text-anchor="middle">N</text>
+      <rect class="axis h" x="276" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="314" y="66" text-anchor="middle">H</text>
+      <rect class="axis c" x="368" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="406" y="66" text-anchor="middle">C</text>
+      <rect class="cursor" x="-2" y="14" width="80" height="88" rx="15">
+        <animate attributeName="x" values="-2;90;182;274;366;-2" keyTimes="0;0.2;0.4;0.6;0.8;1" begin="0.2s" dur="5.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g transform="translate(764,23)">
+      <rect class="track" x="0" y="0" width="298" height="64" rx="14"/>
+      <g>
+        <rect class="cell" x="15" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="53" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="91" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="129" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="167" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="205" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="243" y="15" width="28" height="34" rx="6"/>
+      </g>
+      <g>
+        <rect class="cell-on" x="15" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.2s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="53" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.4s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="91" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.6s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="129" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.8s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="167" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.0s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="205" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.2s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="243" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.4s" dur="1.2s" repeatCount="indefinite"/></rect>
+      </g>
+    </g>
+  </g>
+
+  <g id="row-blhnc" transform="translate(54,536)">
+    <rect class="label-bg" x="0" y="24" width="104" height="64" rx="16"/>
+    <text class="row-label" x="52" y="63" text-anchor="middle">BLHNC</text>
+    <text class="small" x="0" y="112">block first, H before N</text>
+    <g transform="translate(142,0)">
+      <rect class="axis b" x="0" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="38" y="66" text-anchor="middle">B</text>
+      <rect class="axis l" x="92" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="130" y="66" text-anchor="middle">L</text>
+      <rect class="axis h" x="184" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="222" y="66" text-anchor="middle">H</text>
+      <rect class="axis n" x="276" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="314" y="66" text-anchor="middle">N</text>
+      <rect class="axis c" x="368" y="16" width="76" height="84" rx="14"/><text class="axis-text" x="406" y="66" text-anchor="middle">C</text>
+      <rect class="cursor" x="-2" y="14" width="80" height="88" rx="15">
+        <animate attributeName="x" values="-2;90;182;274;366;-2" keyTimes="0;0.2;0.4;0.6;0.8;1" begin="0.7s" dur="5.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g transform="translate(764,23)">
+      <rect class="track" x="0" y="0" width="298" height="64" rx="14"/>
+      <g>
+        <rect class="cell" x="15" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="53" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="91" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="129" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="167" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="205" y="15" width="28" height="34" rx="6"/>
+        <rect class="cell" x="243" y="15" width="28" height="34" rx="6"/>
+      </g>
+      <g>
+        <rect class="cell-on" x="15" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.7s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="53" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="0.9s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="91" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.1s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="129" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.3s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="167" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.5s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="205" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.7s" dur="1.2s" repeatCount="indefinite"/></rect>
+        <rect class="cell-on" x="243" y="15" width="28" height="34" rx="6"><animate attributeName="opacity" values="0;1;0" begin="1.9s" dur="1.2s" repeatCount="indefinite"/></rect>
+      </g>
+    </g>
+  </g>
+</svg>
+```

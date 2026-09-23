@@ -1,7 +1,14 @@
 ---
 import site from "../config/site.json";
+import { siteText, type Locale } from "../config/i18n";
 import { withBase } from "../utils/with-base";
 
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const text = siteText[locale];
 const year = new Date().getFullYear();
 ---
 
@@ -9,13 +16,13 @@ const year = new Date().getFullYear();
   <div class="container">
     <div class="footer-inner glass">
       <div class="footer-copy">
-        <strong>{site.siteName}</strong>
-        <div>{site.tagline} · © {year}</div>
+        <strong>{text.siteName}</strong>
+        <div>{text.tagline} · © {year}</div>
       </div>
       <div class="footer-links">
         <a href={site.githubProfile} target="_blank" rel="noreferrer">GitHub</a>
-        <a href={withBase("/message-board/")}>留言板</a>
-        <a href={withBase("/admin/")}>后台</a>
+        <a href={withBase(locale === "en" ? "/en/message-board/" : "/message-board/")}>{text.footerGuestbook}</a>
+        <a href={withBase(locale === "en" ? "/en/admin/" : "/admin/")}>{text.footerAdmin}</a>
       </div>
     </div>
   </div>

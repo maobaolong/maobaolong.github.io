@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import site from "../../../config/site.json";
+import { siteText } from "../../../config/i18n";
+import { withBase } from "../../../utils/with-base";
+
+const [owner, repo] = site.githubRepo.split("/");
+const text = siteText.en;
+---
+
+<BaseLayout title={`Admin | ${text.siteName}`} description="Manage blog posts and site configuration after signing in with GitHub." locale="en">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Admin</span>
+      <h1 class="section-heading">Site Admin</h1>
+      <p class="section-copy">
+        Sign in with GitHub to manage posts, discussion threads, and site configuration. Saved changes are committed to
+        the repository and trigger a GitHub Pages deployment.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div
+        id="admin-app"
+        class="admin-app glass"
+        data-owner={owner}
+        data-repo={repo}
+        data-branch={site.githubAuth.branch}
+        data-client-id={site.githubAuth.clientId}
+        data-scope={site.githubAuth.scope}
+        data-auth-base-url={site.githubAuth.authBaseUrl}
+      >
+        <div class="admin-app__loading">
+          <span class="chip">GitHub Login</span>
+          <h3>Loading admin...</h3>
+          <p>If you are not signed in yet, the page will guide you through GitHub authorization.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src={withBase("/scripts/github-admin.js")}></script>
+</BaseLayout>

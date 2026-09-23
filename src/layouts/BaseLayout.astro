@@ -1,22 +1,29 @@
 ---
 import "../styles/global.css";
 import site from "../config/site.json";
+import { defaultLocale, type Locale, siteText, localizedPath } from "../config/i18n";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title?: string;
   description?: string;
+  locale?: Locale;
 }
 
 const {
-  title = site.siteName,
-  description = site.description
+  locale = defaultLocale,
+  title = siteText[locale].siteName,
+  description = siteText[locale].description
 } = Astro.props;
+
+const alternateLocale = locale === "zh" ? "en" : "zh";
+const alternatePath = localizedPath(Astro.url.pathname, alternateLocale);
+const basePath = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
-<html lang={site.locale}>
+<html lang={siteText[locale].locale} data-current-locale={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -27,15 +34,48 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={site.siteName} />
+    <meta property="og:site_name" content={siteText[locale].siteName} />
+    <link rel="alternate" hreflang="zh-CN" href={localizedPath(Astro.url.pathname, "zh")} />
+    <link rel="alternate" hreflang="en" href={localizedPath(Astro.url.pathname, "en")} />
+    <script is:inline define:vars={{ locale, basePath }}>
+      (() => {
+        const key = "maobaolong:preferred-language";
+        const base = basePath;
+        const current = locale;
+        const normalize = (lang) => String(lang || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+        const stored = localStorage.getItem(key);
+        const preferred = stored === "zh" || stored === "en" ? stored : normalize(navigator.language);
+        document.documentElement.dataset.preferredLocale = preferred;
+        if (preferred === current) return;
+
+        const stripBase = (path) => base !== "/" && path.startsWith(base) ? path.slice(base.length - 1) : path;
+        const withBase = (path) => base === "/" ? path : `${base.replace(/\/$/, "")}${path}`;
+        const path = stripBase(window.location.pathname);
+        const withoutEn = path === "/en" ? "/" : path.startsWith("/en/") ? path.slice(3) : path;
+        const nextPath = preferred === "en" ? `/en${withoutEn === "/" ? "/" : withoutEn}` : withoutEn;
+        window.location.replace(withBase(nextPath) + window.location.search + window.location.hash);
+      })();
+    </script>
   </head>
   <body>
     <div class="site-shell">
-      <SiteHeader currentPath={Astro.url.pathname} />
+      <SiteHeader currentPath={Astro.url.pathname} locale={locale} alternatePath={alternatePath} />
       <main>
         <slot />
       </main>
-      <SiteFooter />
+      <SiteFooter locale={locale} />
     </div>
+    <script is:inline define:vars={{ locale, alternatePath }}>
+      (() => {
+        const key = "maobaolong:preferred-language";
+        const nextLocale = locale === "zh" ? "en" : "zh";
+        document.querySelectorAll("[data-language-toggle]").forEach((button) => {
+          button.addEventListener("click", () => {
+            localStorage.setItem(key, nextLocale);
+            window.location.href = alternatePath;
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

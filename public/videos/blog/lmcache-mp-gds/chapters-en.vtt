@@ -1,0 +1,31 @@
+WEBVTT
+
+00:00:00.000 --> 00:01:02.888  
+01 Why GDS is Needed
+
+00:01:02.888 --> 00:02:44.306  
+02 Who is Moving the Data
+
+00:02:44.306 --> 00:04:57.437  
+03 Two Sets of Addresses and Three Resources
+
+00:04:57.437 --> 00:06:31.135  
+04 Configuration and Backend
+
+00:06:31.135 --> 00:08:33.519  
+05 Initialization and Lazy Loading
+
+00:08:33.519 --> 00:11:10.200  
+06 STORE: From Paginated KV to SSD
+
+00:11:10.200 --> 00:12:46.089  
+07 RETRIEVE: From SSD Back to Paginated KV
+
+00:12:46.089 --> 00:13:53.383  
+08 async: Who is Waiting for Whom
+
+00:13:53.383 --> 00:15:53.585  
+09 Scaling with Phoenix
+
+00:15:53.585 --> 00:16:49.785  
+10 Returning to the Value of GDS

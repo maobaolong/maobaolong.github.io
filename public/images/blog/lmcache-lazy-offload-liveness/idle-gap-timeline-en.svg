@@ -1,0 +1,102 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980" role="img" aria-labelledby="title desc">
+  <title id="title">Idle Boundaries with and without has_pending_push_work</title>
+  <desc id="desc">When there is no keep-alive hook, the Engine stops stepping after the last request ends, and the worker's completion report cannot return to the scheduler; with a keep-alive hook, the report is completed through a zero token step and block release.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#111c35"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity=".25"/>
+    </filter>
+    <marker id="redArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fb7185"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
+    </marker>
+    <style>
+      .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+      .title{font-size:36px;font-weight:760;fill:#f8fafc}
+      .subtitle{font-size:18px;fill:#94a3b8}
+      .colTitle{font-size:27px;font-weight:730;fill:#f8fafc}
+      .step{font-size:18px;font-weight:680;fill:#f8fafc}
+      .body{font-size:17px;fill:#cbd5e1}
+      .small{font-size:15px;fill:#94a3b8}
+      .code{font-family:"SFMono-Regular",Consolas,monospace;font-size:15px;fill:#bfdbfe}
+    </style>
+  </defs>
+  <rect width="1400" height="980" rx="28" fill="url(#bg)"/>
+  <g class="sans">
+    <text x="70" y="70" class="title">Last Request Ended: Will the Message Pump Continue?</text>
+    <text x="70" y="106" class="subtitle">Same worker store, the only difference is whether the Scheduler is willing to continue executing zero token Step</text>
+
+    <g filter="url(#shadow)">
+      <rect x="55" y="145" width="625" height="765" rx="26" fill="#2b1822" stroke="#fb7185" stroke-width="2.5"/>
+      <text x="90" y="195" class="colTitle">Without PR #4998</text>
+      <text x="90" y="226" class="small">Default has_pending_push_work() = False</text>
+
+      <line x1="132" y1="285" x2="132" y2="790" stroke="#64748b" stroke-width="3"/>
+      <circle cx="132" cy="285" r="11" fill="#60a5fa"/>
+      <text x="172" y="281" class="step">① A's lazy store has been committed</text>
+      <text x="172" y="310" class="body">Scheduler touches blocks; Worker asynchronously writes cache</text>
+
+      <circle cx="132" cy="395" r="11" fill="#60a5fa"/>
+      <text x="172" y="391" class="step">② Last request B ended</text>
+      <text x="172" y="420" class="body">waiting = 0, running = 0</text>
+
+      <circle cx="132" cy="505" r="11" fill="#fb7185"/>
+      <text x="172" y="501" class="step">③ Scheduler determines "no work"</text>
+      <text x="172" y="530" class="code">has_requests() == False</text>
+
+      <circle cx="132" cy="615" r="11" fill="#f59e0b"/>
+      <text x="172" y="611" class="step">④ Worker completes store</text>
+      <text x="172" y="640" class="body">Completion information remains in completed_store_requests</text>
+
+      <circle cx="132" cy="725" r="11" fill="#fb7185"/>
+      <text x="172" y="721" class="step">⑤ No next round ModelRunnerOutput</text>
+      <text x="172" y="750" class="body">update_connector_output() will not be called</text>
+
+      <path d="M132 755 L132 795" stroke="#fb7185" stroke-width="4" marker-end="url(#redArrow)"/>
+      <rect x="90" y="808" width="555" height="67" rx="16" fill="#4c1d2b"/>
+      <text x="367" y="837" text-anchor="middle" class="step">blocks still cannot be reused</text>
+      <text x="367" y="861" text-anchor="middle" class="small">Until a new request starts the Engine Step again</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="720" y="145" width="625" height="765" rx="26" fill="#102a27" stroke="#34d399" stroke-width="2.5"/>
+      <text x="755" y="195" class="colTitle">With PR #4998</text>
+      <text x="755" y="226" class="small">In-flight block IDs allow the connector to actively keep alive</text>
+
+      <line x1="797" y1="285" x2="797" y2="790" stroke="#64748b" stroke-width="3"/>
+      <circle cx="797" cy="285" r="11" fill="#60a5fa"/>
+      <text x="837" y="281" class="step">① A's lazy store has been committed</text>
+      <text x="837" y="310" class="body">A is still in _request_block_ids</text>
+
+      <circle cx="797" cy="395" r="11" fill="#60a5fa"/>
+      <text x="837" y="391" class="step">② Last request B ended</text>
+      <text x="837" y="420" class="body">Normal requests have been cleared, but the connector has not yet cleared</text>
+
+      <circle cx="797" cy="505" r="11" fill="#34d399"/>
+      <text x="837" y="501" class="step">③ Scheduler continues step</text>
+      <text x="837" y="530" class="code">has_pending_push_work() == True</text>
+
+      <circle cx="797" cy="615" r="11" fill="#34d399"/>
+      <text x="837" y="611" class="step">④ Execute zero token Step</text>
+      <text x="837" y="640" class="body">Does not run model forward, but collects worker metadata</text>
+
+      <circle cx="797" cy="725" r="11" fill="#34d399"/>
+      <text x="837" y="721" class="step">⑤ Scheduler receives completion</text>
+      <text x="837" y="750" class="body">update_connector_output() → free_blocks()</text>
+
+      <path d="M797 755 L797 795" stroke="#34d399" stroke-width="4" marker-end="url(#greenArrow)"/>
+      <rect x="755" y="808" width="555" height="67" rx="16" fill="#064e3b"/>
+      <text x="1032" y="837" text-anchor="middle" class="step">blocks become reusable before idle</text>
+      <text x="1032" y="861" text-anchor="middle" class="small">The next batch of requests can see a clean BlockPool</text>
+    </g>
+
+    <text x="700" y="947" text-anchor="middle" class="body">has_pending_push_work() does not make the store faster, but ensures that the last "completion receipt" can be sent back to the Scheduler</text>
+  </g>
+</svg>
+```

@@ -9,7 +9,7 @@ const posts = (await getCollection("blog"))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 ---
 
-<BaseLayout title={`博客 | ${site.siteName}`} description="技术文章、实践复盘与工程笔记。">
+<BaseLayout title={`博客 | ${site.siteName}`} description="技术文章、实践复盘与工程笔记。" locale="zh">
   <section class="page-hero">
     <div class="container">
       <span class="chip">Blog Archive</span>
@@ -23,7 +23,7 @@ const posts = (await getCollection("blog"))
   <section class="section">
     <div class="container post-list">
       {posts.map((post) => (
-        <PostCard post={post} />
+        <PostCard post={post} locale="zh" />
       ))}
     </div>
   </section>

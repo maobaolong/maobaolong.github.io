@@ -1,0 +1,54 @@
+```xml
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<title id="title">Speculative page: Old slot reset, physical page moved to the end</title>
+<desc id="desc">Demonstrating S1 moving from the middle logical slot to the end and the appearance of a null block</desc>
+<defs>
+  <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto"><path d="M2 2L12 7L2 12" stroke="#fde68a" stroke-width="2.4"/></marker>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>
+.title{font:800 33px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.h{font:760 23px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#f8fafc}
+.t{font:520 18px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#d8e5f3}
+.s{font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",Arial,sans-serif;fill:#aebed0}
+.m{font:760 18px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f8fafc;text-anchor:middle}
+.box{fill:#111b2a;stroke:#36506a;stroke-width:2}
+.ok{fill:#103325;stroke:#34d399}.warn{fill:#3b2a17;stroke:#f59e0b}.bad{fill:#3a1f2b;stroke:#fb7185}
+.blue{fill:#122d44;stroke:#38bdf8}.violet{fill:#2d2546;stroke:#a78bfa}.dim{fill:#182335;stroke:#415267}
+.arrow{stroke:#fde68a;stroke-width:4;fill:none;marker-end:url(#arrow)}
+.soft{opacity:.38}.glow{filter:url(#glow)}
+@keyframes pulse{0%,100%{opacity:.34}45%,65%{opacity:1}}
+@keyframes fade{0%,20%{opacity:.18}35%,85%{opacity:1}100%{opacity:.18}}
+@keyframes scanX{0%{transform:translateX(0)}45%{transform:translateX(344px)}70%{transform:translateX(688px)}100%{transform:translateX(688px)}}
+@keyframes scanShort{0%{transform:translateX(0)}50%{transform:translateX(184px)}100%{transform:translateX(368px)}}
+@keyframes tokenMove{0%{transform:translate(0,0);opacity:0}12%{opacity:1}78%{opacity:1}100%{transform:translate(560px,0);opacity:0}}
+@keyframes downMove{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(0,188px);opacity:0}}
+@keyframes relocate{0%,18%{transform:translate(0,0)}58%,100%{transform:translate(630px,260px)}}
+@keyframes zeroIn{0%,42%{opacity:0}55%,100%{opacity:1}}
+@keyframes reject{0%,45%{opacity:.25}55%,100%{opacity:1}}
+@keyframes grow{0%{stroke-dashoffset:620}70%,100%{stroke-dashoffset:0}}
+@keyframes hop{0%{transform:translate(0,0)}20%{transform:translate(96px,0)}40%{transform:translate(192px,0)}60%{transform:translate(288px,0)}80%,100%{transform:translate(384px,0)}}
+@keyframes stepNine{0%{transform:translate(0,0)}11%{transform:translate(112px,0)}22%{transform:translate(224px,0)}33%{transform:translate(336px,0)}44%{transform:translate(448px,0)}55%{transform:translate(560px,0)}66%{transform:translate(672px,0)}77%{transform:translate(784px,0)}88%,100%{transform:translate(896px,0)}}
+</style>
+</defs>
+<rect width="1200" height="700" rx="24" fill="#08111f"/>
+<rect x="22" y="22" width="1156" height="656" rx="22" fill="#0b1422" stroke="#1e344d"/>
+<text x="58" y="70" class="title">Speculative page: Old slot reset, physical page moved to the end</text>
+
+<text x="72" y="132" class="h">Before Moving</text>
+<g><rect x="78" y="168" width="68" height="56" rx="13" class="dim"/><text x="112" y="196" class="m">A</text></g><g><rect x="164" y="168" width="68" height="56" rx="13" class="dim"/><text x="198" y="196" class="m">S1</text></g><g><rect x="250" y="168" width="68" height="56" rx="13" class="dim"/><text x="284" y="196" class="m">S2</text></g><g><rect x="336" y="168" width="68" height="56" rx="13" class="dim"/><text x="370" y="196" class="m">S3</text></g><g><rect x="422" y="168" width="68" height="56" rx="13" class="dim"/><text x="456" y="196" class="m">S4</text></g><g><rect x="508" y="168" width="68" height="56" rx="13" class="dim"/><text x="542" y="196" class="m">C</text></g>
+<rect x="164" y="168" width="68" height="56" rx="10" fill="#4c3470" stroke="#a78bfa" stroke-width="3"/>
+<text x="198" y="203" class="m">S1</text>
+<text x="78" y="264" class="s">Slot 1 is currently just a speculative scratch</text>
+<g style="animation:relocate 5s ease-in-out infinite">
+  <rect x="164" y="168" width="68" height="56" rx="10" fill="#4c3470" stroke="#f8fafc" stroke-width="4"/>
+  <text x="198" y="203" class="m">S1</text>
+</g>
+<path class="arrow" d="M200 236C200 330 760 330 828 428"/>
+<text x="72" y="392" class="h">After Moving</text>
+<g><rect x="78" y="428" width="68" height="56" rx="13" class="dim"/><text x="112" y="456" class="m">A</text></g><g><rect x="164" y="428" width="68" height="56" rx="13" class="dim"/><text x="198" y="456" class="m">0</text></g><g><rect x="250" y="428" width="68" height="56" rx="13" class="dim"/><text x="284" y="456" class="m">S2</text></g><g><rect x="336" y="428" width="68" height="56" rx="13" class="dim"/><text x="370" y="456" class="m">S3</text></g><g><rect x="422" y="428" width="68" height="56" rx="13" class="dim"/><text x="456" y="456" class="m">S4</text></g><g><rect x="508" y="428" width="68" height="56" rx="13" class="dim"/><text x="542" y="456" class="m">C</text></g><g><rect x="594" y="428" width="68" height="56" rx="13" class="dim"/><text x="628" y="456" class="m">S1</text></g><g><rect x="680" y="428" width="68" height="56" rx="13" class="dim"/><text x="714" y="456" class="m">D</text></g>
+<g style="animation:zeroIn 5s ease-in-out infinite"><g><rect x="164" y="428" width="68" height="56" rx="13" class="bad"/><text x="198" y="456" class="m">0</text></g></g>
+<text x="146" y="538" class="s">The old position must become a null block</text>
+<text x="660" y="538" class="s">The end continues to reuse the same physical page</text>
+
+</svg>
+```

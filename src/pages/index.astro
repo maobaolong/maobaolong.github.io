@@ -14,7 +14,7 @@ const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 2);
 const latestPosts = posts.slice(0, 3);
 ---
 
-<BaseLayout title={`${site.siteName} | ${site.tagline}`} description={site.description}>
+<BaseLayout title={`${site.siteName} | ${site.tagline}`} description={site.description} locale="zh">
   <section class="hero">
     <div class="container hero-grid">
       <div class="hero-panel glass fade-up">
@@ -122,8 +122,8 @@ const latestPosts = posts.slice(0, 3);
       </div>
       <div class="post-list">
         {featuredPosts.length > 0
-          ? featuredPosts.map((post) => <PostCard post={post} />)
-          : latestPosts.map((post) => <PostCard post={post} />)}
+          ? featuredPosts.map((post) => <PostCard post={post} locale="zh" />)
+          : latestPosts.map((post) => <PostCard post={post} locale="zh" />)}
       </div>
     </div>
   </section>
@@ -138,7 +138,7 @@ const latestPosts = posts.slice(0, 3);
       </div>
       <div class="post-list">
         {latestPosts.map((post) => (
-          <PostCard post={post} />
+          <PostCard post={post} locale="zh" />
         ))}
       </div>
     </div>

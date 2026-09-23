@@ -22,6 +22,9 @@
   it prompts to install `@astrojs/check`. Do not count it as a passed check unless
   that dependency is intentionally added first.
 - Quote YAML frontmatter strings that contain GitHub issue or PR references such as `#4998`; in an unquoted `description`, `#` starts a YAML comment and silently truncates the rendered metadata.
+- For bilingual blog work, quote translated frontmatter string fields such as `title` and `description`; English titles often introduce `:` or quotes that break YAML when left bare.
+- When generating localized SVG assets, skip files that already end in `-en.svg`; rerunning over generated assets creates unused `-en-en.svg` duplicates.
+- For translated `.vtt`, `.srt`, and transcript files, strip Markdown code fences such as ```vtt before build/browser verification. Subtitle files must remain raw WebVTT/SRT text.
 - The Pages workflow currently emits a Node.js 20 deprecation annotation for `actions/checkout@v4`, `actions/configure-pages@v5`, and `actions/deploy-pages@v4`; GitHub forces them onto Node.js 24 and the deployment still succeeds, so treat it as an upstream-action migration warning rather than an Astro build failure.
 - The Pages workflow may also emit an `ubuntu-latest` migration annotation for
   Ubuntu 26 beginning October 19, 2026. Treat it as runner-image notice unless

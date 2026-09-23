@@ -1,0 +1,69 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC codec registry</title>
+  <desc id="desc">The method codec registry combines protobuf descriptors, Python protocol definitions, structural codecs, and explicit message codecs.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+      <path d="M0,0 L11,4.5 L0,9 Z" fill="#334155" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .proto { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; }
+      .python { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.6; }
+      .codec { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.8; }
+      .custom { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.6; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="20" />
+  <text class="title" x="50" y="58">The existence of the codec is not "an extra layer," but aligns the wire schema with Python semantics</text>
+  <text class="muted" x="50" y="88">protobuf only knows fields; what the LMCache handler needs are Python objects like IPCCacheServerKey, torch.Size, DeviceIPCWrapper, etc.</text>
+
+  <rect class="proto" x="74" y="138" width="312" height="138" rx="16" />
+  <text class="heading" x="100" y="174">protobuf descriptors</text>
+  <text class="code" x="100" y="208">LookupRequest.key</text>
+  <text class="code" x="100" y="236">StoreRequest.gpu_block_ids</text>
+  <text class="text" x="100" y="260">wire fields, tag, presence</text>
+
+  <rect class="python" x="74" y="356" width="312" height="138" rx="16" />
+  <text class="heading" x="100" y="392">Python protocol definitions</text>
+  <text class="code" x="100" y="426">RequestType.STORE</text>
+  <text class="code" x="100" y="454">payload_classes=[...]</text>
+  <text class="text" x="100" y="478">handler parameters and return types</text>
+
+  <rect class="codec" x="506" y="230" width="330" height="178" rx="18" />
+  <text class="heading" x="532" y="268">GrpcMethodCodecRegistry</text>
+  <text class="text" x="532" y="302">Build a read-only table by full method name</text>
+  <text class="code" x="532" y="332">lmcache.mp.LookupService.Lookup</text>
+  <text class="text" x="532" y="362">Compile request_encoder / request_decoder</text>
+  <text class="text" x="532" y="388">Compile response_encoder / response_decoder</text>
+
+  <path class="arrow" d="M386 207 C440 207 458 258 506 284" />
+  <path class="arrow" d="M386 425 C440 425 458 374 506 348" />
+
+  <rect class="custom" x="946" y="138" width="270" height="138" rx="16" />
+  <text class="heading" x="972" y="174">explicit message codecs</text>
+  <text class="code" x="972" y="208">DeviceIPCWrapper</text>
+  <text class="code" x="972" y="236">torch.Size</text>
+  <text class="text" x="972" y="260">Specialized conversion for unstructured objects</text>
+
+  <rect class="card" x="946" y="356" width="270" height="138" rx="16" />
+  <text class="heading" x="972" y="392">structural codec</text>
+  <text class="text" x="972" y="426">dataclass / msgspec.Struct</text>
+  <text class="text" x="972" y="454">list / tuple / map / optional</text>
+  <text class="text" x="972" y="482">Field names and counts must match</text>
+
+  <path class="arrow" d="M836 300 C888 260 902 222 946 207" />
+  <path class="arrow" d="M836 356 C888 386 902 416 946 425" />
+
+  <rect class="card" x="172" y="580" width="936" height="98" rx="16" />
+  <text class="heading" x="204" y="618">Failing at startup is better than silent errors at runtime</text>
+  <text class="text" x="204" y="648">Missing RequestType, duplicate RPCs, mismatched handler annotations, and Python types that cannot be expressed by proto will all be exposed during registry initialization or server registration.</text>
+</svg>
+```

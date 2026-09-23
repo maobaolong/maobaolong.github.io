@@ -1,0 +1,70 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="760" viewBox="0 0 1260 760" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC quick enable configuration</title>
+  <desc id="desc">Concrete server and vLLM side configuration required to switch LMCache MP request transport from ZMQ to gRPC.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#2563eb" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+      .server { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; }
+      .client { fill: #f0fdf4; stroke: #16a34a; stroke-width: 2; }
+      .wire { fill: #fff7ed; stroke: #f97316; stroke-width: 2; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 19px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .label { fill: #ffffff; font: 700 13px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1260" height="760" rx="20" />
+  <text class="title" x="48" y="58">Enable LMCache MP gRPC: Both ends must switch to gRPC simultaneously</text>
+  <text class="muted" x="48" y="88">The vLLM side selects the client transport via the URL scheme; the server side selects the request server via --transport.</text>
+
+  <rect class="client" x="52" y="132" width="520" height="456" rx="18" />
+  <rect x="78" y="158" width="74" height="26" rx="13" fill="#16a34a" />
+  <text class="label" x="97" y="176">vLLM</text>
+  <text class="heading" x="78" y="220">LMCacheMPConnector</text>
+  <text class="text" x="78" y="250">Set the host as grpc://, and the port should still be passed separately:</text>
+  <rect class="panel" x="78" y="278" width="468" height="226" rx="10" />
+  <text class="code" x="100" y="312">vllm serve Qwen/Qwen3-8B \</text>
+  <text class="code" x="100" y="340">  --kv-transfer-config '{</text>
+  <text class="code" x="100" y="368">    "kv_connector":"LMCacheMPConnector",</text>
+  <text class="code" x="100" y="396">    "kv_role":"kv_both",</text>
+  <text class="code" x="100" y="424">    "kv_connector_extra_config":{</text>
+  <text class="code" x="100" y="452">      "lmcache.mp.host":"grpc://lmcache",</text>
+  <text class="code" x="100" y="480">      "lmcache.mp.port":5555}}}'</text>
+  <text class="muted" x="78" y="532">When using multiple servers, use lmcache.mp.server_urls,</text>
+  <text class="muted" x="78" y="556">each URL must include the scheme.</text>
+
+  <rect class="server" x="688" y="132" width="520" height="456" rx="18" />
+  <rect x="714" y="158" width="82" height="26" rx="13" fill="#2563eb" />
+  <text class="label" x="736" y="176">SERVER</text>
+  <text class="heading" x="714" y="220">LMCache Standalone Process</text>
+  <text class="text" x="714" y="250">Switch the request entry from ZMQ server to gRPC server:</text>
+  <rect class="panel" x="714" y="278" width="468" height="118" rx="10" />
+  <text class="code" x="736" y="312">lmcache server \</text>
+  <text class="code" x="736" y="340">  --transport grpc \</text>
+  <text class="code" x="736" y="368">  --host 0.0.0.0 --port 5555 \</text>
+  <text class="code" x="736" y="396">  --l1-size-gb 20 --eviction-policy LRU</text>
+  <text class="muted" x="714" y="436">Common tuning:</text>
+  <text class="code" x="714" y="466">--grpc-server-workers 32</text>
+  <text class="code" x="714" y="492">--max-gpu-workers &lt;TP&gt; --max-cpu-workers 4</text>
+  <text class="muted" x="714" y="525">The port must be reachable by the vLLM worker;</text>
+  <text class="muted" x="714" y="549">Pay attention to service / hostNetwork when deploying in containers.</text>
+
+  <path class="arrow" d="M572 347 H688" />
+  <rect class="wire" x="584" y="286" width="92" height="92" rx="14" />
+  <text class="heading" x="607" y="324">gRPC</text>
+  <text class="text" x="606" y="352">request</text>
+  <text class="text" x="606" y="374">RPC</text>
+
+  <rect class="panel" x="150" y="620" width="960" height="88" rx="14" />
+  <text class="heading" x="178" y="654">Migration Rule: The --transport of the server must match the lmcache.mp.host scheme of vLLM.</text>
+  <text class="heading" x="178" y="682">tcp:// still uses ZMQ; grpc:// uses gRPC.</text>
+</svg>
+```

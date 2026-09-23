@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PostCard from "../../../components/PostCard.astro";
+import { siteText } from "../../../config/i18n";
+
+const posts = (await getCollection("blogEn"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const site = siteText.en;
+---
+
+<BaseLayout title={`Blog | ${site.siteName}`} description="Technical articles, engineering retrospectives, and field notes." locale="en">
+  <section class="page-hero">
+    <div class="container">
+      <span class="chip">Blog Archive</span>
+      <h1 class="section-heading">Articles</h1>
+      <p class="section-copy">
+        Ongoing notes on AI infrastructure, distributed systems, databases, performance work, and engineering practice.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container post-list">
+      {posts.map((post) => <PostCard post={post} locale="en" />)}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,155 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { siteText } from "../../config/i18n";
+import { withBase } from "../../utils/with-base";
+
+const posts = (await getCollection("blogEn"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 2);
+const latestPosts = posts.slice(0, 3);
+const site = siteText.en;
+---
+
+<BaseLayout title={`${site.siteName} | ${site.tagline}`} description={site.description} locale="en">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-panel glass fade-up">
+        <p class="eyebrow">MAOBAOLONG / ENGINEERING LOG</p>
+        <h1 class="hero-title">A living technical site for engineering practice, system performance, and AI infrastructure.</h1>
+        <p class="hero-copy">
+          A personal engineering blog for technical research, performance work, system design, and postmortems.
+          Think of it as a public lab notebook, a durable knowledge base, and an outward-facing engineering profile.
+        </p>
+        <div class="button-row">
+          <a class="button button-primary" href={withBase("/en/blog/")}>Start reading</a>
+          <a class="button button-secondary" href={withBase("/en/message-board/")}>Open guestbook</a>
+        </div>
+      </div>
+
+      <aside class="hero-aside fade-up delay-1">
+        <div class="stack-card glass">
+          <span class="chip">Current Focus</span>
+          <h3>Turning a personal blog into an operable technical site</h3>
+          <p>
+            The site combines long-form articles, project signals, content management, comments, and knowledge capture
+            into the GitHub collaboration flow.
+          </p>
+          <ul>
+            <li>Technical writing and project pages in one place</li>
+            <li>GitHub-backed management for home page and posts</li>
+            <li>Guestbook, comments, and reactions in one workflow</li>
+          </ul>
+        </div>
+        <div class="stack-card glass">
+          <span class="chip">Content Pipeline</span>
+          <h3>The content still belongs to the repository</h3>
+          <p>
+            Articles remain Markdown files in the repo. The admin UI only generates and commits changes, so migration
+            and backup stay straightforward.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container metrics-grid">
+      {[
+        ["GitHub", "Repo-connected admin", "Manage posts and site content after signing in"],
+        ["Issues + Reactions", "Comments and likes", "Map each article to a GitHub issue thread"],
+        ["Guestbook", "Standalone message board", "Keep ongoing visitor conversations on one page"],
+        ["Astro", "Fast static delivery", "Fits technical writing, SEO, and GitHub Pages hosting"]
+      ].map(([value, label, detail], index) => (
+        <div class={`metric-card glass fade-up delay-${Math.min(index, 2)}`}>
+          <strong>{value}</strong>
+          <h3>{label}</h3>
+          <p>{detail}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Why This Site</span>
+          <h2 class="section-heading">A continuously updated release note for engineering work</h2>
+          <p class="section-copy">
+            The site is shaped as a research home, technical blog, and interaction surface rather than a simple reverse-chronological archive.
+          </p>
+        </div>
+      </div>
+      <div class="three-grid">
+        {[
+          ["More like a product page than a classic blog", "The home page explains what is being worked on, why it matters, and what was published recently."],
+          ["Content management without living in Git commands", "Content remains in GitHub, while routine edits can be made through an admin interface."],
+          ["Interaction built on GitHub primitives", "Comments, guestbook entries, and reactions live in GitHub Issues and Reactions instead of a separate database."]
+        ].map(([title, body]) => (
+          <article class="text-card glass">
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Three Pillars</span>
+          <h2 class="section-heading">Three long-running content threads</h2>
+        </div>
+      </div>
+      <div class="three-grid">
+        {[
+          ["AI Infra / Inference Systems", "Design tradeoffs around model serving, cache systems, throughput, and latency."],
+          ["Distributed Systems / Data Infrastructure", "Architecture evolution, bottleneck analysis, incident review, and capacity planning."],
+          ["Engineering Practice / Writing", "Reusable notes on debugging, release workflows, and technical communication."]
+        ].map(([title, body]) => (
+          <article class="text-card glass">
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Featured Reading</span>
+          <h2 class="section-heading">Featured Articles</h2>
+        </div>
+        <a class="button button-ghost" href={withBase("/en/blog/")}>View all articles</a>
+      </div>
+      <div class="post-list">
+        {featuredPosts.length > 0
+          ? featuredPosts.map((post) => <PostCard post={post} locale="en" />)
+          : latestPosts.map((post) => <PostCard post={post} locale="en" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="chip">Latest Notes</span>
+          <h2 class="section-heading">Latest Updates</h2>
+        </div>
+      </div>
+      <div class="post-list">
+        {latestPosts.map((post) => <PostCard post={post} locale="en" />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

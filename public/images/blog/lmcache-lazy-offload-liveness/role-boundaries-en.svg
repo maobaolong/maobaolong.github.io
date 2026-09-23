@@ -1,0 +1,97 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="940" viewBox="0 0 1400 940" role="img" aria-labelledby="title desc">
+  <title id="title">Communication and Ownership between Scheduler, Model Worker, and LMCache Server</title>
+  <desc id="desc">The Scheduler-side connector and Model Worker both communicate with the LMCache Server. The Scheduler handles control surfaces such as queries, sessions, and allocations, while the Worker manages the KV store and retrieves data. The Scheduler and Worker exchange store metadata and completion through SchedulerOutput and ModelRunnerOutput.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#111c35"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#34d399"/>
+    </marker>
+    <marker id="amberArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/>
+    </marker>
+    <style>
+      .sans{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+      .title{font-size:36px;font-weight:760;fill:#f8fafc}
+      .subtitle{font-size:18px;fill:#94a3b8}
+      .boxTitle{font-size:25px;font-weight:730;fill:#f8fafc}
+      .body{font-size:17px;fill:#cbd5e1}
+      .small{font-size:15px;fill:#94a3b8}
+      .label{font-size:15px;font-weight:700}
+      .code{font-family:"SFMono-Regular",Consolas,monospace;font-size:15px;fill:#bfdbfe}
+    </style>
+  </defs>
+  <rect width="1400" height="940" rx="28" fill="url(#bg)"/>
+  <g class="sans">
+    <text x="70" y="68" class="title">Three Roles, Two Planes, One Internal Loop of vLLM</text>
+    <text x="70" y="103" class="subtitle">Cache Service simultaneously serves the Scheduler control plane and the Worker data plane; however, the final release authority of the vLLM BlockPool resides only with the Scheduler</text>
+
+    <rect x="55" y="135" width="1290" height="465" rx="30" fill="#0b1628" stroke="#334155" stroke-width="2"/>
+    <text x="87" y="171" class="label" fill="#94a3b8">vLLM RUNTIME</text>
+
+    <g filter="url(#shadow)">
+      <rect x="85" y="205" width="470" height="330" rx="26" fill="#132a32" stroke="#14b8a6" stroke-width="2.5"/>
+      <rect x="116" y="233" width="171" height="34" rx="17" fill="#0f766e"/>
+      <text x="201" y="256" text-anchor="middle" class="label" fill="#ccfbf1">SCHEDULER ROLE</text>
+      <text x="120" y="310" class="boxTitle">EngineCore / Scheduler</text>
+      <text x="120" y="348" class="body">Scheduler-side LMCache connector</text>
+      <text x="142" y="386" class="code">scheduler_adapter</text>
+      <text x="142" y="420" class="code">_pending_store</text>
+      <text x="142" y="454" class="code">_gpu_block_pool</text>
+      <rect x="117" y="480" width="405" height="35" rx="12" fill="#064e3b"/>
+      <text x="320" y="503" text-anchor="middle" class="label" fill="#d1fae5">Decides whether the block is reusable · Calls free_blocks()</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="845" y="205" width="470" height="330" rx="26" fill="#172554" stroke="#3b82f6" stroke-width="2.5"/>
+      <rect x="876" y="233" width="147" height="34" rx="17" fill="#1d4ed8"/>
+      <text x="949" y="256" text-anchor="middle" class="label" fill="#dbeafe">WORKER ROLE</text>
+      <text x="880" y="310" class="boxTitle">Model Worker</text>
+      <text x="880" y="348" class="body">Worker-side LMCache connector</text>
+      <text x="902" y="386" class="code">worker_adapter</text>
+      <text x="902" y="420" class="code">store_futures</text>
+      <text x="902" y="454" class="code">completed_store_requests</text>
+      <rect x="877" y="480" width="405" height="35" rx="12" fill="#1e3a8a"/>
+      <text x="1080" y="503" text-anchor="middle" class="label" fill="#dbeafe">Interacts with KV tensor · Submits transfers · Reports completion</text>
+    </g>
+
+    <path d="M555 300 C650 260 750 260 843 300" fill="none" stroke="#60a5fa" stroke-width="4" marker-end="url(#blueArrow)"/>
+    <text x="700" y="245" text-anchor="middle" class="label" fill="#bfdbfe">SchedulerOutput</text>
+    <text x="700" y="269" text-anchor="middle" class="small">Scheduling results + STORE metadata</text>
+
+    <path d="M845 442 C750 482 650 482 557 442" fill="none" stroke="#a78bfa" stroke-width="4" marker-end="url(#blueArrow)"/>
+    <text x="700" y="493" text-anchor="middle" class="label" fill="#ddd6fe">ModelRunnerOutput</text>
+    <text x="700" y="517" text-anchor="middle" class="small">Token results + worker completion</text>
+
+    <g filter="url(#shadow)">
+      <rect x="390" y="695" width="620" height="172" rx="30" fill="#302517" stroke="#f59e0b" stroke-width="2.5"/>
+      <rect x="421" y="723" width="163" height="34" rx="17" fill="#b45309"/>
+      <text x="502" y="746" text-anchor="middle" class="label" fill="#fef3c7">CACHE SERVICE</text>
+      <text x="425" y="804" class="boxTitle">LMCache Server</text>
+      <text x="425" y="838" class="body">Cache indexing and session control · KV store/retrieve · Memory/Disk/Remote backend</text>
+    </g>
+
+    <path d="M270 535 C285 645 390 705 500 694" fill="none" stroke="#34d399" stroke-width="4" marker-start="url(#greenArrow)" marker-end="url(#greenArrow)"/>
+    <rect x="84" y="608" width="370" height="64" rx="16" fill="#102a27" stroke="#34d399" stroke-width="1.5"/>
+    <text x="269" y="634" text-anchor="middle" class="label" fill="#d1fae5">Control Plane · scheduler_adapter</text>
+    <text x="269" y="657" text-anchor="middle" class="small">Lookup · Locks/Session · Allocation telemetry</text>
+
+    <path d="M1130 535 C1115 645 1010 705 900 694" fill="none" stroke="#f59e0b" stroke-width="4" marker-start="url(#amberArrow)" marker-end="url(#amberArrow)"/>
+    <rect x="946" y="608" width="370" height="64" rx="16" fill="#302517" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="1131" y="634" text-anchor="middle" class="label" fill="#fef3c7">Data Plane · worker_adapter</text>
+    <text x="1131" y="657" text-anchor="middle" class="small">KV store/retrieve · Future completion</text>
+
+    <rect x="70" y="888" width="1260" height="36" rx="14" fill="#111827" stroke="#475569" stroke-width="1.5"/>
+    <text x="700" y="912" text-anchor="middle" class="body">Cache Service completing store ≠ Scheduler has released block; completion still needs to return to the state owner via ModelRunnerOutput</text>
+  </g>
+</svg>
+```

@@ -7,7 +7,7 @@ import site from "../config/site.json";
 const guestbookThread = commentThreads.find((thread) => thread.key === "guestbook");
 ---
 
-<BaseLayout title={`留言板 | ${site.siteName}`} description="给毛宝龙留言、交流想法、推荐选题。">
+<BaseLayout title={`留言板 | ${site.siteName}`} description="给毛宝龙留言、交流想法、推荐选题。" locale="zh">
   <section class="page-hero">
     <div class="container">
       <span class="chip">Guestbook</span>
@@ -38,6 +38,7 @@ const guestbookThread = commentThreads.find((thread) => thread.key === "guestboo
             issueNumber={guestbookThread.issueNumber}
             threadKey={guestbookThread.key}
             kind="guestbook"
+            locale="zh"
           />
         ) : (
           <div class="notice">留言线程还没有初始化。</div>

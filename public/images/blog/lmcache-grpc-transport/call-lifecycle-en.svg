@@ -1,0 +1,77 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache gRPC call lifecycle</title>
+  <desc id="desc">A single gRPC lookup request is encoded by the client, transported through gRPC, decoded by the server, handled by a business module, and converted back into a MessagingFuture result.</desc>
+  <defs>
+    <marker id="blue" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+      <path d="M0,0 L11,4.5 L0,9 Z" fill="#2563eb" />
+    </marker>
+    <marker id="green" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+      <path d="M0,0 L11,4.5 L0,9 Z" fill="#16a34a" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .client { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; }
+      .server { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.6; }
+      .wire { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.6; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 17px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrowB { stroke: #2563eb; stroke-width: 3; fill: none; marker-end: url(#blue); }
+      .arrowG { stroke: #16a34a; stroke-width: 3; fill: none; marker-end: url(#green); }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="20" />
+  <text class="title" x="50" y="58">How a LOOKUP completes under gRPC</text>
+  <text class="muted" x="50" y="88">The client receives a MessagingFuture; after the gRPC future completes, the response is decoded back to a Python result.</text>
+
+  <rect class="client" x="58" y="132" width="260" height="118" rx="14" />
+  <text class="heading" x="84" y="168">1. public method</text>
+  <text class="code" x="84" y="202">client.lookup(key, tp_size)</text>
+  <text class="text" x="84" y="228">Method automatically installed by descriptor</text>
+
+  <rect class="client" x="390" y="132" width="260" height="118" rx="14" />
+  <text class="heading" x="416" y="168">2. request encoder</text>
+  <text class="code" x="416" y="202">LookupRequest{key, tp_size}</text>
+  <text class="text" x="416" y="228">Python object written to protobuf</text>
+  <path class="arrowB" d="M318 191 H390" />
+
+  <rect class="wire" x="722" y="132" width="260" height="118" rx="14" />
+  <text class="heading" x="748" y="168">3. gRPC future call</text>
+  <text class="code" x="748" y="202">stub.Lookup.future(...)</text>
+  <text class="text" x="748" y="228">wait_for_ready + client-id metadata</text>
+  <path class="arrowB" d="M650 191 H722" />
+
+  <rect class="server" x="390" y="350" width="260" height="118" rx="14" />
+  <text class="heading" x="416" y="386">4. request decoder</text>
+  <text class="code" x="416" y="420">(IPCCacheServerKey, int)</text>
+  <text class="text" x="416" y="446">Server restores handler parameters</text>
+
+  <rect class="server" x="58" y="350" width="260" height="118" rx="14" />
+  <text class="heading" x="84" y="386">5. business handler</text>
+  <text class="code" x="84" y="420">LookupModule.lookup(...)</text>
+  <text class="text" x="84" y="446">@request_handler binds RequestType</text>
+  <path class="arrowB" d="M852 250 C852 318 722 409 650 409" />
+  <path class="arrowB" d="M390 409 H318" />
+
+  <rect class="server" x="722" y="350" width="260" height="118" rx="14" />
+  <text class="heading" x="748" y="386">6. response encoder</text>
+  <text class="code" x="748" y="420">LookupResponse{}</text>
+  <text class="text" x="748" y="446">None also has a clear response message</text>
+  <path class="arrowG" d="M318 468 C380 544 650 544 722 468" />
+
+  <rect class="client" x="390" y="568" width="260" height="118" rx="14" />
+  <text class="heading" x="416" y="604">7. response decoder</text>
+  <text class="code" x="416" y="638">None / int / dataclass...</text>
+  <text class="text" x="416" y="664">gRPC future -> MessagingFuture</text>
+  <path class="arrowG" d="M852 468 C852 548 722 627 650 627" />
+
+  <rect class="box" x="722" y="568" width="260" height="118" rx="14" />
+  <text class="heading" x="748" y="604">Error propagation</text>
+  <text class="text" x="748" y="638">grpc_future.result() raises exception</text>
+  <text class="code" x="748" y="664">future.set_exception(exc)</text>
+</svg>
+```

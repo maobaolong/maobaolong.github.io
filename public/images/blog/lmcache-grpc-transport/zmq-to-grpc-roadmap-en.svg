@@ -1,0 +1,77 @@
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">LMCache ZMQ to gRPC migration roadmap</title>
+  <desc id="desc">A public PR roadmap showing LMCache moving from ZMQ semantic abstraction to request factories, protobuf schemas, runtime gRPC, and future gRPC-first improvements.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="9" refX="10" refY="4.5" orient="auto">
+      <path d="M0,0 L11,4.5 L0,9 Z" fill="#334155" />
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .stage { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .done { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.8; }
+      .now { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.8; }
+      .next { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.8; }
+      .title { fill: #0f172a; font: 700 26px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .heading { fill: #0f172a; font: 700 18px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .text { fill: #334155; font: 15px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .code { fill: #0f172a; font: 13px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .muted { fill: #64748b; font: 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1280" height="820" rx="20" />
+  <text class="title" x="50" y="58">gRPC Supported PR Roadmap: Abstract Boundaries First, Then Integrate New Transport</text>
+  <text class="muted" x="50" y="88">Each PR only pushes one layer of boundaries to avoid mixing business logic, ZMQ compatibility, protobuf, packaging, and runtime all at once.</text>
+
+  <rect class="done" x="50" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="76" y="164">1. PR #4878: ZMQ Semantic Abstraction</text>
+  <text class="code" x="76" y="194">RequestClient + named RPC facade</text>
+  <text class="text" x="76" y="224">Caller migrates from submit_request/list payload</text>
+  <text class="text" x="76" y="248">to lookup/store/retrieve methods.</text>
+
+  <rect class="done" x="460" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="486" y="164">2. PR #4882: Client Factory</text>
+  <text class="code" x="486" y="194">RequestClientFactory.create(url)</text>
+  <text class="text" x="486" y="224">tcp:// reserved for ZMQ; grpc:// reserved for</text>
+  <text class="text" x="486" y="248">new gRPC client implementation.</text>
+
+  <rect class="done" x="870" y="128" width="360" height="142" rx="16" />
+  <text class="heading" x="896" y="164">3. PR #5050: Isolate ZMQ Implementation</text>
+  <text class="code" x="896" y="194">zmq_impl owns old wire path</text>
+  <text class="text" x="896" y="224">Old protocol remains available but retreats to transport</text>
+  <text class="text" x="896" y="248">behind the boundary, making room for gRPC.</text>
+
+  <path class="arrow" d="M410 199 H460" />
+  <path class="arrow" d="M820 199 H870" />
+
+  <rect class="done" x="50" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="76" y="376">4. PR #5066: Protobuf Foundation</text>
+  <text class="code" x="76" y="406">*_service.proto + generator</text>
+  <text class="text" x="76" y="436">First stabilize the schema, generated code, and testing</text>
+  <text class="text" x="76" y="460">infrastructure, without rushing to cut traffic.</text>
+
+  <rect class="done" x="460" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="486" y="376">5. PR #5081: Packaging Stability</text>
+  <text class="code" x="486" y="406">wheel proto generation</text>
+  <text class="text" x="486" y="436">Handle generation boundaries in wheel/build,</text>
+  <text class="text" x="486" y="460">avoiding gRPC tooling pollution in runtime.</text>
+
+  <rect class="now" x="870" y="340" width="360" height="150" rx="16" />
+  <text class="heading" x="896" y="376">6. PR #4953: Runtime gRPC</text>
+  <text class="code" x="896" y="406">--transport grpc + grpc://</text>
+  <text class="text" x="896" y="436">client/server connects to codec registry,</text>
+  <text class="text" x="896" y="460">CI simultaneously covers both ZMQ and gRPC.</text>
+
+  <path class="arrow" d="M230 270 V340" />
+  <path class="arrow" d="M410 415 H460" />
+  <path class="arrow" d="M820 415 H870" />
+
+  <rect class="next" x="80" y="592" width="1120" height="174" rx="18" />
+  <text class="heading" x="112" y="630">Next Steps: More Can Be Done After gRPC-First</text>
+  <text class="text" x="112" y="664">Remove ZMQ compatibility layer: ZMQ facade, server path, RequestType numeric wire ID can be gradually phased out.</text>
+  <text class="text" x="112" y="694">Simplify intermediate structures: operation identity returns to package.Service/Method, Python contract handled by generated adapter.</text>
+  <text class="text" x="112" y="724">Optimize gRPC performance: deadline, backpressure, connection reuse, worker pool, batch small control requests, codec overhead.</text>
+  <text class="text" x="112" y="754">Increase metrics: per-RPC latency/status, codec cost, queue wait, affinity distribution, reconnect/error rate.</text>
+</svg>
+```
