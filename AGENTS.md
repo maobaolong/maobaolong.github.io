@@ -32,6 +32,18 @@
 - This site is prepared for GitHub Pages. Use `SITE_URL=https://<username>.github.io` and:
   - no `BASE_PATH` for a `<username>.github.io` repository
   - `BASE_PATH=/repo-name` for a project site repository
+- Treat the Gitee remote as a source mirror, not a deployed website. Verified on
+  2026-09-23: Gitee's official feedback states that Pages is offline with no
+  restoration date (https://gitee.com/oschina/git-osc/issues/IA6DQ6).
+  Do not instruct users to enable Gitee Pages or promise a `gitee.io` URL without
+  fresh evidence that the service has returned.
+- This Astro repository must be built before static hosting: deploy the contents
+  of `dist/`, not the source repository root. A successful Git push does not prove
+  website deployment; verify the hosting job and public routes separately.
+- With both `origin` (GitHub) and `gitee` configured, a push to `gitee` only updates
+  the mirror. Publishing this site requires pushing to `origin`, waiting for the
+  matching GitHub Pages workflow to succeed, and checking `/` and `/en/` online,
+  including language switching and preference persistence after reload.
 - The current production architecture does not use Decap CMS. `/admin/` and the interactive widgets use GitHub OAuth Device Flow through the `auth-service/` Vercel helper, and comments/guestbook use GitHub Issues plus Reactions.
 - For the `auth-service/` Vercel helper, prefer zero-config Node API routes. Pinning `@vercel/node` inside `vercel.json` caused `peer-version-mismatch` on direct API deployments.
 - New Vercel team projects may default to SSO protection for non-custom domains. If the auth helper returns a Vercel SSO redirect or anonymous 404s, clear project `ssoProtection` before validating the public GitHub Pages integration.
