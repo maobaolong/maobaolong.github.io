@@ -129,18 +129,18 @@ The animation below moves an actual SVG pointer. Select a step to move from the 
         <text class="ipc-memory-label" x="14" y="32">Block 3</text><text class="ipc-memory-sub" x="14" y="56">payload</text>
       </g>
       <g class="ipc-gate"><line x1="202" y1="60" x2="232" y2="196" /><line x1="232" y1="60" x2="202" y2="196" /><text x="178" y="218">REJECT</text></g>
-      <g data-ipc-pointer transform="translate(72 0)">
+      <g data-ipc-pointer transform="translate(40 0)">
         <line class="ipc-pointer-line" x1="0" y1="42" x2="0" y2="188" /><circle class="ipc-pointer-dot" cx="0" cy="188" r="7" />
         <text class="ipc-pointer-text" data-pointer-label x="9" y="34">read pointer</text>
       </g>
     </svg>
   </div>
   <div class="ipc-lab__controls" role="group" aria-label="Memory addressing animation controls">
-    <button type="button" data-ipc-step data-x="72" data-state="normal" data-title="Start with one model-wide page size" data-copy="Blue is the content used by this KV group. Yellow is the gap left behind by model-wide page-size alignment.">1. Unified page</button>
-    <button type="button" data-ipc-step data-x="252" data-state="normal" data-title="The real stride crosses the gap" data-copy="stride[0] is 655,360, so the pointer must pass the yellow region before it reaches the next blue payload.">2. Real stride</button>
-    <button type="button" data-ipc-step data-x="217" data-state="wrong" data-title="numel plus reshape lands inside padding" data-copy="The dense-layout assumption advances only 542,720 elements and mistakes Block 0's padding for Block 1's payload.">3. Old reshape</button>
-    <button type="button" data-ipc-step data-x="217" data-state="gated" data-title="The old wrapper fails closed" data-copy="Rather than silently restore corrupted KV, it checks is_contiguous and raises ValueError.">4. Fail closed</button>
-    <button type="button" data-ipc-step data-x="72" data-state="fixed" data-title="byte span plus as_strided restores the map" data-copy="The new path maps every gap and rebuilds the original stride. The pointer now visits every correct block start.">5. Fixed path</button>
+    <button type="button" data-ipc-step data-x="40" data-state="normal" data-title="Start with one model-wide page size" data-copy="Blue is the content used by this KV group. Yellow is the alignment gap. The pointer starts exactly at Block 0.">1. Unified page</button>
+    <button type="button" data-ipc-step data-x="220" data-state="normal" data-title="The real stride crosses the gap" data-copy="stride[0] is 655,360, so one step from Block 0 must cross the yellow region and land exactly at the start of Block 1.">2. Real stride</button>
+    <button type="button" data-ipc-step data-x="185" data-state="wrong" data-title="numel plus reshape lands inside padding" data-copy="The dense-layout assumption advances only 542,720 elements, stopping at the start of Block 0's padding instead of Block 1.">3. Old reshape</button>
+    <button type="button" data-ipc-step data-x="185" data-state="gated" data-title="The old wrapper fails closed" data-copy="Rather than silently restore corrupted KV, it checks is_contiguous and raises ValueError.">4. Fail closed</button>
+    <button type="button" data-ipc-step data-x="40" data-state="fixed" data-title="byte span plus as_strided restores the map" data-copy="The new path maps every gap and rebuilds the original stride. The pointer stops at all four true block starts.">5. Fixed path</button>
     <button class="ipc-play" type="button" data-ipc-play data-play-label="▶ Auto play" data-pause-label="Ⅱ Pause">▶ Auto play</button>
   </div>
   <figcaption>The blue/yellow ratio approximates the real 542,720 / 112,640-element layout. On narrow screens the canvas scrolls horizontally instead of compressing labels.</figcaption>

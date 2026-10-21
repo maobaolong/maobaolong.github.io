@@ -130,7 +130,7 @@ physical span = 7,395,624,960 elements
         <text class="ipc-memory-label" x="14" y="32">Block 3</text><text class="ipc-memory-sub" x="14" y="56">payload</text>
       </g>
       <g class="ipc-gate"><line x1="202" y1="60" x2="232" y2="196" /><line x1="232" y1="60" x2="202" y2="196" /><text x="178" y="218">REJECT</text></g>
-      <g data-ipc-pointer transform="translate(72 0)">
+      <g data-ipc-pointer transform="translate(40 0)">
         <line class="ipc-pointer-line" x1="0" y1="42" x2="0" y2="188" />
         <circle class="ipc-pointer-dot" cx="0" cy="188" r="7" />
         <text class="ipc-pointer-text" data-pointer-label x="9" y="34">读取指针</text>
@@ -138,11 +138,11 @@ physical span = 7,395,624,960 elements
     </svg>
   </div>
   <div class="ipc-lab__controls" role="group" aria-label="内存寻址动画控制">
-    <button type="button" data-ipc-step data-x="72" data-state="normal" data-title="先看到统一大 page" data-copy="蓝色是这个 KV group 真正使用的内容，黄色是为了对齐 model-wide page size 留下的空洞。">1. 统一 page</button>
-    <button type="button" data-ipc-step data-x="252" data-state="normal" data-title="真实 stride 会跨过 padding" data-copy="stride[0] = 655,360，所以从 Block 0 到 Block 1 必须越过黄色区域，落在下一个蓝色区域。">2. 真实 stride</button>
-    <button type="button" data-ipc-step data-x="217" data-state="wrong" data-title="numel + reshape 把指针带进空洞" data-copy="旧逻辑只前进 542,720 个元素，于是把 Block 0 的 padding 当成了 Block 1 的内容。">3. 旧 reshape</button>
-    <button type="button" data-ipc-step data-x="217" data-state="gated" data-title="旧 wrapper 选择拒绝" data-copy="与其静默读错 KV，旧实现检查 is_contiguous 并抛出 ValueError。启动失败，但避免了 silent corruption。">4. fail closed</button>
-    <button type="button" data-ipc-step data-x="72" data-state="fixed" data-title="byte span + as_strided 恢复完整地图" data-copy="新逻辑映射包含 padding 的完整跨度，再按原始 stride 重建；指针会依次走过所有正确 block 起点。">5. 修复后</button>
+    <button type="button" data-ipc-step data-x="40" data-state="normal" data-title="先看到统一大 page" data-copy="蓝色是这个 KV group 真正使用的内容，黄色是为了对齐 model-wide page size 留下的空洞。指针从 Block 0 的起点出发。">1. 统一 page</button>
+    <button type="button" data-ipc-step data-x="220" data-state="normal" data-title="真实 stride 会跨过 padding" data-copy="stride[0] = 655,360，所以从 Block 0 起点走一步，必须越过黄色区域，准确落在 Block 1 起点。">2. 真实 stride</button>
+    <button type="button" data-ipc-step data-x="185" data-state="wrong" data-title="numel + reshape 把指针带进空洞" data-copy="旧逻辑只前进 542,720 个元素，指针停在 Block 0 payload 之后的 padding 起点，而不是 Block 1。">3. 旧 reshape</button>
+    <button type="button" data-ipc-step data-x="185" data-state="gated" data-title="旧 wrapper 选择拒绝" data-copy="与其静默读错 KV，旧实现检查 is_contiguous 并抛出 ValueError。启动失败，但避免了 silent corruption。">4. fail closed</button>
+    <button type="button" data-ipc-step data-x="40" data-state="fixed" data-title="byte span + as_strided 恢复完整地图" data-copy="新逻辑映射包含 padding 的完整跨度，再按原始 stride 重建；指针会依次停在四个 block 的真实起点。">5. 修复后</button>
     <button class="ipc-play" type="button" data-ipc-play data-play-label="▶ 自动播放" data-pause-label="Ⅱ 暂停">▶ 自动播放</button>
   </div>
   <figcaption>动画中的蓝黄比例按真实 542,720 / 112,640 元素近似绘制。窄屏下画布可以横向滚动，不压缩文字。</figcaption>

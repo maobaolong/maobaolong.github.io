@@ -16,7 +16,7 @@ for (const lab of labs) {
   };
 
   let currentStep = 0;
-  let currentX = 72;
+  let currentX = 40;
   let frame = 0;
   let timer = 0;
   let sweepTimers = [];
@@ -31,8 +31,13 @@ for (const lab of labs) {
     sweepTimers = [];
   };
 
+  const cancelPointerMotion = () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+  };
+
   const animateTo = (target, duration = 850) => {
-    cancelAnimationFrame(frame);
+    cancelPointerMotion();
     if (reducedMotion) {
       setPointer(target);
       return;
@@ -44,13 +49,14 @@ for (const lab of labs) {
       const eased = 1 - Math.pow(1 - progress, 3);
       setPointer(start + (target - start) * eased);
       if (progress < 1) frame = requestAnimationFrame(tick);
+      else frame = 0;
     };
     frame = requestAnimationFrame(tick);
   };
 
   const animateSweep = () => {
     clearSweep();
-    const targets = [72, 252, 432, 612];
+    const targets = [40, 220, 400, 580];
     targets.forEach((target, index) => {
       const id = window.setTimeout(() => animateTo(target, 520), index * 620);
       sweepTimers.push(id);
@@ -58,9 +64,10 @@ for (const lab of labs) {
   };
 
   const stop = () => {
-    window.clearInterval(timer);
+    window.clearTimeout(timer);
     timer = 0;
     clearSweep();
+    cancelPointerMotion();
     if (playButton) playButton.textContent = playButton.dataset.playLabel || "▶ Play";
   };
 
@@ -78,7 +85,15 @@ for (const lab of labs) {
     buttons.forEach((item, itemIndex) => item.classList.toggle("is-active", itemIndex === index));
     clearSweep();
     if (state === "fixed") animateSweep();
-    else animateTo(Number(button.dataset.x || 72));
+    else animateTo(Number(button.dataset.x || 40));
+  };
+
+  const scheduleNextStep = () => {
+    const delay = currentStep === buttons.length - 1 ? 3300 : 2200;
+    timer = window.setTimeout(() => {
+      render((currentStep + 1) % buttons.length);
+      scheduleNextStep();
+    }, delay);
   };
 
   buttons.forEach((button, index) => {
@@ -94,8 +109,8 @@ for (const lab of labs) {
       return;
     }
     playButton.textContent = playButton.dataset.pauseLabel || "Ⅱ Pause";
-    render((currentStep + 1) % buttons.length);
-    timer = window.setInterval(() => render((currentStep + 1) % buttons.length), 3600);
+    render(0);
+    scheduleNextStep();
   });
 
   setPointer(currentX);
