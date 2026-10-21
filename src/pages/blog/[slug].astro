@@ -68,6 +68,12 @@ const thread = commentThreads.find((item) => item.key === threadKey);
             <script type="module" src={withBase("/scripts/lmcache-gds.js")}></script>
           </>
         ) : null}
+        {post.id === "lmcache-padded-kv-cuda-ipc" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-padded-ipc.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-padded-ipc.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>

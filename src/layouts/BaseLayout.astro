@@ -42,9 +42,8 @@ const basePath = import.meta.env.BASE_URL;
         const key = "maobaolong:preferred-language";
         const base = basePath;
         const current = locale;
-        const normalize = (lang) => String(lang || "").toLowerCase().startsWith("zh") ? "zh" : "en";
         const stored = localStorage.getItem(key);
-        const preferred = stored === "zh" || stored === "en" ? stored : normalize(navigator.language);
+        const preferred = stored === "zh" || stored === "en" ? stored : "en";
         document.documentElement.dataset.preferredLocale = preferred;
         if (preferred === current) return;
 

@@ -2,7 +2,7 @@ import { withBase } from "../utils/with-base";
 
 export type Locale = "zh" | "en";
 
-export const defaultLocale: Locale = "zh";
+export const defaultLocale: Locale = "en";
 export const locales: Locale[] = ["zh", "en"];
 
 export const localeLabels: Record<Locale, string> = {
