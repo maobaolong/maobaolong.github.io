@@ -1,7 +1,7 @@
 ---
 title: "KV Layout 不该靠猜：从 vLLM #63699 到 RBLN 与 LMCache 的显式轴契约"
 description: "用 15 张图和两个交互示例，讲清 KV cache 的轴语义、物理布局、内容编码，追踪 allocator 到 connector 的完整调用链，以及 RBLN、MLA、hybrid 模型和 LMCache 接入的边界。"
-publishedAt: 2026-10-26
+publishedAt: "2026-10-26T14:01:10Z"
 category: "AI Infra"
 tags:
   - vllm
