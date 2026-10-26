@@ -1,4 +1,4 @@
-<details class="guide-toc"><summary>文章导航：背景、调用链、相关工作与终态</summary><nav aria-label="文章导航"><a href="#overview">在创建 view 的地方声明每个轴的含义。</a><a href="#ambiguity">当 block 数是 2，shape 和 stride 无法判断哪个轴代表 K/V。</a><a href="#concepts">“Layout”其实涵盖三份不同的契约。</a><a href="#physical">标准 view 始终是 BHNC，stride 则可以变化。</a><a href="#selection">平台和 backend 约束分配，轴声明描述分配的结果。</a><a href="#mrv2">MRV2：同一个字典，从空容器走到注册。</a><a href="#variants">MRV1 和 HiSparse 传递同一类轴声明。</a><a href="#hybrid">层名字典不意味着只有一种布局、一份 allocation 或一种编码。</a><a href="#rbln">RBLN 按自己的 shape 选择逻辑声明布局。</a><a href="#mla">MLA 的标准 view 没有独立的 K/V 选择轴。</a><a href="#compat">传递 metadata，不代表每个 connector 都会使用它。</a><a href="#future">声明 → 保留 → 校验 → 注册时解析一次 → 传输。</a><a href="#failure">错误的轴解释，可能最终变成错误的字节选择。</a><a href="#lifecycle">把张量和它的声明当作一组匹配的信息来维护。</a><a href="#related">分配标准化、生产者 metadata、消费者接入，是三件不同的事。</a><a href="#review">先审契约，再跟传递链路。</a><a href="#sources">每个实现链接都固定到被审阅的源码版本。</a></nav></details>
+<details class="guide-toc"><summary>文章导航：背景、调用链、相关工作与终态</summary><nav aria-label="文章导航"><a href="#overview">在创建 view 的地方声明每个轴的含义。</a><a href="#ambiguity">当 block 数是 2，shape 和 stride 无法判断哪个轴代表 K/V。</a><a href="#concepts">“Layout”其实涵盖三份不同的契约。</a><a href="#physical">标准 view 始终是 BHNC，stride 则可以变化。</a><a href="#selection">平台和 backend 约束分配，轴声明描述分配的结果。</a><a href="#mrv2">MRV2：同一个字典，从空容器走到注册。</a><a href="#variants">MRV1/MRV2 是执行器，HiSparse 是缓存方案。</a><a href="#hybrid">层名字典不意味着只有一种布局、一份 allocation 或一种编码。</a><a href="#rbln">RBLN 按自己的 shape 选择逻辑声明布局。</a><a href="#mla">MLA 的标准 view 没有独立的 K/V 选择轴。</a><a href="#compat">传递 metadata，不代表每个 connector 都会使用它。</a><a href="#future">声明 → 保留 → 校验 → 注册时解析一次 → 传输。</a><a href="#failure">错误的轴解释，可能最终变成错误的字节选择。</a><a href="#lifecycle">把张量和它的声明当作一组匹配的信息来维护。</a><a href="#related">分配标准化、生产者 metadata、消费者接入，是三件不同的事。</a><a href="#review">先审契约，再跟传递链路。</a><a href="#sources">每个实现链接都固定到被审阅的源码版本。</a></nav></details>
 
 <div class="tocline">先读 01–05 了解背景，再对照 diff 阅读 06–11 的调用链，最后用 12–16 判断边界、终态和待办。 <button class="print" type="button" onclick="window.print()">打印／另存为 PDF</button></div>
 <section class="section" id="overview">
@@ -40,6 +40,7 @@
 </section>
 <section class="section" id="mrv2">
 <div class="num">06 / 跟着主实现走一遍</div><h2>MRV2：同一个字典，从空容器走到注册。</h2>
+<p><b>MRV2 = Model Runner V2，即第二版模型执行器。</b>它属于 vLLM V1 引擎；第 07 节会解释执行器选择，以及 HiSparse 为什么是 MRV2 内部的缓存路径。</p>
 <p><code>tensor_layouts = {}</code> 是输出容器。下面的调用接收同一个字典对象，view 创建函数原地填写它。这不是传给 backend 的“空布局请求”。</p>
 <div class="figure"><div class="figlabel">图 6 · 点击调用步骤，查看当时的 metadata</div><div class="stepgrid"><div class="steps" id="traceSteps"></div><div class="snapshot" aria-live="polite"><div class="small" style="color:#99b9fb">注册 metadata 快照</div><h3 id="traceTitle">Runner 开始分配</h3><div class="badgecount" id="traceCount">0</div><div class="small">已描述的层名数量 · 以两层分配为例</div><pre id="tracePayload"></pre><p id="traceExplanation"></p></div></div><p class="caption">这是对真实调用链的示意，并非某次模型运行的 trace。层名已简化，并额外展示一个共享 cache 的别名。</p></div>
 <pre><code># GPUModelRunner.initialize_kv_cache
@@ -54,11 +55,48 @@ layouts.update((name, layout) for name in kv_cache_tensor.layers)</code></pre>
 <p class="source">源码： <a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/model_runner.py#L799" data-src="vllm/v1/worker/gpu/model_runner.py:799">initialize_kv_cache</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/attn_utils.py#L398" data-src="vllm/v1/worker/gpu/attn_utils.py:398">init_kv_cache</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/utils.py#L565" data-src="vllm/v1/worker/utils.py:565">allocate_kv_cache</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/kv_cache_interface.py#L478" data-src="vllm/v1/kv_cache_interface.py:478">View 创建与填写</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/kv_connector.py#L62" data-src="vllm/v1/worker/gpu/kv_connector.py:62">ActiveKVConnector</a></p>
 </section>
 <section class="section" id="variants">
-<div class="num">07 / 共享这份契约的其它路径</div><h2>MRV1 和 HiSparse 传递同一类轴声明。</h2>
-<div class="figure"><div class="figlabel">图 7 · 两种分配路径，同一个注册契约</div><div class="grid2"><div class="card"><h3>MRV1</h3><div class="vertical small"><div><code>initialize_kv_cache</code><br>创建新的输出字典</div><div class="down">↓</div><div><code>initialize_kv_cache_tensors</code><br>把字典传给 allocator</div><div class="down">↓</div><div><code>allocate_kv_cache</code> → view 创建函数<br>填写轴声明</div><div class="down">↓</div><div>复制共享层的描述符</div><div class="down">↓</div><div><code>register_kv_caches_with_layouts</code></div></div><div class="card"><h3>MRV2 中的 HiSparse</h3><div class="vertical small"><div><code>init_kv_cache</code><br>选择 HiSparse 分配路径</div><div class="down">↓</div><div><code>init_hisparse_kv_cache</code></div><div class="down">↓</div><div><code>allocate_hisparse_kv_caches</code></div><div class="down">↓</div><div>Device view 走公共 allocator<br>Host view 走同一个 view 创建函数</div><div class="down">↓</div><div>声明好的 view 传到注册接口<br>自管理的 raw spec 保持未指定</div></div></div></div>
-<p>Allocator 原有返回类型不变。不需要 metadata 的调用方可以省略 <code>tensor_layouts</code>。每次初始化注册都使用新字典，raw buffer 不会被强行标为 BHNC。</p>
-<p class="source">源码： <a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu_model_runner.py#L6915" data-src="vllm/v1/worker/gpu_model_runner.py:6915">MRV1 张量初始化</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu_model_runner.py#L7044" data-src="vllm/v1/worker/gpu_model_runner.py:7044">MRV1 注册</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/hisparse/binding.py#L83" data-src="vllm/v1/hisparse/binding.py:83">HiSparse 分配</a></p>
-</div></div></section>
+<div class="num">07 / 执行器选择与 HiSparse 缓存路径</div>
+<h2>MRV1/MRV2 是执行器，HiSparse 是缓存方案。</h2>
+<p><b>MRV1</b> 是 Model Runner V1，即第一版模型执行器；<b>MRV2</b> 是 Model Runner V2，即第二版模型执行器。它们都可以运行在 vLLM V1 引擎中。路径里的 <code>v1</code> 指引擎代际，不是 Model Runner 的版本。</p>
+<div class="tablewrap"><table><thead><tr><th>执行器</th><th>实现位置</th></tr></thead><tbody><tr><td>MRV1</td><td><code>vllm/v1/worker/gpu_model_runner.py</code></td></tr><tr><td>MRV2</td><td><code>vllm/v1/worker/gpu/model_runner.py</code></td></tr></tbody></table></div>
+<div class="figure"><div class="figlabel">图 7 · 先选择执行器，再选择 MRV2 内部的 KV 分配路径</div>
+<div class="card"><b>Upstream GPU worker</b><p class="small">标准 worker 根据 <code>VllmConfig.use_v2_model_runner</code> 决定构造哪一版执行器。</p></div>
+<div class="down" aria-hidden="true">↓</div>
+<div class="grid2">
+<div class="card"><h3>MRV1</h3><p class="small">第一版模型执行器。</p><p class="small"><code>initialize_kv_cache_tensors</code> → 公共 allocator → 类型化 connector 注册。</p></div>
+<div class="card blue"><h3>MRV2</h3><p class="small">第二版模型执行器。</p><div class="vertical"><div class="card"><h4>普通分配</h4><p class="small"><code>hisparse_config is None</code><br><code>init_kv_cache</code> → <code>allocate_kv_cache</code></p></div><div class="card teal"><h4>HiSparse 分配</h4><p class="small"><code>hisparse_config is not None</code><br><code>init_kv_cache</code> → <code>init_hisparse_kv_cache</code> → <code>allocate_hisparse_kv_caches</code></p></div></div></div>
+</div>
+<p class="caption">HiSparse 是 MRV2 内部的一条路径，不是与 MRV1、MRV2 并列的第三版执行器。公共 view 创建函数为 device／host view 生成轴声明；自管理的 raw storage 仍保持未指定。</p>
+</div>
+<h3>什么时候选择 MRV1 或 MRV2？</h3>
+<p>下面按本文固定源码版本的优先级说明。Out-of-tree worker 可以覆写执行器构造逻辑，因此这不是适用于所有 device 的通用选择表。</p>
+<div class="tablewrap"><table><thead><tr><th>条件，按优先级排列</th><th>结果</th></tr></thead><tbody>
+<tr><td>配置了 HiSparse。</td><td>必须 MRV2；显式设置 <code>VLLM_USE_V2_MODEL_RUNNER=0</code> 会报错。</td></tr>
+<tr><td>配置了 watermarking。</td><td>必须 MRV2，即使显式设为 <code>0</code> 也会被覆盖。</td></tr>
+<tr><td>其余情况下，显式设置 <code>VLLM_USE_V2_MODEL_RUNNER=1</code>。</td><td>请求 MRV2，仍需通过兼容检查；GPU worker 会拒绝缺少 Triton 的 MRV2 配置。</td></tr>
+<tr><td>其余情况下，显式设置 <code>VLLM_USE_V2_MODEL_RUNNER=0</code>。</td><td>请求 MRV1，仍需通过 MRV1 自身的功能兼容检查。</td></tr>
+<tr><td>没有显式设置，且实际平台缺少 Triton。</td><td>回退到 MRV1。</td></tr>
+<tr><td>没有显式设置，且配置命中了 MRV2 尚不支持的功能。</td><td>回退到 MRV1。</td></tr>
+<tr><td>没有显式设置，也不满足以上回退条件。</td><td>使用 MRV2。</td></tr>
+</tbody></table></div>
+<p>这个版本中，MRV2 的限制示例包括 <code>external_launcher</code> 搭配 pipeline parallel、<code>suffix</code>／<code>custom_class</code> speculative 方法，以及 draft／target 词表不同的配置。支持范围会随版本变化，环境变量也不保证任意配置都能运行，应以对应版本的检查为准。</p>
+<h3>HiSparse 到底做什么？</h3>
+<p><b>HiSparse 是面向稀疏 MLA 的实验性、本地 KV offload 方案。</b>稀疏 attention 每步只选取一部分历史位置，因此可以把历史 KV 保存在 pinned CPU 内存，GPU 使用 resident page 和热点行缓存，以 host 内存与数据传输为代价，降低历史 KV 的 GPU 显存占用。</p>
+<pre><code>本步选中的 top-k 历史位置
+          ↓
+GPU resident page 命中？── 是 → 使用驻留行
+          ↓ 否
+GPU hot row 命中？──────── 是 → 使用热点缓存行
+          ↓ 否
+从 pinned CPU 内存补入 GPU hot cache</code></pre>
+<p>融合的 GPU resolver 依次检查 resident page、hot row 和 host 内存。Indexer KV 有独立的管理方式；启用 HiSparse 不等于给模型的每个 KV group 都自动创建一份 CPU 副本。</p>
+<h3>什么时候启用 HiSparse？</h3>
+<p>直接配置 <code>HiSparseConnector</code>，或通过 <code>MultiConnector</code> 包含它时，会推导出默认 <code>hisparse_config</code>。Connector 提供 <code>host_pool_gib</code> 容量，<code>HiSparseConfig</code> 用来调节 GPU hot buffer 等字段。仍需一份完整且受支持的配置，显存不足本身不会自动开启 HiSparse。</p>
+<div class="callout amber"><b>此版本的主要约束：</b>NVIDIA CUDA、MRV2，以及带 <code>index_topk</code> 的 DSA 模型。目前不支持 pipeline parallel 和 decode context parallel。单独的 <code>cudagraph_mode=FULL</code> 会被拒绝；默认的 <code>FULL_AND_PIECEWISE</code> 仍可以为 decode 捕获 full graph。这些是代码里的兼容条件，不代表本 PR 做过相应硬件验证。</div>
+<p><code>HiSparseConnector</code> 管理本地 host／GPU 驻留状态，可以通过 <code>MultiConnector</code> 与 P/D 或其它 offload connector 组合。它的职责与后文尚待实现的 LMCache adapter／MP 接入不同。</p>
+<div class="callout teal"><b>这与 #63699 的关系：</b>普通 MRV2 分配和 HiSparse 的 host／device 分配，都必须把实际注册 view 的匹配轴声明传到 connector。本 PR 接通这些 metadata 路径，并不负责选择执行器或启用 HiSparse。Allocator 原有返回类型不变，共享层继承目标描述符，raw buffer 不会被凭空标为 BHNC。</div>
+<p class="source">本文审阅版本的源码： <a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/config/vllm.py#L731">执行器选择优先级</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/config/vllm.py#L3053">MRV2 不支持的功能</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu_worker.py#L570">Worker 构造执行器</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/config/attention.py#L125">HiSparse 配置</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/config/vllm.py#L1876">HiSparse 兼容检查</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/docs/design/hisparse.md">HiSparse 架构</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/attn_utils.py#L398">MRV2 分配分支</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/hisparse/binding.py#L83">HiSparse view 分配</a></p>
+</section>
 <section class="section" id="hybrid">
 <div class="num">08 / 多层、共享别名和 hybrid 模型</div><h2>层名字典不意味着只有一种布局、一份 allocation 或一种编码。</h2>
 <div class="figure"><div class="figlabel">图 8 · 共享 backing 不会抹去每层 view 的差异</div><svg class="diagram" viewBox="0 0 900 320" role="img" aria-labelledby="hybridTitle hybridDesc"><title id="hybridTitle">不同层的张量可以指向同一份共享 allocation</title><desc id="hybridDesc">第 0、1 层有各自的逻辑 view，block page 在 backing 中交错排列。共享别名指向第 0 层。层名选择 view，offset 与 stride 选择字节。</desc><defs><marker id="hybridArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#7b8fae"></path></marker></defs><rect x="15" y="20" width="260" height="68" rx="10" fill="#e5f4ee" stroke="#9bcabc"></rect><text x="34" y="48" font-size="16" font-weight="700">layer.0 → view A</text><text x="34" y="70" class="minor">BHNC 轴 · 各自的 offset／stride</text><rect x="320" y="20" width="260" height="68" rx="10" fill="#e6edff" stroke="#adc0ec"></rect><text x="339" y="48" font-size="16" font-weight="700">layer.1 → view B</text><text x="339" y="70" class="minor">BHNC 轴 · 各自的 offset／stride</text><rect x="625" y="20" width="260" height="68" rx="10" fill="#f2ecfa" stroke="#cfbde6"></rect><text x="644" y="48" font-size="16" font-weight="700">layer.2 → A 的共享别名</text><text x="644" y="70" class="minor">同一张量、同一描述符</text><path d="M145 88V145H125V178M450 88V145H330V178M755 88V120H145" stroke="#7b8fae" fill="none" stroke-width="2" marker-end="url(#hybridArrow)"></path><text x="16" y="168" class="minor">Block 交错分配示例</text><g font-size="14" font-weight="650"><rect x="15" y="185" width="205" height="58" rx="4" fill="#cee8df"></rect><text x="37" y="219">第 0 层／block 0</text><rect x="222" y="185" width="205" height="58" rx="4" fill="#d7e1fd"></rect><text x="244" y="219">第 1 层／block 0</text><rect x="429" y="185" width="205" height="58" rx="4" fill="#cee8df"></rect><text x="451" y="219">第 0 层／block 1</text><rect x="636" y="185" width="249" height="58" rx="4" fill="#d7e1fd"></rect><text x="658" y="219">第 1 层／block 1 …</text></g><path d="M118 253V270H531V253" fill="none" stroke="#3c8a76" stroke-width="2"></path><text x="170" y="298" class="minor">第 0 层的 block stride 可能跨过其它层的 page。</text></svg><p class="caption">图中示意跨层物理 packing。Hybrid group 还可以按 allocator 规划复用或覆盖 storage；不同层名不代表不同 buffer。</p></div>
