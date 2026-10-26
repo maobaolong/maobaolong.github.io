@@ -1,4 +1,4 @@
-<details class="guide-toc"><summary>Contents: background, call chains, related work and end state</summary><nav aria-label="Article contents"><a href="#overview">Declare axis meaning at the point of creation.</a><a href="#ambiguity">At two blocks, shape and strides cannot tell K from V.</a><a href="#concepts">“Layout” covers three separate contracts.</a><a href="#physical">The standard view stays BHNC. Its strides can change.</a><a href="#selection">Platform and backend constrain the allocation. The declaration describes its result.</a><a href="#mrv2">MRV2: follow the same dictionary from empty to registered.</a><a href="#variants">MRV1/MRV2 are runners; HiSparse is a cache scheme.</a><a href="#hybrid">A layer map is not a promise of one layout, one allocation or one encoding.</a><a href="#rbln">RBLN declares the layout chosen by its own shape logic.</a><a href="#mla">MLA has no separate K/V selector in its standard view.</a><a href="#compat">Passing metadata does not mean every connector consumes it.</a><a href="#future">Declare → preserve → validate → resolve once → transfer.</a><a href="#failure">A wrong axis interpretation can become a wrong byte selection.</a><a href="#lifecycle">Carry the tensor and its declaration as one logical pair.</a><a href="#related">Allocation standardization, producer metadata and consumer adoption are different layers.</a><a href="#review">Review the contract before the plumbing.</a><a href="#sources">Every implementation link pins the reviewed source.</a></nav></details>
+<details class="guide-toc"><summary>Contents: background, call chains, related work and end state</summary><nav aria-label="Article contents"><a href="#overview">Declare axis meaning at the point of creation.</a><a href="#ambiguity">At two blocks, shape and strides cannot tell K from V.</a><a href="#concepts">“Layout” covers three separate contracts.</a><a href="#physical">The standard view stays BHNC. Its strides can change.</a><a href="#selection">Platform and backend constrain the allocation. The declaration describes its result.</a><a href="#mrv2">MRV2: follow the same dictionary from empty to registered.</a><a href="#variants">MRV1/MRV2 are runners; HiSparse is a cache scheme.</a><a href="#hybrid">A layer map is not a promise of one layout, one allocation or one encoding.</a><a href="#rbln">RBLN declares the layout chosen by its own shape logic.</a><a href="#mla">MLA has no separate K/V selector in its standard view.</a><a href="#compat">Passing metadata does not mean every connector consumes it.</a><a href="#future">Declare → preserve → validate → resolve once → transfer.</a><a href="#failure">A wrong axis interpretation can become a wrong byte selection.</a><a href="#lifecycle">Carry the tensor and its declaration as one logical pair.</a><a href="#related">Allocation standardization, producer metadata and consumer adoption are different layers.</a><a href="#review">Review the contract before the plumbing.</a><a href="#registration-tests">Read all seven registration tests and their 17 cases.</a><a href="#sources">Every implementation link pins the reviewed source.</a></nav></details>
 
 <div class="tocline">Read sections 01–05 for context. Trace 06–11 against the diff. Use 12–16 to judge scope and remaining work. <button class="print" type="button" onclick="window.print()">Print / save PDF</button></div>
 <section class="section" id="overview">
@@ -171,6 +171,251 @@ VLLM_TARGET_DEVICE=cpu HF_HUB_OFFLINE=1 uv run --no-sync .venv/bin/python -m pyt
 # 94 passed</code></pre></details>
 <p class="source">Evidence: <a href="https://github.com/vllm-project/vllm/pull/63699">PR description, exact test revisions and CI</a><a href="https://github.com/RBLN-SW/vllm-rbln/pull/1297">RBLN validation limits and merge gates</a></p>
 </section>
+<section class="section" id="registration-tests"><div class="num">17 / Reading the registration tests</div><h2>Seven test functions, 17 cases: what does each assertion protect?</h2><p>This section reads <code>tests/v1/kv_connector/unit/test_kv_cache_registration.py</code> at <code>3838746</code>. Each explanation covers inputs, the exercised path, independent expected values and the actual assertion boundary. Code blocks preserve the original tests and parameter decorators for comparison with the pinned source.</p><div class="tablewrap"><table><thead><tr><th>Test</th><th>Cases</th><th>What it protects</th></tr></thead><tbody><tr><td><code>two_blocks…</code></td><td>2</td><td>K/V values and mixed-child compatibility</td></tr><tr><td><code>allocator_views…</code></td><td>8</td><td>Six layouts, two padding cases, aliases</td></tr><tr><td><code>invalid_descriptor…</code></td><td>3</td><td>Rank/KV/SINGLETON checks and side effects</td></tr><tr><td><code>unknown_layer…</code></td><td>1</td><td>Reject an extra descriptor key</td></tr><tr><td><code>duplicate_semantic_axes</code></td><td>1</td><td>Reject duplicate BLOCK</td></tr><tr><td><code>missing_descriptors…</code></td><td>1</td><td>Preserve unspecified semantics</td></tr><tr><td><code>hybrid_allocator…</code></td><td>1</td><td>Per-view roles, mixed geometry, shared backing</td></tr></tbody></table></div><h3>Start with the fixture: a real MultiConnector and two recording children.</h3><p><code>TensorRegistrationConnector</code> implements only the old <code>register_kv_caches</code> and records its input dictionary. Its inherited new hook tests compatibility with that old override. <code>AxisRegistrationConnector</code> calls super for validation and legacy dispatch, then records layouts as a descriptor-aware consumer. <code>make_connector</code> creates a CPU VllmConfig and dynamically loads both children by module path/class name with the WORKER role. This exercises real registration plumbing, not a mocked forwarding call or a serving engine.</p><div class="figure"><div class="figlabel">Figure 16 · The registration path exercised by the fixture</div><div class="vertical"><div class="node"><b>New hook: tensors + layouts</b></div><div class="down">↓</div><div class="node"><b>MultiConnector forwards in order</b></div><div class="down">↓</div><div class="grid2"><div class="card teal">Legacy child: validate → old override</div><div class="card blue">Aware child: super → retain layouts</div></div></div></div><details><summary>Expand the full fixture and both connector classes</summary><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L36">Original test code · L36–L38</a></p><pre class="test-source"><code>class TensorRegistrationConnector(ExampleConnector):
+    def register_kv_caches(self, kv_caches: dict[str, torch.Tensor]):
+        self.registered_caches = kv_caches</code></pre><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L41">Original test code · L41–L48</a></p><pre class="test-source"><code>class AxisRegistrationConnector(TensorRegistrationConnector):
+    def register_kv_caches_with_layouts(
+        self,
+        kv_caches: dict[str, torch.Tensor],
+        layouts: Mapping[str, KVCacheTensorLayout],
+    ) -&gt; None:
+        super().register_kv_caches_with_layouts(kv_caches, layouts)
+        self.layouts = layouts</code></pre><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L51">Original test code · L51–L83</a></p><pre class="test-source"><code>@pytest.fixture
+def make_connector():
+    def make(kv_cache_config: KVCacheConfig) -&gt; MultiConnector:
+        config = VllmConfig(
+            device_config=DeviceConfig(device=&quot;cpu&quot;),
+            scheduler_config=SchedulerConfig(
+                max_model_len=16,
+                max_num_batched_tokens=16,
+                max_num_seqs=1,
+                is_encoder_decoder=False,
+                disable_hybrid_kv_cache_manager=True,
+            ),
+            kv_transfer_config=KVTransferConfig(
+                kv_connector=&quot;MultiConnector&quot;,
+                kv_role=&quot;kv_both&quot;,
+                kv_connector_extra_config={
+                    &quot;connectors&quot;: [
+                        {
+                            &quot;kv_connector&quot;: cls.__name__,
+                            &quot;kv_connector_module_path&quot;: __name__,
+                            &quot;kv_role&quot;: &quot;kv_both&quot;,
+                        }
+                        for cls in (
+                            TensorRegistrationConnector,
+                            AxisRegistrationConnector,
+                        )
+                    ]
+                },
+            ),
+        )
+        return MultiConnector(config, KVConnectorRole.WORKER, kv_cache_config)
+
+    return make</code></pre></details><div class="test-case" id="registration-test-1"><h3>1. At two blocks, forwarding a descriptor is not enough: read the right K/V values.</h3><p><code>test_two_blocks_keep_kv_semantics_through_mixed_connectors</code> has two parameter cases: blocks-first and kv-first. Both place <code>arange(8)</code> in shape <code>(2,2,1,1,2,1)</code>, so shape and strides are identical. Only the axis declarations differ. The test consumer permutes into <code>(KV,BLOCK,STATE,HEAD,HEAD_DIM,SINGLETON)</code> using the received descriptor, then compares flattened values.</p>
+<div class="figure"><div class="figlabel">Figure 17 · Work out the expected values independently</div><div class="tablewrap"><table><thead><tr><th>Producer declaration</th><th>Original values by block</th><th>Canonical K-first result</th></tr></thead><tbody><tr><td>BLOCK → KV</td><td>b0: K=[0,1], V=[2,3]<br>b1: K=[4,5], V=[6,7]</td><td>K=[0,1,4,5]<br>V=[2,3,6,7]</td></tr><tr><td>KV → BLOCK</td><td>K: b0=[0,1], b1=[2,3]<br>V: b0=[4,5], b1=[6,7]</td><td>K=[0,1,2,3]<br>V=[4,5,6,7]</td></tr></tbody></table></div></div>
+<p><b>Why hard-code the expected arrays?</b> The oracle is independent of the implementation. Reusing the same axis-resolution algorithm to compute expected values could let both share a bug. <code>is caches</code> checks that both children receive the same dictionary; the value assertion checks the interpretation of K/V. Offsets 0 and 100 register two new tensor batches through the same connector, catching stale data on the second call. The declaration stays the same, so this does not test changing layouts during re-registration.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L86">Original test code · L86–L113</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;axes&quot;, &quot;expected&quot;),
+    [
+        ((Axis.BLOCK, Axis.KV), [0, 1, 4, 5, 2, 3, 6, 7]),
+        ((Axis.KV, Axis.BLOCK), list(range(8))),
+    ],
+    ids=[&quot;blocks-first&quot;, &quot;kv-first&quot;],
+)
+def test_two_blocks_keep_kv_semantics_through_mixed_connectors(
+    make_connector, axes, expected
+):
+    &quot;&quot;&quot;Equal shapes must still give the consumer the producer&#x27;s K/V values.&quot;&quot;&quot;
+    connector = make_connector(KVCacheConfig(2, [], []))
+    layout = KVCacheTensorLayout(
+        (*axes, Axis.HEAD, Axis.SINGLETON, Axis.STATE, Axis.HEAD_DIM)
+    )
+    order = (Axis.KV, Axis.BLOCK, Axis.STATE, Axis.HEAD, Axis.HEAD_DIM, Axis.SINGLETON)
+    for offset in (0, 100):
+        caches = {&quot;layer&quot;: (torch.arange(8) + offset).reshape(2, 2, 1, 1, 2, 1)}
+        connector.register_kv_caches_with_layouts(caches, {&quot;layer&quot;: layout})
+        legacy, consumer = connector.sub_connectors
+        assert isinstance(legacy, TensorRegistrationConnector)
+        assert isinstance(consumer, AxisRegistrationConnector)
+        assert legacy.registered_caches is consumer.registered_caches is caches
+        canonical = consumer.registered_caches[&quot;layer&quot;].permute(
+            *(consumer.layouts[&quot;layer&quot;].axis_index(axis) for axis in order)
+        )
+        assert canonical.flatten().tolist() == [value + offset for value in expected]</code></pre></div><div class="test-case" id="registration-test-2"><h3>2. Do allocator views retain their values across physical layouts and aliases?</h3><p><code>test_allocator_views_and_aliases_keep_their_values</code> expands into eight cases: all six <code>KVCacheLayout</code> members, plus padded LBHNC and BLHNC. It calls the real <code>compute_layout_strides</code> and <code>allocate_kv_cache</code>; allocation results are not mocked. Two layers share a backing allocation while exposing separate views.</p>
+<p>The test writes 0…63 into first, fills second with -1, and aliases first. The consumer constructs semantic coordinates <code>B=1,H=0,N=2,C=3</code> from the received axis tuple. In logical shape <code>(2,2,4,4)</code>, the expected value is <code>(((1×2+0)×4+2)×4+3)=43</code>, independent of physical order. A descriptor/view mismatch can therefore produce a concrete wrong value.</p>
+<p>It also verifies that second was not overwritten and that <code>stride(0) × element_size()</code> matches the configured block stride in bytes. A padded page is 144 bytes rather than 128, checking that registration preserves gaps between pages. Only block stride has an explicit equality assertion; layer stride participates in construction but is not separately asserted. The test manually attaches both the alias tensor and descriptor. It verifies forwarding after attachment, not automatic alias wiring inside either model runner.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L116">Original test code · L116–L176</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;physical_layout&quot;, &quot;padded&quot;),
+    [(layout, False) for layout in KVCacheLayout]
+    + [(KVCacheLayout.LBHNC, True), (KVCacheLayout.BLHNC, True)],
+)
+def test_allocator_views_and_aliases_keep_their_values(
+    make_connector, physical_layout, padded
+):
+    &quot;&quot;&quot;Registration describes indexing order while preserving real strides.&quot;&quot;&quot;
+    spec = FullAttentionSpec(
+        block_size=4,
+        num_kv_heads=2,
+        head_size=2,
+        dtype=torch.float32,
+        page_size_padded=144 if padded else None,
+    )
+    nb, nl = 2, 2
+    strides = compute_layout_strides(spec, nb, nl, physical_layout)
+    config = KVCacheConfig(
+        num_blocks=nb,
+        kv_cache_tensors=[
+            KVCacheTensor(
+                size=nb * nl * spec.page_size_bytes,
+                layers=[&quot;first&quot;, &quot;second&quot;],
+                layer_stride=strides[0],
+                block_stride=strides[1],
+            )
+        ],
+        kv_cache_groups=[
+            KVCacheGroupSpec(
+                [&quot;first&quot;, &quot;second&quot;],
+                UniformTypeKVCacheSpecs(
+                    block_size=4, kv_cache_specs={&quot;first&quot;: spec, &quot;second&quot;: spec}
+                ),
+            )
+        ],
+    )
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    caches = allocate_kv_cache(
+        config, torch.device(&quot;cpu&quot;), physical_layout, tensor_layouts=layouts
+    )
+    caches[&quot;first&quot;].copy_(torch.arange(64).reshape(2, 2, 4, 4))
+    caches[&quot;second&quot;].fill_(-1)
+    add_kv_sharing_layers_to_kv_cache_groups({&quot;alias&quot;: &quot;first&quot;}, config.kv_cache_groups)
+    caches[&quot;alias&quot;] = caches[&quot;first&quot;]
+    layouts[&quot;alias&quot;] = layouts[&quot;first&quot;]
+    connector = make_connector(config)
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    assert consumer.registered_caches is caches
+    assert set(consumer.layouts) == set(caches)
+    assert consumer.layouts[&quot;alias&quot;] == consumer.layouts[&quot;first&quot;]
+    layout = consumer.layouts[&quot;first&quot;]
+    index = tuple(
+        {Axis.BLOCK: 1, Axis.HEAD: 0, Axis.STATE: 2, Axis.CONTENT: 3}[axis]
+        for axis in layout.axes
+    )
+    assert consumer.registered_caches[&quot;alias&quot;][index].item() == 43
+    assert torch.all(caches[&quot;second&quot;] == -1)
+    assert caches[&quot;first&quot;].stride(0) * caches[&quot;first&quot;].element_size() == strides[1]</code></pre></div><div class="test-case" id="registration-test-3"><h3>3. Invalid metadata must fail before legacy registration causes side effects.</h3><p><code>test_invalid_descriptor_is_rejected_before_legacy_registration</code> fixes the declaration to <code>(BLOCK,KV,SINGLETON,HEAD_DIM)</code> and tries three invalid shapes: <code>(3,2,1)</code> has the wrong rank; <code>(3,3,1,4)</code> has KV size 3; <code>(3,2,2,4)</code> has structural singleton size 2.</p>
+<p><code>pytest.raises(ValueError, match=message)</code> checks both exception type and category. Afterwards, no child may have a <code>registered_caches</code> attribute, showing that the fixture's old hook has not run. The first child inherits base validation, which rejects the input before MultiConnector reaches the next child. This is not a general transactional rollback guarantee for arbitrary custom overrides that bypass validation.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L179">Original test code · L179–L194</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;shape&quot;, &quot;message&quot;),
+    [((3, 2, 1), &quot;rank&quot;), ((3, 3, 1, 4), &quot;KV axis&quot;), ((3, 2, 2, 4), &quot;SINGLETON&quot;)],
+)
+def test_invalid_descriptor_is_rejected_before_legacy_registration(
+    make_connector, shape, message
+):
+    connector = make_connector(KVCacheConfig(3, [], []))
+    layout = KVCacheTensorLayout((Axis.BLOCK, Axis.KV, Axis.SINGLETON, Axis.HEAD_DIM))
+    with pytest.raises(ValueError, match=message):
+        connector.register_kv_caches_with_layouts(
+            {&quot;layer&quot;: torch.empty(shape)}, {&quot;layer&quot;: layout}
+        )
+    assert all(
+        not hasattr(child, &quot;registered_caches&quot;) for child in connector.sub_connectors
+    )</code></pre></div><div class="test-case" id="registration-test-4"><h3>4. A descriptor cannot refer to a layer that has no registered tensor.</h3><p><code>test_unknown_layer_descriptor_is_rejected</code> passes an empty tensor dictionary with a declaration for <code>missing</code>. It expects ValueError containing <code>unregistered layer</code>. This catches mismatched map keys, such as a stale layer descriptor left after a model rebuild.</p><p>This enforces that every supplied descriptor has a corresponding tensor. It does not require a descriptor for every tensor; test 6 deliberately permits missing declarations.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L197">Original test code · L197–L202</a></p><pre class="test-source"><code>def test_unknown_layer_descriptor_is_rejected(make_connector):
+    connector = make_connector(KVCacheConfig(2, [], []))
+    with pytest.raises(ValueError, match=&quot;unregistered layer&quot;):
+        connector.register_kv_caches_with_layouts(
+            {}, {&quot;missing&quot;: KVCacheTensorLayout((Axis.BLOCK,))}
+        )</code></pre></div><div class="test-case" id="registration-test-5"><h3>5. Reject repeated semantic roles when constructing the descriptor.</h3><p><code>test_rejects_duplicate_semantic_axes</code> constructs <code>(BLOCK,BLOCK)</code> and expects ValueError containing <code>unique</code>, before any connector runs. Otherwise, <code>axis_index(BLOCK)</code> would return only the first occurrence and silently ignore the other supposed BLOCK axis.</p><p>This case covers duplicate BLOCK only. The implementation allows repeated structural <code>SINGLETON</code> roles, but this test does not exercise that valid case or enumerate every role combination. It is a focused regression, not a complete schema property test.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L205">Original test code · L205–L207</a></p><pre class="test-source"><code>def test_rejects_duplicate_semantic_axes():
+    with pytest.raises(ValueError, match=&quot;unique&quot;):
+        KVCacheTensorLayout((Axis.BLOCK, Axis.BLOCK))</code></pre></div><div class="test-case" id="registration-test-6"><h3>6. An absent declaration stays unspecified; do not invent a plausible layout.</h3><p><code>test_missing_descriptors_stay_unspecified</code> creates a configuration with a HiSparse raw spec but <code>kv_cache_tensors=[]</code>. With no allocation records, the allocator returns an empty dictionary and leaves output layouts empty. The test then manually registers <code>raw</code> and <code>custom</code> tensors with an empty descriptor map.</p><p>The consumer must receive the original tensor dictionary and no declarations. Rank, layer names or specs must not trigger an invented BHNC default. This case does not allocate HiSparse raw storage: it tests empty allocator output and externally supplied tensors registered without declarations. The hybrid case below actually exercises raw-storage allocation and verifies that it receives no descriptor.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L210">Original test code · L210–L232</a></p><pre class="test-source"><code>def test_missing_descriptors_stay_unspecified(make_connector):
+    config = KVCacheConfig(
+        num_blocks=2,
+        kv_cache_tensors=[],
+        kv_cache_groups=[
+            KVCacheGroupSpec([&quot;raw&quot;], HiSparseResidentSpec(block_size=4, page_size=128))
+        ],
+    )
+    caches = {&quot;raw&quot;: torch.empty(256, dtype=torch.uint8), &quot;custom&quot;: torch.empty(2)}
+    connector = make_connector(config)
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    assert (
+        allocate_kv_cache(
+            config, torch.device(&quot;cpu&quot;), KVCacheLayout.LBHNC, tensor_layouts=layouts
+        )
+        == {}
+    )
+    assert layouts == {}
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    assert consumer.registered_caches is caches
+    assert consumer.layouts == {}</code></pre></div><div class="test-case" id="registration-test-7"><h3>7. Hybrid caches require declarations for each actual view, not one model-wide string.</h3><p><code>test_hybrid_allocator_registers_each_created_view</code> combines full attention, sliding attention, Mamba and HiSparse raw specs. Each KVCacheTensor uses the total backing allocation size, while its offset advances through separate regions. The resulting views share an allocation without addressing the same region.</p>
+<div class="tablewrap"><table><thead><tr><th>Layer</th><th>Actual shape</th><th>Meaning in this test</th></tr></thead><tbody><tr><td>full</td><td>(2,2,4,4)</td><td>float32; 2 heads, 4 states, CONTENT width 4.</td></tr><tr><td>sliding</td><td>(2,1,2,4)</td><td>float16; 1 head and 2 states. Shared roles do not imply shared geometry.</td></tr><tr><td>mamba</td><td>(2,1,1,24)</td><td>24 opaque state bytes per block: (2 + 2×2) × 4. HEAD/STATE are size-one slots.</td></tr><tr><td>raw</td><td>One-dimensional backing buffer</td><td>No layer view, so no tensor-axis declaration.</td></tr></tbody></table></div>
+<p>The assertions check three things: only full/sliding/mamba have descriptor keys; all three declare <code>(BLOCK,HEAD,STATE,CONTENT)</code>; and separately written layer values survive registration while each layer's <code>untyped_storage().data_ptr()</code> equals raw's storage address. This connects per-view declarations with a shared backing allocation.</p><p>Only full and sliding have explicit dtype assertions. Mamba's byte-shaped view and values are checked, but the two float32 state components are not decoded. Nor does the test establish state-to-token granularity; that still belongs to the spec and execution logic.</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L235">Original test code · L235–L298</a></p><pre class="test-source"><code>def test_hybrid_allocator_registers_each_created_view(make_connector):
+    &quot;&quot;&quot;Hybrid specs share axis roles, not shapes, dtype or content encoding.&quot;&quot;&quot;
+    specs = {
+        &quot;full&quot;: FullAttentionSpec(
+            block_size=4, num_kv_heads=2, head_size=2, dtype=torch.float32
+        ),
+        &quot;sliding&quot;: SlidingWindowSpec(
+            block_size=2,
+            num_kv_heads=1,
+            head_size=2,
+            dtype=torch.float16,
+            sliding_window=8,
+        ),
+        &quot;mamba&quot;: MambaSpec(
+            block_size=4,
+            shapes=((2,), (2, 2)),
+            dtypes=(torch.float32, torch.float32),
+        ),
+        &quot;raw&quot;: HiSparseResidentSpec(block_size=4, page_size=64),
+    }
+    num_blocks = 2
+    size = sum(num_blocks * spec.page_size_bytes for spec in specs.values())
+    tensors = []
+    offset = 0
+    for name, spec in specs.items():
+        tensors.append(
+            KVCacheTensor(
+                size=size,
+                layers=[name],
+                offset=offset,
+                layer_stride=num_blocks * spec.page_size_bytes,
+                block_stride=spec.page_size_bytes,
+            )
+        )
+        offset += num_blocks * spec.page_size_bytes
+    config = KVCacheConfig(
+        num_blocks,
+        tensors,
+        [KVCacheGroupSpec([name], spec) for name, spec in specs.items()],
+    )
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    caches = allocate_kv_cache(
+        config, torch.device(&quot;cpu&quot;), KVCacheLayout.LBHNC, tensor_layouts=layouts
+    )
+    assert set(layouts) == {&quot;full&quot;, &quot;sliding&quot;, &quot;mamba&quot;}
+    assert caches[&quot;full&quot;].shape == (2, 2, 4, 4)
+    assert caches[&quot;sliding&quot;].shape == (2, 1, 2, 4)
+    assert caches[&quot;mamba&quot;].shape == (2, 1, 1, 24)
+    assert caches[&quot;raw&quot;].ndim == 1
+    assert caches[&quot;full&quot;].dtype == torch.float32
+    assert caches[&quot;sliding&quot;].dtype == torch.float16
+    for value, name in enumerate(layouts, start=1):
+        caches[name].fill_(value)
+    connector = make_connector(config)
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    for value, name in enumerate(layouts, start=1):
+        axes = consumer.layouts[name]
+        assert axes.axes == (Axis.BLOCK, Axis.HEAD, Axis.STATE, Axis.CONTENT)
+        assert torch.all(consumer.registered_caches[name] == value)
+        assert consumer.registered_caches[name].untyped_storage().data_ptr() == (
+            caches[&quot;raw&quot;].untyped_storage().data_ptr()
+        )</code></pre></div><div class="callout amber"><b>Where does this evidence stop?</b> It covers the real CPU allocator → view metadata → MultiConnector → recording consumer, plus invalid-input paths. It does not execute full MRV1/MRV2 initialize_kv_cache, HiSparse host/device binding, attention kernels, model serving or LMCache IPC. The RBLN-shaped case does not use the rebel SDK. Parameterization expands seven functions into 17 pytest cases; offset and per-layer loops add assertions inside a case, not extra pytest cases.</div><h3>Run this file on its own</h3><p>Use the vLLM CPU development prerequisites from the preceding section and check out <code>383874621325a7057190711527ad268c183e0b19</code>: Python 3.12, PyTorch 2.14.1, pytest, tblib and the vLLM test dependencies. A fresh run of this file on 27 Oct 2026 produced <b>17 passed</b>; its only warning was the missing generated <code>vllm._version</code> in the source environment. No model weights or GPU inference were involved.</p><pre class="test-source"><code>VLLM_TARGET_DEVICE=cpu HF_HUB_OFFLINE=1 python -m pytest \
+  tests/v1/kv_connector/unit/test_kv_cache_registration.py -q -rs
+# 17 passed</code></pre></section>
 <section class="section" id="sources"><div class="num">Source index / frozen code, live discussion</div><h2>Every implementation link pins the reviewed source.</h2><p>vLLM links in this document use <code>383874621325a7057190711527ad268c183e0b19</code>. RBLN links use <code>a930b4daaf19ea083f3f7d8f80ed3fa82cc7a27d</code>. PR and issue links remain live. If the implementation changes, review the new diff rather than treating this snapshot as current.</p><div class="grid2 linklist"><div><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/docs/design/kv_cache_registration.md" data-src="docs/design/kv_cache_registration.md">API design contract</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/kv_cache_layout.py" data-src="vllm/v1/kv_cache_layout.py">Axis and physical-layout types</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/kv_cache_interface.py#L424" data-src="vllm/v1/kv_cache_interface.py:424">Standard view creator</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/utils.py#L565" data-src="vllm/v1/worker/utils.py:565">Common allocator</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/attention/backends/utils.py#L293" data-src="vllm/v1/attention/backends/utils.py:293">Physical-layout resolver</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/model_runner.py#L799" data-src="vllm/v1/worker/gpu/model_runner.py:799">MRV2 entry</a></div><div><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/attn_utils.py#L398" data-src="vllm/v1/worker/gpu/attn_utils.py:398">MRV2 allocation and aliases</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu_model_runner.py#L6915" data-src="vllm/v1/worker/gpu_model_runner.py:6915">MRV1 allocation</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/hisparse/binding.py#L83" data-src="vllm/v1/hisparse/binding.py:83">HiSparse host/device allocation</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/distributed/kv_transfer/kv_connector/v1/base.py#L303" data-src="vllm/distributed/kv_transfer/kv_connector/v1/base.py:303">Base hook and validation</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/distributed/kv_transfer/kv_connector/v1/multi_connector.py#L265" data-src="vllm/distributed/kv_transfer/kv_connector/v1/multi_connector.py:265">MultiConnector forwarding</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py" data-src="tests/v1/kv_connector/unit/test_kv_cache_registration.py">Registration behavior tests</a></div></div><div class="callout"><b>Reviewer's takeaway:</b> the change moves known axis semantics across an existing ownership boundary. It provides a compatible producer API; complete layout understanding still combines that declaration with tensor geometry, specs and a consumer that actually preserves and uses it.</div></section>
 <footer class="footer">Prepared for PR review with OpenAI Codex assistance · 26 Oct 2026 · Source-linked engineering explanation, not a benchmark or hardware validation report.<br>All figures are explanatory drawings. Use the blog header button to switch between the complete Chinese and English versions.</footer>
 

@@ -25,3 +25,7 @@
 .kv-review-guide .footer {line-height:1.7;}
 @media(max-width:600px){.kv-review-guide .section{padding:17px}.kv-review-guide .guide-toc nav{grid-template-columns:1fr}.kv-review-guide{font-size:15px}.kv-review-guide .snapshot{position:static}}
 .kv-review-guide .section {scroll-margin-top:125px;}
+
+.kv-review-guide .test-case {margin-top:32px;padding-top:24px;border-top:1px solid var(--line);scroll-margin-top:125px;}
+.kv-review-guide .test-source {max-height:34rem;overflow:auto;line-height:1.65;font-size:13px;tab-size:4;white-space:pre;}
+.kv-review-guide .test-source code {white-space:pre;word-break:normal;overflow-wrap:normal;}

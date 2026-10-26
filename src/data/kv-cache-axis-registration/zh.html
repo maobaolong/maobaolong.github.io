@@ -1,4 +1,4 @@
-<details class="guide-toc"><summary>文章导航：背景、调用链、相关工作与终态</summary><nav aria-label="文章导航"><a href="#overview">在创建 view 的地方声明每个轴的含义。</a><a href="#ambiguity">当 block 数是 2，shape 和 stride 无法判断哪个轴代表 K/V。</a><a href="#concepts">“Layout”其实涵盖三份不同的契约。</a><a href="#physical">标准 view 始终是 BHNC，stride 则可以变化。</a><a href="#selection">平台和 backend 约束分配，轴声明描述分配的结果。</a><a href="#mrv2">MRV2：同一个字典，从空容器走到注册。</a><a href="#variants">MRV1/MRV2 是执行器，HiSparse 是缓存方案。</a><a href="#hybrid">层名字典不意味着只有一种布局、一份 allocation 或一种编码。</a><a href="#rbln">RBLN 按自己的 shape 选择逻辑声明布局。</a><a href="#mla">MLA 的标准 view 没有独立的 K/V 选择轴。</a><a href="#compat">传递 metadata，不代表每个 connector 都会使用它。</a><a href="#future">声明 → 保留 → 校验 → 注册时解析一次 → 传输。</a><a href="#failure">错误的轴解释，可能最终变成错误的字节选择。</a><a href="#lifecycle">把张量和它的声明当作一组匹配的信息来维护。</a><a href="#related">分配标准化、生产者 metadata、消费者接入，是三件不同的事。</a><a href="#review">先审契约，再跟传递链路。</a><a href="#sources">每个实现链接都固定到被审阅的源码版本。</a></nav></details>
+<details class="guide-toc"><summary>文章导航：背景、调用链、相关工作与终态</summary><nav aria-label="文章导航"><a href="#overview">在创建 view 的地方声明每个轴的含义。</a><a href="#ambiguity">当 block 数是 2，shape 和 stride 无法判断哪个轴代表 K/V。</a><a href="#concepts">“Layout”其实涵盖三份不同的契约。</a><a href="#physical">标准 view 始终是 BHNC，stride 则可以变化。</a><a href="#selection">平台和 backend 约束分配，轴声明描述分配的结果。</a><a href="#mrv2">MRV2：同一个字典，从空容器走到注册。</a><a href="#variants">MRV1/MRV2 是执行器，HiSparse 是缓存方案。</a><a href="#hybrid">层名字典不意味着只有一种布局、一份 allocation 或一种编码。</a><a href="#rbln">RBLN 按自己的 shape 选择逻辑声明布局。</a><a href="#mla">MLA 的标准 view 没有独立的 K/V 选择轴。</a><a href="#compat">传递 metadata，不代表每个 connector 都会使用它。</a><a href="#future">声明 → 保留 → 校验 → 注册时解析一次 → 传输。</a><a href="#failure">错误的轴解释，可能最终变成错误的字节选择。</a><a href="#lifecycle">把张量和它的声明当作一组匹配的信息来维护。</a><a href="#related">分配标准化、生产者 metadata、消费者接入，是三件不同的事。</a><a href="#review">先审契约，再跟传递链路。</a><a href="#registration-tests">逐项读懂 7 个注册测试与 17 个用例。</a><a href="#sources">每个实现链接都固定到被审阅的源码版本。</a></nav></details>
 
 <div class="tocline">先读 01–05 了解背景，再对照 diff 阅读 06–11 的调用链，最后用 12–16 判断边界、终态和待办。 <button class="print" type="button" onclick="window.print()">打印／另存为 PDF</button></div>
 <section class="section" id="overview">
@@ -171,6 +171,251 @@ VLLM_TARGET_DEVICE=cpu HF_HUB_OFFLINE=1 uv run --no-sync .venv/bin/python -m pyt
 # 94 passed</code></pre></details>
 <p class="source">验证依据： <a href="https://github.com/vllm-project/vllm/pull/63699">PR 描述、精确测试版本与 CI</a><a href="https://github.com/RBLN-SW/vllm-rbln/pull/1297">RBLN 验证边界与合并前置条件</a></p>
 </section>
+<section class="section" id="registration-tests"><div class="num">17 / 测试代码逐项拆解</div><h2>7 个测试函数，17 个用例：每条断言在保护什么？</h2><p>这节逐项阅读 <code>tests/v1/kv_connector/unit/test_kv_cache_registration.py</code>，固定到 <code>3838746</code>。不是根据测试名猜意图：下面给出输入、执行链路、独立预期值和断言的实际覆盖范围。代码块保留原测试与参数化装饰器，可直接和固定版本源码对照。</p><div class="tablewrap"><table><thead><tr><th>测试</th><th>用例数</th><th>核心保护点</th></tr></thead><tbody><tr><td><code>two_blocks…</code></td><td>2</td><td>K/V 数值与旧／新 child 兼容</td></tr><tr><td><code>allocator_views…</code></td><td>8</td><td>六种物理布局、两种 padding、alias</td></tr><tr><td><code>invalid_descriptor…</code></td><td>3</td><td>rank / KV / SINGLETON 校验及副作用</td></tr><tr><td><code>unknown_layer…</code></td><td>1</td><td>拒绝多余的 descriptor key</td></tr><tr><td><code>duplicate_semantic_axes</code></td><td>1</td><td>拒绝重复 BLOCK</td></tr><tr><td><code>missing_descriptors…</code></td><td>1</td><td>保持 unspecified</td></tr><tr><td><code>hybrid_allocator…</code></td><td>1</td><td>逐 view 声明、混合几何、共享 backing</td></tr></tbody></table></div><h3>先看测试装置：真实 MultiConnector，加两个只记录输入的 child。</h3><p><code>TensorRegistrationConnector</code> 只实现旧 <code>register_kv_caches</code>，记录收到的字典；它继承新 hook 的基类实现，所以能检验新接口是否继续调用旧 override。<code>AxisRegistrationConnector</code> 先调用 super 完成基类校验／旧 hook，再记录 layouts，模拟一个理解新契约的消费者。<code>make_connector</code> 用 CPU VllmConfig，通过模块路径和类名动态加载两个 child，角色为 WORKER；不是用 mock 替换注册链路，也不会启动模型 serving。</p><div class="figure"><div class="figlabel">图 16 · 测试实际执行的注册链路</div><div class="vertical"><div class="node"><b>新 hook：tensor 字典 + layouts</b></div><div class="down">↓</div><div class="node"><b>MultiConnector 依次转发</b></div><div class="down">↓</div><div class="grid2"><div class="card teal">旧 child：基类校验 → 旧 override</div><div class="card blue">新 child：super → 保存 layouts</div></div></div></div><details><summary>展开 fixture 与两个 connector 的完整代码</summary><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L36">原始测试代码 · L36–L38</a></p><pre class="test-source"><code>class TensorRegistrationConnector(ExampleConnector):
+    def register_kv_caches(self, kv_caches: dict[str, torch.Tensor]):
+        self.registered_caches = kv_caches</code></pre><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L41">原始测试代码 · L41–L48</a></p><pre class="test-source"><code>class AxisRegistrationConnector(TensorRegistrationConnector):
+    def register_kv_caches_with_layouts(
+        self,
+        kv_caches: dict[str, torch.Tensor],
+        layouts: Mapping[str, KVCacheTensorLayout],
+    ) -&gt; None:
+        super().register_kv_caches_with_layouts(kv_caches, layouts)
+        self.layouts = layouts</code></pre><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L51">原始测试代码 · L51–L83</a></p><pre class="test-source"><code>@pytest.fixture
+def make_connector():
+    def make(kv_cache_config: KVCacheConfig) -&gt; MultiConnector:
+        config = VllmConfig(
+            device_config=DeviceConfig(device=&quot;cpu&quot;),
+            scheduler_config=SchedulerConfig(
+                max_model_len=16,
+                max_num_batched_tokens=16,
+                max_num_seqs=1,
+                is_encoder_decoder=False,
+                disable_hybrid_kv_cache_manager=True,
+            ),
+            kv_transfer_config=KVTransferConfig(
+                kv_connector=&quot;MultiConnector&quot;,
+                kv_role=&quot;kv_both&quot;,
+                kv_connector_extra_config={
+                    &quot;connectors&quot;: [
+                        {
+                            &quot;kv_connector&quot;: cls.__name__,
+                            &quot;kv_connector_module_path&quot;: __name__,
+                            &quot;kv_role&quot;: &quot;kv_both&quot;,
+                        }
+                        for cls in (
+                            TensorRegistrationConnector,
+                            AxisRegistrationConnector,
+                        )
+                    ]
+                },
+            ),
+        )
+        return MultiConnector(config, KVConnectorRole.WORKER, kv_cache_config)
+
+    return make</code></pre></details><div class="test-case" id="registration-test-1"><h3>1. 两个 block 时，传对描述符还不够，K/V 数值也必须读对。</h3><p><code>test_two_blocks_keep_kv_semantics_through_mixed_connectors</code> 有两个参数用例：blocks-first 和 kv-first。两者都把 <code>arange(8)</code> 放进 <code>(2,2,1,1,2,1)</code>，所以 shape 和 stride 相同，只有轴声明不同。测试消费者按描述符把 view 置换到 <code>(KV,BLOCK,STATE,HEAD,HEAD_DIM,SINGLETON)</code>，再展开比值。</p>
+<div class="figure"><div class="figlabel">图 17 · 先手算标准答案，再检查消费结果</div><div class="tablewrap"><table><thead><tr><th>生产者声明</th><th>按 block 解释的原始数据</th><th>统一 K-first 输出</th></tr></thead><tbody><tr><td>BLOCK → KV</td><td>b0: K=[0,1], V=[2,3]<br>b1: K=[4,5], V=[6,7]</td><td>K=[0,1,4,5]<br>V=[2,3,6,7]</td></tr><tr><td>KV → BLOCK</td><td>K: b0=[0,1], b1=[2,3]<br>V: b0=[4,5], b1=[6,7]</td><td>K=[0,1,2,3]<br>V=[4,5,6,7]</td></tr></tbody></table></div></div>
+<p><b>为什么预期值直接写成数组？</b> 标准答案独立于被测代码。如果也用同一套轴解析逻辑算 expected，测试和实现可能一起算错。<code>is caches</code> 检查两个 child 拿到同一个字典；数值断言检查消费者确实保住了 K/V 的含义。<code>offset=0,100</code> 在同一个 connector 上注册两批新 tensor，防止第二次还沿用旧数据；它没有切换描述符，因此不能据此声称已验证“重注册时 layout 改变”。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L86">原始测试代码 · L86–L113</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;axes&quot;, &quot;expected&quot;),
+    [
+        ((Axis.BLOCK, Axis.KV), [0, 1, 4, 5, 2, 3, 6, 7]),
+        ((Axis.KV, Axis.BLOCK), list(range(8))),
+    ],
+    ids=[&quot;blocks-first&quot;, &quot;kv-first&quot;],
+)
+def test_two_blocks_keep_kv_semantics_through_mixed_connectors(
+    make_connector, axes, expected
+):
+    &quot;&quot;&quot;Equal shapes must still give the consumer the producer&#x27;s K/V values.&quot;&quot;&quot;
+    connector = make_connector(KVCacheConfig(2, [], []))
+    layout = KVCacheTensorLayout(
+        (*axes, Axis.HEAD, Axis.SINGLETON, Axis.STATE, Axis.HEAD_DIM)
+    )
+    order = (Axis.KV, Axis.BLOCK, Axis.STATE, Axis.HEAD, Axis.HEAD_DIM, Axis.SINGLETON)
+    for offset in (0, 100):
+        caches = {&quot;layer&quot;: (torch.arange(8) + offset).reshape(2, 2, 1, 1, 2, 1)}
+        connector.register_kv_caches_with_layouts(caches, {&quot;layer&quot;: layout})
+        legacy, consumer = connector.sub_connectors
+        assert isinstance(legacy, TensorRegistrationConnector)
+        assert isinstance(consumer, AxisRegistrationConnector)
+        assert legacy.registered_caches is consumer.registered_caches is caches
+        canonical = consumer.registered_caches[&quot;layer&quot;].permute(
+            *(consumer.layouts[&quot;layer&quot;].axis_index(axis) for axis in order)
+        )
+        assert canonical.flatten().tolist() == [value + offset for value in expected]</code></pre></div><div class="test-case" id="registration-test-2"><h3>2. allocator 创建的 view，经过不同物理布局和共享别名，数值还能找对吗？</h3><p><code>test_allocator_views_and_aliases_keep_their_values</code> 展开成 8 个用例：<code>KVCacheLayout</code> 的 6 个成员，加上 LBHNC、BLHNC 的 padded 版本。这里真正调用 <code>compute_layout_strides</code> 和 <code>allocate_kv_cache</code>，没有伪造分配结果；两个层共用 backing allocation，却有各自的 view。</p>
+<p>它往 first 写入 0…63，给 second 填 -1，再把 alias 指向 first。消费者根据收到的轴元组构造语义坐标 <code>B=1,H=0,N=2,C=3</code>；在逻辑 <code>(2,2,4,4)</code> 中，该值应为 <code>(((1×2+0)×4+2)×4+3)=43</code>。这个数与物理排列无关，因而能发现“声明和实际 view 对不上”。</p>
+<p>最后还检查 second 没被意外覆盖，以及 <code>stride(0) × element_size()</code> 与配置的 block 字节 stride 一致。<code>page_size_padded=144</code> 对比无 padding 的 128 字节页，防止注册过程把页间空隙抹掉。注意：测试只明确断言了 block stride；layer stride 参与构造，但没有单独等式断言。alias 的 tensor 和 descriptor 都由测试手动接线，证明接好后能正确传递，不等于执行了两套 runner 的自动 alias 接线。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L116">原始测试代码 · L116–L176</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;physical_layout&quot;, &quot;padded&quot;),
+    [(layout, False) for layout in KVCacheLayout]
+    + [(KVCacheLayout.LBHNC, True), (KVCacheLayout.BLHNC, True)],
+)
+def test_allocator_views_and_aliases_keep_their_values(
+    make_connector, physical_layout, padded
+):
+    &quot;&quot;&quot;Registration describes indexing order while preserving real strides.&quot;&quot;&quot;
+    spec = FullAttentionSpec(
+        block_size=4,
+        num_kv_heads=2,
+        head_size=2,
+        dtype=torch.float32,
+        page_size_padded=144 if padded else None,
+    )
+    nb, nl = 2, 2
+    strides = compute_layout_strides(spec, nb, nl, physical_layout)
+    config = KVCacheConfig(
+        num_blocks=nb,
+        kv_cache_tensors=[
+            KVCacheTensor(
+                size=nb * nl * spec.page_size_bytes,
+                layers=[&quot;first&quot;, &quot;second&quot;],
+                layer_stride=strides[0],
+                block_stride=strides[1],
+            )
+        ],
+        kv_cache_groups=[
+            KVCacheGroupSpec(
+                [&quot;first&quot;, &quot;second&quot;],
+                UniformTypeKVCacheSpecs(
+                    block_size=4, kv_cache_specs={&quot;first&quot;: spec, &quot;second&quot;: spec}
+                ),
+            )
+        ],
+    )
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    caches = allocate_kv_cache(
+        config, torch.device(&quot;cpu&quot;), physical_layout, tensor_layouts=layouts
+    )
+    caches[&quot;first&quot;].copy_(torch.arange(64).reshape(2, 2, 4, 4))
+    caches[&quot;second&quot;].fill_(-1)
+    add_kv_sharing_layers_to_kv_cache_groups({&quot;alias&quot;: &quot;first&quot;}, config.kv_cache_groups)
+    caches[&quot;alias&quot;] = caches[&quot;first&quot;]
+    layouts[&quot;alias&quot;] = layouts[&quot;first&quot;]
+    connector = make_connector(config)
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    assert consumer.registered_caches is caches
+    assert set(consumer.layouts) == set(caches)
+    assert consumer.layouts[&quot;alias&quot;] == consumer.layouts[&quot;first&quot;]
+    layout = consumer.layouts[&quot;first&quot;]
+    index = tuple(
+        {Axis.BLOCK: 1, Axis.HEAD: 0, Axis.STATE: 2, Axis.CONTENT: 3}[axis]
+        for axis in layout.axes
+    )
+    assert consumer.registered_caches[&quot;alias&quot;][index].item() == 43
+    assert torch.all(caches[&quot;second&quot;] == -1)
+    assert caches[&quot;first&quot;].stride(0) * caches[&quot;first&quot;].element_size() == strides[1]</code></pre></div><div class="test-case" id="registration-test-3"><h3>3. 描述符不合法时，要在旧注册函数产生副作用之前失败。</h3><p><code>test_invalid_descriptor_is_rejected_before_legacy_registration</code> 固定声明 <code>(BLOCK,KV,SINGLETON,HEAD_DIM)</code>，分别传入三种错误：<code>(3,2,1)</code> 少一维；<code>(3,3,1,4)</code> 的 KV 大小不是 2；<code>(3,2,2,4)</code> 的结构 singleton 不是 1。</p>
+<p><code>pytest.raises(ValueError, match=message)</code> 同时检查异常类型和错误类别；之后检查所有 child 都没有 <code>registered_caches</code> 属性，证明本 fixture 中旧 hook 尚未执行。这里第一个 child 继承了基类校验，所以它先拒绝，再停止 MultiConnector 的循环。这个断言不能推广成“任意自定义 child 都有事务回滚”；绕过基类校验的 override 不在这个测试的保证范围内。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L179">原始测试代码 · L179–L194</a></p><pre class="test-source"><code>@pytest.mark.parametrize(
+    (&quot;shape&quot;, &quot;message&quot;),
+    [((3, 2, 1), &quot;rank&quot;), ((3, 3, 1, 4), &quot;KV axis&quot;), ((3, 2, 2, 4), &quot;SINGLETON&quot;)],
+)
+def test_invalid_descriptor_is_rejected_before_legacy_registration(
+    make_connector, shape, message
+):
+    connector = make_connector(KVCacheConfig(3, [], []))
+    layout = KVCacheTensorLayout((Axis.BLOCK, Axis.KV, Axis.SINGLETON, Axis.HEAD_DIM))
+    with pytest.raises(ValueError, match=message):
+        connector.register_kv_caches_with_layouts(
+            {&quot;layer&quot;: torch.empty(shape)}, {&quot;layer&quot;: layout}
+        )
+    assert all(
+        not hasattr(child, &quot;registered_caches&quot;) for child in connector.sub_connectors
+    )</code></pre></div><div class="test-case" id="registration-test-4"><h3>4. 一个不存在的层名，不能凭空带着描述符混进注册。</h3><p><code>test_unknown_layer_descriptor_is_rejected</code> 使用空 tensor 字典，却给出 <code>missing</code> 的轴声明。预期是带 <code>unregistered layer</code> 信息的 ValueError。这防止 tensor map 与 layout map 的 key 集合失配，比如模型重建后残留了上一次的层名。</p><p>它检查的是“描述符不能指向不存在的 tensor”，并不要求每个 tensor 都必须有描述符；后者恰恰由第 6 项测试允许缺省。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L197">原始测试代码 · L197–L202</a></p><pre class="test-source"><code>def test_unknown_layer_descriptor_is_rejected(make_connector):
+    connector = make_connector(KVCacheConfig(2, [], []))
+    with pytest.raises(ValueError, match=&quot;unregistered layer&quot;):
+        connector.register_kv_caches_with_layouts(
+            {}, {&quot;missing&quot;: KVCacheTensorLayout((Axis.BLOCK,))}
+        )</code></pre></div><div class="test-case" id="registration-test-5"><h3>5. 重复的语义轴在构造描述符时就拒绝。</h3><p><code>test_rejects_duplicate_semantic_axes</code> 直接构造 <code>(BLOCK,BLOCK)</code>，在进入 connector 前就应抛出带 <code>unique</code> 的 ValueError。否则 <code>axis_index(BLOCK)</code> 只能返回第一个位置，消费者会悄悄忽略另一个“BLOCK”。</p><p>这项只覆盖重复 BLOCK。实现允许重复的结构 <code>SINGLETON</code>；此用例没有验证该合法场景，也没有覆盖全部轴组合。不能把一个重复轴反例说成完整的 schema 属性测试。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L205">原始测试代码 · L205–L207</a></p><pre class="test-source"><code>def test_rejects_duplicate_semantic_axes():
+    with pytest.raises(ValueError, match=&quot;unique&quot;):
+        KVCacheTensorLayout((Axis.BLOCK, Axis.BLOCK))</code></pre></div><div class="test-case" id="registration-test-6"><h3>6. 没有声明就是 unspecified，不能自动补一个“看起来合理”的布局。</h3><p><code>test_missing_descriptors_stay_unspecified</code> 建立一个带 HiSparse raw spec、但 <code>kv_cache_tensors=[]</code> 的配置。allocator 因为没有 allocation record 而返回空字典，输出 layouts 也保持为空。随后测试手动注册 <code>raw</code> 与 <code>custom</code> 两个 tensor，仍然传空描述符。</p><p>消费者必须拿到原 tensor 字典和空 layouts，不能根据 rank、层名或 spec 自动猜 BHNC。要注意这个用例本身没有真正分配 HiSparse raw storage：它验证空分配输出和“外部提供 tensor 可以无声明注册”。下一项 hybrid 测试才实际走到 raw-storage 分支，并检查 raw 没有被生成描述符。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L210">原始测试代码 · L210–L232</a></p><pre class="test-source"><code>def test_missing_descriptors_stay_unspecified(make_connector):
+    config = KVCacheConfig(
+        num_blocks=2,
+        kv_cache_tensors=[],
+        kv_cache_groups=[
+            KVCacheGroupSpec([&quot;raw&quot;], HiSparseResidentSpec(block_size=4, page_size=128))
+        ],
+    )
+    caches = {&quot;raw&quot;: torch.empty(256, dtype=torch.uint8), &quot;custom&quot;: torch.empty(2)}
+    connector = make_connector(config)
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    assert (
+        allocate_kv_cache(
+            config, torch.device(&quot;cpu&quot;), KVCacheLayout.LBHNC, tensor_layouts=layouts
+        )
+        == {}
+    )
+    assert layouts == {}
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    assert consumer.registered_caches is caches
+    assert consumer.layouts == {}</code></pre></div><div class="test-case" id="registration-test-7"><h3>7. hybrid 不是一个全模型的 layout 字符串：要检查每个实际 view。</h3><p><code>test_hybrid_allocator_registers_each_created_view</code> 把 full attention、sliding attention、Mamba 和 HiSparse raw 四种 spec 放进同一配置。所有 KVCacheTensor 的 <code>size</code> 都是整块 backing storage 的总字节数，<code>offset</code> 则逐段推进；因此这些 view 共用 allocation，但访问不同区域。</p>
+<div class="tablewrap"><table><thead><tr><th>层</th><th>实际 shape</th><th>测试中的含义</th></tr></thead><tbody><tr><td>full</td><td>(2,2,4,4)</td><td>float32；2 heads、4 states，CONTENT=4。</td></tr><tr><td>sliding</td><td>(2,1,2,4)</td><td>float16；1 head、2 states，同一组轴角色不代表相同几何。</td></tr><tr><td>mamba</td><td>(2,1,1,24)</td><td>每块 24 字节的不透明状态：(2 + 2×2) × 4；HEAD/STATE 是大小为 1 的 slot。</td></tr><tr><td>raw</td><td>一维 backing buffer</td><td>没有 layer view，不应生成 tensor layout。</td></tr></tbody></table></div>
+<p>关键断言有三组：layouts 的 key 恰好是 full/sliding/mamba；三层的轴都为 <code>(BLOCK,HEAD,STATE,CONTENT)</code>；逐层写入不同值后，注册消费者能读到各自的数据，并且三层的 <code>untyped_storage().data_ptr()</code> 都等于 raw 的 storage 地址。这同时约束了“每层声明”和“共用 backing”的关系。</p><p>代码只对 full/sliding 显式断言 dtype，对 Mamba 的 24 字节 shape 和值做检查；它没有把 Mamba 的两份 float32 状态解码回来，更没有证明 state 和 token 的推进比例。这些信息仍属于 spec 和实际执行逻辑。</p><p class="source"><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py#L235">原始测试代码 · L235–L298</a></p><pre class="test-source"><code>def test_hybrid_allocator_registers_each_created_view(make_connector):
+    &quot;&quot;&quot;Hybrid specs share axis roles, not shapes, dtype or content encoding.&quot;&quot;&quot;
+    specs = {
+        &quot;full&quot;: FullAttentionSpec(
+            block_size=4, num_kv_heads=2, head_size=2, dtype=torch.float32
+        ),
+        &quot;sliding&quot;: SlidingWindowSpec(
+            block_size=2,
+            num_kv_heads=1,
+            head_size=2,
+            dtype=torch.float16,
+            sliding_window=8,
+        ),
+        &quot;mamba&quot;: MambaSpec(
+            block_size=4,
+            shapes=((2,), (2, 2)),
+            dtypes=(torch.float32, torch.float32),
+        ),
+        &quot;raw&quot;: HiSparseResidentSpec(block_size=4, page_size=64),
+    }
+    num_blocks = 2
+    size = sum(num_blocks * spec.page_size_bytes for spec in specs.values())
+    tensors = []
+    offset = 0
+    for name, spec in specs.items():
+        tensors.append(
+            KVCacheTensor(
+                size=size,
+                layers=[name],
+                offset=offset,
+                layer_stride=num_blocks * spec.page_size_bytes,
+                block_stride=spec.page_size_bytes,
+            )
+        )
+        offset += num_blocks * spec.page_size_bytes
+    config = KVCacheConfig(
+        num_blocks,
+        tensors,
+        [KVCacheGroupSpec([name], spec) for name, spec in specs.items()],
+    )
+    layouts: dict[str, KVCacheTensorLayout] = {}
+    caches = allocate_kv_cache(
+        config, torch.device(&quot;cpu&quot;), KVCacheLayout.LBHNC, tensor_layouts=layouts
+    )
+    assert set(layouts) == {&quot;full&quot;, &quot;sliding&quot;, &quot;mamba&quot;}
+    assert caches[&quot;full&quot;].shape == (2, 2, 4, 4)
+    assert caches[&quot;sliding&quot;].shape == (2, 1, 2, 4)
+    assert caches[&quot;mamba&quot;].shape == (2, 1, 1, 24)
+    assert caches[&quot;raw&quot;].ndim == 1
+    assert caches[&quot;full&quot;].dtype == torch.float32
+    assert caches[&quot;sliding&quot;].dtype == torch.float16
+    for value, name in enumerate(layouts, start=1):
+        caches[name].fill_(value)
+    connector = make_connector(config)
+    connector.register_kv_caches_with_layouts(caches, layouts)
+    consumer = connector.sub_connectors[1]
+    assert isinstance(consumer, AxisRegistrationConnector)
+    for value, name in enumerate(layouts, start=1):
+        axes = consumer.layouts[name]
+        assert axes.axes == (Axis.BLOCK, Axis.HEAD, Axis.STATE, Axis.CONTENT)
+        assert torch.all(consumer.registered_caches[name] == value)
+        assert consumer.registered_caches[name].untyped_storage().data_ptr() == (
+            caches[&quot;raw&quot;].untyped_storage().data_ptr()
+        )</code></pre></div><div class="callout amber"><b>这份测试证明到哪一步？</b> CPU 上的真实 allocator → view metadata → MultiConnector → 测试消费者，以及错误路径。它没有运行 MRV1/MRV2 的完整 initialize_kv_cache、HiSparse host/device 绑定、attention kernel、模型 serving 或 LMCache IPC。原始 RBLN 用例也不是 rebel SDK 测试。7 个函数经参数化得到 17 个 pytest 用例；offset 循环和逐层循环是同一个用例里的额外断言，不应再加进用例数。</div><h3>怎样单独复现这一份测试？</h3><p>在本文前一节列出的 vLLM CPU 开发环境中，切换到固定提交 <code>383874621325a7057190711527ad268c183e0b19</code>，使用 Python 3.12、PyTorch 2.14.1、pytest 与 tblib，确保已装好 vLLM 测试依赖。2026-10-27 针对该文件重新执行：<b>17 passed</b>；唯一警告是源码环境缺少生成的 <code>vllm._version</code>。没有下载模型权重，也没有运行 GPU 推理。</p><pre class="test-source"><code>VLLM_TARGET_DEVICE=cpu HF_HUB_OFFLINE=1 python -m pytest \
+  tests/v1/kv_connector/unit/test_kv_cache_registration.py -q -rs
+# 17 passed</code></pre></section>
 <section class="section" id="sources"><div class="num">源码索引／固定代码版本，讨论链接保持实时</div><h2>每个实现链接都固定到被审阅的源码版本。</h2><p>本文 vLLM 链接固定到 <code>383874621325a7057190711527ad268c183e0b19</code>；RBLN 链接固定到 <code>a930b4daaf19ea083f3f7d8f80ed3fa82cc7a27d</code>。PR 和 issue 链接仍指向实时讨论。实现更新后应检查新的 diff，不能把本文快照当成永远最新。</p><div class="grid2 linklist"><div><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/docs/design/kv_cache_registration.md" data-src="docs/design/kv_cache_registration.md">API 设计契约</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/kv_cache_layout.py" data-src="vllm/v1/kv_cache_layout.py">轴类型与物理布局类型</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/kv_cache_interface.py#L424" data-src="vllm/v1/kv_cache_interface.py:424">标准 view 创建函数</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/utils.py#L565" data-src="vllm/v1/worker/utils.py:565">公共 allocator</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/attention/backends/utils.py#L293" data-src="vllm/v1/attention/backends/utils.py:293">物理布局解析器</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/model_runner.py#L799" data-src="vllm/v1/worker/gpu/model_runner.py:799">MRV2 入口</a></div><div><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu/attn_utils.py#L398" data-src="vllm/v1/worker/gpu/attn_utils.py:398">MRV2 分配与共享别名</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/worker/gpu_model_runner.py#L6915" data-src="vllm/v1/worker/gpu_model_runner.py:6915">MRV1 分配</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/v1/hisparse/binding.py#L83" data-src="vllm/v1/hisparse/binding.py:83">HiSparse host／device 分配</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/distributed/kv_transfer/kv_connector/v1/base.py#L303" data-src="vllm/distributed/kv_transfer/kv_connector/v1/base.py:303">Base hook 与校验</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/vllm/distributed/kv_transfer/kv_connector/v1/multi_connector.py#L265" data-src="vllm/distributed/kv_transfer/kv_connector/v1/multi_connector.py:265">MultiConnector 转发</a><a href="https://github.com/maobaolong/vllm/blob/383874621325a7057190711527ad268c183e0b19/tests/v1/kv_connector/unit/test_kv_cache_registration.py" data-src="tests/v1/kv_connector/unit/test_kv_cache_registration.py">注册行为测试</a></div></div><div class="callout"><b>Reviewer 要记住的重点：</b> 这个改动让已知的轴语义跨过现有的所有权边界。它提供兼容的生产者 API；要完整理解布局，仍需结合描述符、张量几何、spec，以及真正保留并使用这些信息的消费者。</div></section>
 <footer class="footer">在 OpenAI Codex 协助下编写 · 2026-10-26 · 基于固定源码的工程讲解，不是性能测试或硬件验证报告。<br>图表为原理示意；中文和英文版本通过博客顶部的按钮切换。</footer>
 

@@ -1,7 +1,8 @@
 ---
 title: "KV Layout Should Not Be Guessed: vLLM #63699, RBLN and the LMCache Contract"
-description: "15 diagrams and two interactive examples explain KV axis semantics, physical layout and encoding, trace allocation through connector registration, and show the RBLN, MLA, hybrid and LMCache integration boundaries."
+description: "17 diagrams and two interactive examples explain KV axis semantics, physical layout and encoding, trace allocation through connector registration, and show the RBLN, MLA, hybrid and LMCache integration boundaries."
 publishedAt: "2026-10-26T14:01:10Z"
+updatedAt: "2026-10-26T16:07:39Z"
 category: "AI Infra"
 tags:
   - vllm
@@ -11,7 +12,7 @@ tags:
   - attention
   - distributed-systems
 author: "Maobaolong"
-readingTime: "22 min"
+readingTime: "38 min"
 featured: true
 draft: false
 ---
