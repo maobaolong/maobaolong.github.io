@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="650" viewBox="0 0 1180 650" role="img" aria-labelledby="title desc">
+  <title id="title">从历史 token 到分页 KV Cache</title>
+  <desc id="desc">模型把历史 token 的 Key 和 Value 保存为 KV Cache，逻辑上连续的 token 通过 block table 映射到不连续的 GPU 物理页。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101722"/><stop offset=".55" stop-color="#172c35"/><stop offset="1" stop-color="#0d1219"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto"><path d="M2 2 L10 6 L2 10 Z" fill="#8ba3b8"/></marker>
+    <style>
+      .title{fill:#f8fafc;font:800 31px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sub{fill:#a9b8c6;font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.panel{fill:#17232e;stroke:#526779;stroke-width:1.4}.head{fill:#f1f5f9;font:800 19px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.body{fill:#d5dee7;font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.micro{fill:#a7b6c4;font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.token{fill:#9de6d2;stroke:#d7fff4}.page{fill:#22384a;stroke:#6f8ca5}.pageHot{fill:#294d46;stroke:#9de6d2;stroke-width:2}.edge{fill:none;stroke:#8ba3b8;stroke-width:2.5;marker-end:url(#arrow)}.badge{fill:#101a24;stroke:#455a6d}.accent{fill:#9de6d2;font:700 14px ui-monospace,SFMono-Regular,Menlo,monospace}
+    </style>
+  </defs>
+  <rect width="1180" height="650" rx="28" fill="url(#bg)"/>
+  <text class="title" x="54" y="58">KV Cache：模型的“推理记事本”，也是一组分页内存</text>
+  <text class="sub" x="56" y="88">逻辑 token 连续，不代表它们在 GPU 物理内存中也连续。</text>
+
+  <g transform="translate(58 142)">
+    <rect class="panel" width="270" height="340" rx="20"/>
+    <text class="head" x="24" y="42">① 模型已经读过</text>
+    <g transform="translate(24 78)">
+      <rect class="token" x="0" width="40" height="42" rx="9"/><rect class="token" x="48" width="40" height="42" rx="9"/><rect class="token" x="96" width="40" height="42" rx="9"/><rect class="token" x="144" width="40" height="42" rx="9"/><rect class="token" x="192" width="40" height="42" rx="9"/>
+      <text class="body" x="20" y="27" text-anchor="middle">我</text><text class="body" x="68" y="27" text-anchor="middle">喜</text><text class="body" x="116" y="27" text-anchor="middle">欢</text><text class="body" x="164" y="27" text-anchor="middle">学</text><text class="body" x="212" y="27" text-anchor="middle">习</text>
+    </g>
+    <text class="body" x="24" y="168">每层 attention 为历史 token</text>
+    <text class="body" x="24" y="194">计算 Key / Value。</text>
+    <rect class="badge" x="24" y="228" width="222" height="74" rx="14"/>
+    <text class="accent" x="135" y="257" text-anchor="middle">下一个 token</text>
+    <text class="micro" x="135" y="283" text-anchor="middle">复用旧 K/V，不重新计算</text>
+  </g>
+
+  <path class="edge" d="M328 310 C370 310 390 310 432 310"/>
+
+  <g transform="translate(432 142)">
+    <rect class="panel" width="290" height="340" rx="20"/>
+    <text class="head" x="24" y="42">② KV Cache 按 block 分页</text>
+    <g transform="translate(26 76)">
+      <rect class="pageHot" x="0" y="0" width="112" height="76" rx="12"/><rect class="page" x="126" y="0" width="112" height="76" rx="12"/>
+      <rect class="page" x="0" y="92" width="112" height="76" rx="12"/><rect class="pageHot" x="126" y="92" width="112" height="76" rx="12"/>
+      <text class="body" x="56" y="32" text-anchor="middle">block 37</text><text class="micro" x="56" y="55" text-anchor="middle">token 0–15</text>
+      <text class="body" x="182" y="32" text-anchor="middle">block 12</text><text class="micro" x="182" y="55" text-anchor="middle">空闲</text>
+      <text class="body" x="56" y="124" text-anchor="middle">block 52</text><text class="micro" x="56" y="147" text-anchor="middle">其他请求</text>
+      <text class="body" x="182" y="124" text-anchor="middle">block 8</text><text class="micro" x="182" y="147" text-anchor="middle">token 16–31</text>
+    </g>
+    <text class="accent" x="145" y="288" text-anchor="middle">[NB, BS, NH, HS]</text>
+    <text class="micro" x="145" y="316" text-anchor="middle">block · token · head · head size</text>
+  </g>
+
+  <path class="edge" d="M722 310 C764 310 784 310 826 310"/>
+
+  <g transform="translate(826 142)">
+    <rect class="panel" width="296" height="340" rx="20"/>
+    <text class="head" x="24" y="42">③ Block table 负责导航</text>
+    <g transform="translate(24 82)">
+      <rect class="badge" width="248" height="54" rx="12"/><rect class="badge" y="70" width="248" height="54" rx="12"/>
+      <text class="body" x="18" y="33">逻辑 token 0–15</text><text class="accent" x="226" y="33" text-anchor="end">→ 37</text>
+      <text class="body" x="18" y="103">逻辑 token 16–31</text><text class="accent" x="226" y="103" text-anchor="end">→ 8</text>
+    </g>
+    <text class="body" x="24" y="244">LMCache 恢复一个连续 chunk 时，</text>
+    <text class="body" x="24" y="270">必须按 block ID 分段写回。</text>
+    <text class="micro" x="24" y="307">这就是 gather / scatter 的来源。</text>
+  </g>
+
+  <g transform="translate(308 548)"><rect class="badge" width="564" height="52" rx="14"/><text class="body" x="282" y="32" text-anchor="middle">逻辑连续 ≠ 物理连续；高性能传输首先要解决地址映射</text></g>
+</svg>
