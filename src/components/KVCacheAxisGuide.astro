@@ -1,0 +1,16 @@
+---
+import english from "../data/kv-cache-axis-registration/en.html?raw";
+import chinese from "../data/kv-cache-axis-registration/zh.html?raw";
+import type { Locale } from "../config/i18n";
+import { withBase } from "../utils/with-base";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<link rel="stylesheet" href={withBase("/styles/vllm-kv-cache-axis-registration.css")} />
+<div class="kv-review-guide" data-locale={locale} set:html={locale === "zh" ? chinese : english} />
+<script is:inline type="module" src={withBase("/scripts/vllm-kv-cache-axis-registration.js")}></script>

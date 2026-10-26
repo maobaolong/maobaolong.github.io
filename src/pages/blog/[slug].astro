@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import KVCacheAxisGuide from "../../components/KVCacheAxisGuide.astro";
 import GitHubThreadWidget from "../../components/GitHubThreadWidget.astro";
 import commentThreads from "../../config/comment-threads.json";
 import site from "../../config/site.json";
@@ -59,6 +60,9 @@ const thread = commentThreads.find((item) => item.key === threadKey);
     <div class="container">
       <article class="article-card glass prose">
         <Content />
+        {post.id === "vllm-kv-cache-axis-registration" ? (
+          <KVCacheAxisGuide locale="zh" />
+        ) : null}
         {post.id === "lmcache-register-kv-cache" ? (
           <script type="module" src={withBase("/scripts/lmcache-register-kv-cache-animations.js")}></script>
         ) : null}

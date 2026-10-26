@@ -9,6 +9,9 @@
   - `pnpm install && pnpm build`
 - `astro preview` serves the built `dist/` output. After changing files under
   `public/`, run `pnpm build` again before visual-checking previewed assets.
+- Astro 7 may reuse an existing preview daemon and ignore a newly requested
+  `--port`. Read the printed running URL before browser checks; do not assume
+  the requested port started or stop a shared preview just to change its port.
 - This desktop environment does not currently provide an `ffmpeg` executable.
   For generated narration videos, use macOS AVFoundation or `avconvert`; convert
   OpenAI Speech MP3 output to M4A before muxing if AVFoundation cannot discover
