@@ -77,6 +77,12 @@ const site = siteText.en;
             <script type="module" src={withBase("/scripts/lmcache-padded-ipc.js")}></script>
           </>
         ) : null}
+        {post.id === "lmcache-kernel-paged-kv-groups" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-kernel-paging.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-kernel-paging.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
