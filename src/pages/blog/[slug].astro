@@ -90,6 +90,12 @@ const thread = commentThreads.find((item) => item.key === threadKey);
             <script type="module" src={withBase("/scripts/lmcache-p2p.js")}></script>
           </>
         ) : null}
+        {post.id === "lmcache-sdk-cache-dropping" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-sdk-cache-dropping.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-sdk-cache-dropping.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
