@@ -84,6 +84,12 @@ const thread = commentThreads.find((item) => item.key === threadKey);
             <script type="module" src={withBase("/scripts/lmcache-kernel-paging.js")}></script>
           </>
         ) : null}
+        {post.id === "lmcache-p2p-control-data-plane" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/lmcache-p2p.css")} />
+            <script type="module" src={withBase("/scripts/lmcache-p2p.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
