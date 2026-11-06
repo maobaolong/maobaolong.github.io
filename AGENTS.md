@@ -29,7 +29,15 @@
 - For bilingual blog work, quote translated frontmatter string fields such as `title` and `description`; English titles often introduce `:` or quotes that break YAML when left bare.
 - When generating localized SVG assets, skip files that already end in `-en.svg`; rerunning over generated assets creates unused `-en-en.svg` duplicates.
 - For translated `.vtt`, `.srt`, and transcript files, strip Markdown code fences such as ```vtt before build/browser verification. Subtitle files must remain raw WebVTT/SRT text.
-- The Pages workflow currently emits a Node.js 20 deprecation annotation for `actions/checkout@v4`, `actions/configure-pages@v5`, and `actions/deploy-pages@v4`; GitHub forces them onto Node.js 24 and the deployment still succeeds, so treat it as an upstream-action migration warning rather than an Astro build failure.
+- The Pages workflow currently emits Node.js 20 deprecation annotations and GitHub
+  forces `actions/deploy-pages@v4` onto Node.js 24. On 2026-11-06 two clean
+  Astro builds stalled until the v4 deployment poll timed out; prefer
+  `actions/deploy-pages@v5` once the publishing credential has `workflow` scope.
+  After an artifact upload failure, start a fresh workflow run rather than
+  rerunning only the failed job in the same run: the latter can leave two
+  `github-pages` artifacts and fail with an ambiguous-artifact error. Repeated
+  `workflow_dispatch` runs also reuse the same commit SHA, so use a fresh source
+  commit when Pages treats retries as the same deployment version.
 - The Pages workflow may also emit an `ubuntu-latest` migration annotation for
   Ubuntu 26 beginning October 19, 2026. Treat it as runner-image notice unless
   the Astro build or deploy job actually fails.
