@@ -96,6 +96,12 @@ const thread = commentThreads.find((item) => item.key === threadKey);
             <script type="module" src={withBase("/scripts/lmcache-sdk-cache-dropping.js")}></script>
           </>
         ) : null}
+        {post.id === "cuda-vmm-fd-fabric-lmcache" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/cuda-vmm-fd-fabric.css")} />
+            <script type="module" src={withBase("/scripts/cuda-vmm-fd-fabric.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
