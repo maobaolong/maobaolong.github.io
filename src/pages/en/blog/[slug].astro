@@ -95,6 +95,12 @@ const site = siteText.en;
             <script type="module" src={withBase("/scripts/cuda-vmm-fd-fabric.js")}></script>
           </>
         ) : null}
+        {post.id === "sglang-mamba-lmcache-checkpoint-alignment" ? (
+          <>
+            <link rel="stylesheet" href={withBase("/styles/sglang-mamba-checkpoint-alignment.css")} />
+            <script type="module" src={withBase("/scripts/sglang-mamba-checkpoint-alignment.js")}></script>
+          </>
+        ) : null}
       </article>
     </div>
   </section>
