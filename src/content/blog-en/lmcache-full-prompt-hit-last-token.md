@@ -14,7 +14,7 @@ Send the same prompt twice. On the second request, vLLM's local prefix cache is 
 
 That gives us three questions. How much KV does LMCache **have**? How much does this request **load**? What does the model **still need to compute**? The answers explain how one extra cache hit once led to an HTTP 500.
 
-<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css">
+<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css?v=chunk-boundary">
 <script type="module" src="/videos/blog/lmcache-full-prompt-hit/explainer.js"></script>
 
 <figure class="last-token-video">
@@ -99,15 +99,39 @@ The two ends of the load used different lengths. **The scheduler prepared GPU de
 
 The full chunk had four blocks to write into. The tail had an empty list of destinations. `trim_and_stage_unfull_chunk_block_ids` prepares target block IDs for each group. It hit the empty list and raised `ValueError: unfull chunk has no block for group 0`. The server marked the whole retrieve as failed. With `kv_load_failure_policy=fail` in the reported setup, vLLM returned an HTTP 500. [The check that raises](https://github.com/LMCache/LMCache/blob/07f1c6bb642f4772606a36eab730ae009ddce08f/lmcache/v1/multiprocess/object_group_transfer/unfull_chunk.py#L129-L138) · [Reproduction logs](https://github.com/LMCache/LMCache/issues/6751)
 
-The remainder explains the edge case. With chunk size `C`, a prompt of length `P = k × C + 1` has a one-token tail. Reserving the last token puts the load boundary at `P−1 = k × C`, exactly at the end of a full chunk. Add **one** token to the prompt and the load reaches into the tail again. The scheduler now allocates a destination for it.
+<h3 id="why-257">Why does 257 fail while 258 works?</h3>
 
-| Prompt length | Stored tail | Load range after reserving the last token | Before the fix, as reported |
-| --- | --- | --- | --- |
-| 257 | 1 token | 256, no destination needed for the tail | HTTP 500 |
-| 258 | 2 tokens | 257, load reaches into the tail | Success |
-| 3841 | 1 token | 3840, no destination needed for the tail | HTTP 500 |
+In all three cases, vLLM saves the last token for a forward pass. Look just beyond token 256. **Did LMCache store a tail there, and does the load still need any KV from it?**
 
-All three rows come from the issue's runs with tail saving enabled, `max_tokens = 1` on the first request, and a local prefix-cache reset before the repeat. The issue also records a successful 3841-token run with the local cache still populated. [Full reproduction matrix](https://github.com/LMCache/LMCache/issues/6751)
+<figure class="last-token-figure">
+  <div class="last-token-boundary" aria-hidden="true">
+    <div class="last-token-boundary-head"><span>Prompt length</span><span>Within the full chunk</span><span>Past the full chunk</span></div>
+    <div class="last-token-boundary-row">
+      <strong>256</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–255</span><span class="last-token-run">256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-absent">No tail object</span></div>
+    </div>
+    <div class="last-token-boundary-row">
+      <strong>257</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-run">257</span></div>
+    </div>
+    <div class="last-token-boundary-row">
+      <strong>258</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-load">257</span><span class="last-token-run">258</span></div>
+    </div>
+  </div>
+  <figcaption>Figure 3. The dashed line marks the chunk boundary after token 256. Blue shows the KV the request plans to reuse. Yellow marks the last token, which runs in the forward pass. The diagram shows token ranges. GPU allocations still happen in blocks.</figcaption>
+</figure>
+
+- **256 = one full chunk.** vLLM reserves token 256 for the forward pass. LMCache's stored range ends at the full chunk boundary, so there's no tail object for retrieve to handle.
+- **257 = one full chunk + one token.** The tail contains only token 257, the very token reserved for the forward pass. The load plan stops at 256, and the four GPU blocks cover just the full chunk. The old retrieve still includes the tail in its request, with nowhere to put it.
+- **258 = one full chunk + two tokens.** Reserving token 258 still leaves token 257 to load. Even that one position needs a fifth GPU block. The old retrieve has a destination when it processes the tail.
+
+The pattern repeats at every chunk boundary. With chunk size `C`, a remainder of zero (`P % C = 0`) means there is no stored tail. A remainder of at least two means there is tail KV left to load after reserving the last token. For a request loading at least one full chunk, **a remainder of exactly one** gives a stored tail with zero tokens in the load range. In other words, `P = k × C + 1`. With `C = 256`, that length condition covers 257, 513, 769, …, 3841.
+
+Length is one condition. In the reported reproduction, the first request used `max_tokens = 1` with tail saving enabled. The second request repeated the prompt after a local prefix-cache reset. The issue records HTTP 500 for 257, 513, and 3841, and success for 258, 3840, and 3842. The 3841-token case also succeeded with vLLM's local prefix cache still populated. [Full reproduction matrix](https://github.com/LMCache/LMCache/issues/6751)
 
 ## 4. What does PR #6759 do with the tail?
 
@@ -118,7 +142,7 @@ PR #6759 adds a guard to **retrieve on the LMCache server**. If the key addresse
     <div><strong>Before</strong><ol><li>Copy the full chunk</li><li>Try to stage the tail</li><li>The entire retrieve fails</li></ol></div>
     <div><strong>PR #6759</strong><ol><li>Copy the full chunk</li><li>Skip the tail if all groups lack destinations</li><li>Keep the 256 loaded tokens</li></ol></div>
   </div>
-  <figcaption>Figure 3. Both paths receive the same GPU block IDs. They diverge at the tail.</figcaption>
+  <figcaption>Figure 4. Both paths receive the same GPU block IDs. They diverge at the tail.</figcaption>
 </figure>
 
 If some groups have a destination and others don't, the existing check still raises. That preserves detection of inconsistent destination metadata. The stored tail remains in LMCache. [Guard condition](https://github.com/LMCache/LMCache/blob/0a707cbbace7d15868bf3e16a77491539360916e/lmcache/v1/multiprocess/modules/lmcache_driven_transfer.py#L1188-L1198) · [Transfer and completion accounting](https://github.com/LMCache/LMCache/blob/0a707cbbace7d15868bf3e16a77491539360916e/lmcache/v1/multiprocess/modules/lmcache_driven_transfer.py#L1272-L1333)

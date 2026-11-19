@@ -14,7 +14,7 @@ draft: false
 
 这里有三个不同的问题。LMCache **存着多少**？这次请求**要加载多少**？模型**还要算什么**？把这三件事分开，就能看懂为什么多命中一个 token，曾经会让整个请求返回 HTTP 500。
 
-<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css">
+<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css?v=chunk-boundary">
 <script type="module" src="/videos/blog/lmcache-full-prompt-hit/explainer.js"></script>
 
 <figure class="last-token-video">
@@ -99,15 +99,39 @@ draft: false
 
 完整 chunk 可以写入已有的四个 blocks。轮到尾块时，它的目的地列表是空的。`trim_and_stage_unfull_chunk_block_ids` 要为每个 group 准备目标 block ID，碰到空列表就抛出 `ValueError: unfull chunk has no block for group 0`。服务器把整次 retrieve 标记为失败。在 issue 的配置中，vLLM 使用 `kv_load_failure_policy=fail`，客户端因此收到了 HTTP 500。 [抛出异常的检查](https://github.com/LMCache/LMCache/blob/07f1c6bb642f4772606a36eab730ae009ddce08f/lmcache/v1/multiprocess/object_group_transfer/unfull_chunk.py#L129-L138) · [复现日志](https://github.com/LMCache/LMCache/issues/6751)
 
-这个边界可以用余数看懂。设 chunk 大小为 `C`，当 `P = k × C + 1` 时，尾块只有 1 个 token。留下最后一个 token 后，`P−1 = k × C`，加载范围正好止于完整 chunk 的末尾。在同样的配置下，把 prompt 加长**一个** token，尾块就还剩一个位置需要加载，调度器会为它准备目标 block。
+<h3 id="why-257">为什么 257 会失败，258 却可以？</h3>
 
-| Prompt 长度 | LMCache 里存的尾块 | 留下最后一个 token 后的加载范围 | Issue 中修复前的现象 |
-| --- | --- | --- | --- |
-| 257 | 1 个 token | 256，尾块无需目标 block | HTTP 500 |
-| 258 | 2 个 token | 257，加载范围进入尾块 | 成功 |
-| 3841 | 1 个 token | 3840，尾块无需目标 block | HTTP 500 |
+三种长度都留最后一个 token 给 forward。要看的是**第 256 个 token 之后，LMCache 有没有存尾块，以及这次加载还需不需要进尾块**。
 
-这三行均来自原 issue 中首次请求 `max_tokens = 1`、启用尾块保存，并在重复请求前清空 vLLM 本地 prefix cache 的实验。Issue 也记录了 `3841` 个 token 在本地 cache 未清空时成功的对照。 [完整复现矩阵](https://github.com/LMCache/LMCache/issues/6751)
+<figure class="last-token-figure">
+  <div class="last-token-boundary" aria-hidden="true">
+    <div class="last-token-boundary-head"><span>Prompt 长度</span><span>完整 chunk 内</span><span>完整 chunk 之后</span></div>
+    <div class="last-token-boundary-row">
+      <strong>256</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–255</span><span class="last-token-run">256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-absent">无尾块对象</span></div>
+    </div>
+    <div class="last-token-boundary-row">
+      <strong>257</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-run">257</span></div>
+    </div>
+    <div class="last-token-boundary-row">
+      <strong>258</strong>
+      <div class="last-token-boundary-chunk"><span class="last-token-load">1–256</span></div>
+      <div class="last-token-boundary-tail"><span class="last-token-load">257</span><span class="last-token-run">258</span></div>
+    </div>
+  </div>
+  <figcaption>图 3 · 虚线标出第 256 个 token 后的 chunk 边界。蓝色是计划复用的 KV，黄色是留给 forward 的最后一个 token。图示按 token 范围划分，GPU 仍按 block 分配。</figcaption>
+</figure>
+
+- **256 = 1 个完整 chunk。** vLLM 留第 256 个 token 给 forward。因为 LMCache 的存储边界也到 256，根本没有尾块对象要处理。
+- **257 = 1 个完整 chunk + 1 个 token。** 尾块只有第 257 个 token，刚好就是留给 forward 的那个。加载计划止于第 256 个 token，四个 GPU blocks 刚好覆盖完整 chunk。旧 retrieve 仍把尾块列入加载范围，却没有任何尾块目标 block。
+- **258 = 1 个完整 chunk + 2 个 token。** 留第 258 个 token 给 forward 后，第 257 个的 KV 仍要加载。即使只需要尾块里的这一个位置，也得分配第 5 个 GPU block。旧 retrieve 处理尾块时就有目标地址。
+
+所以这个边界按 chunk 大小重复。设 chunk 大小为 `C`，`P % C = 0` 时没有尾块，余数至少为 2 时裁掉最后一个 token 仍会留下需要加载的尾块 KV。对需要加载至少一个完整 chunk 的请求，**余数恰好为 1** 时才会出现「尾块存着，但加载范围里一个尾块 token 都没有」。这时 `P = k × C + 1`。当 `C = 256`，符合这个长度条件的有 257、513、769、⋯、3841。
+
+长度只是触发条件之一。原 issue 中首次请求启用了尾块保存并设置 `max_tokens = 1`，第二次发相同 prompt 前清空了 vLLM 的本地 prefix cache。作者实际观察到 257、513、3841 返回 HTTP 500，258、3840、3842 成功。同样是 3841，如果 vLLM 本地前缀还在，对照请求也成功了。 [完整复现矩阵](https://github.com/LMCache/LMCache/issues/6751)
 
 ## 4. PR #6759 怎么处理这个尾块？
 
@@ -118,7 +142,7 @@ PR #6759 在 **LMCache server 的 retrieve** 路径上判断，本次 key 指向
     <div><strong>修复前</strong><ol><li>拷贝完整 chunk</li><li>尝试为尾块 staging</li><li>整次 retrieve 失败</li></ol></div>
     <div><strong>PR #6759</strong><ol><li>拷贝完整 chunk</li><li>所有 group 均无目标，跳过尾块</li><li>保留 256 个已加载 token</li></ol></div>
   </div>
-  <figcaption>图 3 · 两条路径接收相同的 GPU block IDs，区别发生在处理尾块时。</figcaption>
+  <figcaption>图 4 · 两条路径接收相同的 GPU block IDs，区别发生在处理尾块时。</figcaption>
 </figure>
 
 如果某些 group 有尾块目标 block、另一些没有，就仍走原来的检查并报错。这样可以区分「整段尾块没有任何加载目的地」和「加载所需的目的地信息不一致」。尾块对象仍保存在 LMCache 中。 [判断条件](https://github.com/LMCache/LMCache/blob/0a707cbbace7d15868bf3e16a77491539360916e/lmcache/v1/multiprocess/modules/lmcache_driven_transfer.py#L1188-L1198) · [传输与完成统计](https://github.com/LMCache/LMCache/blob/0a707cbbace7d15868bf3e16a77491539360916e/lmcache/v1/multiprocess/modules/lmcache_driven_transfer.py#L1272-L1333)

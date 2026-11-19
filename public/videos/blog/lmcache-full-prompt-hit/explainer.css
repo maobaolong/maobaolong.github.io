@@ -125,6 +125,50 @@
 .last-token-state { min-height: 6.3rem; padding: .25rem clamp(.8rem, 3vw, 1.4rem) 1rem; }
 .last-token-state strong, .last-token-state span { display: block; }
 .last-token-state span { color: var(--lt-muted); font-size: .9rem; margin-top: .15rem; }
+#why-257 { scroll-margin-top: 8rem; }
+@media (max-width: 720px) {
+  #why-257 { scroll-margin-top: 18rem; }
+}
+.last-token-boundary {
+  display: grid;
+  gap: .48rem;
+  padding: clamp(.75rem, 3vw, 1.4rem);
+}
+.last-token-boundary-head, .last-token-boundary-row {
+  display: grid;
+  grid-template-columns: minmax(3.5rem, .65fr) minmax(0, 2.6fr) minmax(0, 1.5fr);
+  gap: clamp(.4rem, 2vw, .8rem);
+  align-items: stretch;
+}
+.last-token-boundary-head {
+  color: var(--lt-muted);
+  font-size: clamp(.72rem, 2vw, .87rem);
+  line-height: 1.25;
+}
+.last-token-boundary-row > strong {
+  align-self: center;
+  font-variant-numeric: tabular-nums;
+}
+.last-token-boundary-chunk, .last-token-boundary-tail { display: flex; gap: .24rem; }
+.last-token-boundary-tail {
+  border-inline-start: 1px dashed var(--lt-muted);
+  padding-inline-start: clamp(.35rem, 1.4vw, .7rem);
+}
+.last-token-boundary-chunk span, .last-token-boundary-tail span {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  min-height: 2.4rem;
+  text-align: center;
+  border-radius: .4rem;
+  font-size: clamp(.69rem, 2.25vw, .88rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+.last-token-boundary-chunk .last-token-run { flex: 0 0 32%; }
+.last-token-load { color: var(--lt-blue); border: 1px solid #4979ac; background: #203b59; }
+.last-token-run { color: var(--lt-yellow); border: 1px solid #9b763f; background: #3b3027; }
+.last-token-absent { color: var(--lt-muted); border: 1px dashed var(--lt-line); }
 .last-token-compare { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; padding: clamp(.8rem, 3vw, 1.4rem); }
 .last-token-compare > div { padding: .8rem; border-radius: .6rem; border: 1px solid var(--lt-line); }
 .last-token-compare strong { color: var(--lt-red); }
