@@ -24,6 +24,8 @@
 }
 .last-token-video figcaption { display: flex; gap: .25rem 1rem; flex-wrap: wrap; justify-content: space-between; }
 .last-token-video figcaption a { color: var(--lt-blue); white-space: nowrap; }
+.last-token-chapters { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: .15rem 1rem; padding-top: .3rem; }
+.last-token-chapters a { white-space: normal; }
 .last-token-flow {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -125,9 +127,9 @@
 .last-token-state { min-height: 6.3rem; padding: .25rem clamp(.8rem, 3vw, 1.4rem) 1rem; }
 .last-token-state strong, .last-token-state span { display: block; }
 .last-token-state span { color: var(--lt-muted); font-size: .9rem; margin-top: .15rem; }
-#why-257 { scroll-margin-top: 8rem; }
+#why-257, #save-unfull-off { scroll-margin-top: 8rem; }
 @media (max-width: 720px) {
-  #why-257 { scroll-margin-top: 18rem; }
+  #why-257, #save-unfull-off { scroll-margin-top: 18rem; }
 }
 .last-token-boundary {
   display: grid;

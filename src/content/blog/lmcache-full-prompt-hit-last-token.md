@@ -14,16 +14,20 @@ draft: false
 
 这里有三个不同的问题。LMCache **存着多少**？这次请求**要加载多少**？模型**还要算什么**？把这三件事分开，就能看懂为什么多命中一个 token，曾经会让整个请求返回 HTTP 500。
 
-<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css?v=chunk-boundary">
-<script type="module" src="/videos/blog/lmcache-full-prompt-hit/explainer.js"></script>
+<link rel="stylesheet" href="/videos/blog/lmcache-full-prompt-hit/explainer.css?v=aligned-and-unfull">
+<script type="module" src="/videos/blog/lmcache-full-prompt-hit/explainer.js?v=aligned-and-unfull"></script>
 
 <figure class="last-token-video">
-  <video controls playsinline preload="metadata" width="1280" height="720" poster="/videos/blog/lmcache-full-prompt-hit/poster-zh.jpg" aria-label="动画短片 · 中文口播">
-    <source src="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4" type="video/mp4">
-    <track kind="captions" src="/videos/blog/lmcache-full-prompt-hit/captions-zh.vtt" srclang="zh" label="中文字幕" default>
-    <track kind="subtitles" src="/videos/blog/lmcache-full-prompt-hit/subtitles-en-for-zh.vtt" srclang="en" label="English">
+  <video controls playsinline preload="metadata" width="1280" height="720" poster="/videos/blog/lmcache-full-prompt-hit/poster-zh.jpg?v=aligned-and-unfull" aria-label="动画短片 · 中文口播">
+    <source src="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4?v=aligned-and-unfull" type="video/mp4">
+    <track kind="captions" src="/videos/blog/lmcache-full-prompt-hit/captions-zh.vtt?v=aligned-and-unfull" srclang="zh" label="中文字幕" default>
+    <track kind="subtitles" src="/videos/blog/lmcache-full-prompt-hit/subtitles-en-for-zh.vtt?v=aligned-and-unfull" srclang="en" label="English">
   </video>
-  <figcaption><strong>动画短片 · 2 分 48 秒 · 中文 AI 口播</strong><span><a href="/videos/blog/lmcache-full-prompt-hit/transcript-zh.txt">阅读口播稿</a> · <a href="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4" download>下载视频</a></span></figcaption>
+  <figcaption>
+    <strong>动画短片 · 4 分 13 秒 · 中文 AI 口播</strong>
+    <span><a href="/videos/blog/lmcache-full-prompt-hit/transcript-zh.txt?v=aligned-and-unfull">阅读口播稿</a> · <a href="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4?v=aligned-and-unfull" download>下载视频</a></span>
+    <nav class="last-token-chapters" aria-label="视频章节"><a href="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4?v=aligned-and-unfull#t=123.98" data-video-start="123.98">2:04 · 对照 256 / 257 / 258 / 512</a> <a href="/videos/blog/lmcache-full-prompt-hit/explainer-zh.mp4?v=aligned-and-unfull#t=175.23" data-video-start="175.23">2:55 · 关闭 save_unfull_chunk</a></nav>
+  </figcaption>
 </figure>
 
 ## 1. 第一个输出 token 从哪儿来？
@@ -125,13 +129,26 @@ draft: false
   <figcaption>图 3 · 虚线标出第 256 个 token 后的 chunk 边界。蓝色是计划复用的 KV，黄色是留给 forward 的最后一个 token。图示按 token 范围划分，GPU 仍按 block 分配。</figcaption>
 </figure>
 
-- **256 = 1 个完整 chunk。** vLLM 留第 256 个 token 给 forward。因为 LMCache 的存储边界也到 256，根本没有尾块对象要处理。
+- **256 和 512 正好是整 chunk。** 加载计划分别覆盖前 255、511 个 token。GPU 每 64 个 token 分一个 block，向上取整后仍然需要 4、8 个 blocks，最后一个位置就在已经分配的最后一块里。retrieve 的 key 可以按原始命中长度覆盖 1 个、2 个完整 chunk。这两种长度都没有尾块对象。 [vLLM 的 block 分配](https://github.com/vllm-project/vllm/blob/c410543d9ffff03f5f6c4a8c0ae1d3ad082c4a15/vllm/v1/core/single_type_kv_cache_manager.py#L353-L371)
 - **257 = 1 个完整 chunk + 1 个 token。** 尾块只有第 257 个 token，刚好就是留给 forward 的那个。加载计划止于第 256 个 token，四个 GPU blocks 刚好覆盖完整 chunk。旧 retrieve 仍把尾块列入加载范围，却没有任何尾块目标 block。
 - **258 = 1 个完整 chunk + 2 个 token。** 留第 258 个 token 给 forward 后，第 257 个的 KV 仍要加载。即使只需要尾块里的这一个位置，也得分配第 5 个 GPU block。旧 retrieve 处理尾块时就有目标地址。
 
 所以这个边界按 chunk 大小重复。设 chunk 大小为 `C`，`P % C = 0` 时没有尾块，余数至少为 2 时裁掉最后一个 token 仍会留下需要加载的尾块 KV。对需要加载至少一个完整 chunk 的请求，**余数恰好为 1** 时才会出现「尾块存着，但加载范围里一个尾块 token 都没有」。这时 `P = k × C + 1`。当 `C = 256`，符合这个长度条件的有 257、513、769、⋯、3841。
 
 长度只是触发条件之一。原 issue 中首次请求启用了尾块保存并设置 `max_tokens = 1`，第二次发相同 prompt 前清空了 vLLM 的本地 prefix cache。作者实际观察到 257、513、3841 返回 HTTP 500，258、3840、3842 成功。同样是 3841，如果 vLLM 本地前缀还在，对照请求也成功了。 [完整复现矩阵](https://github.com/LMCache/LMCache/issues/6751)
+
+<h3 id="save-unfull-off">关闭 save_unfull_chunk 会怎样？</h3>
+
+在这条 MP connector 路径里，`lmcache.mp.save_unfull_chunk` 默认是 `false`。关闭后，lookup 范围向下对齐到完整 chunk。比如 257、258 都先查到 256，**此时已经是部分命中，connector 不会再从 256 中减 1**。剩下的位置交给 vLLM 计算。 [默认配置](https://github.com/LMCache/LMCache/blob/07f1c6bb642f4772606a36eab730ae009ddce08f/lmcache/integration/vllm/lmcache_mp_connector.py#L684-L688) · [lookup 对齐](https://github.com/LMCache/LMCache/blob/07f1c6bb642f4772606a36eab730ae009ddce08f/lmcache/integration/vllm/vllm_multi_process_adapter.py#L810-L822)
+
+| Prompt 长度 | 关闭尾块保存后的 lookup 命中 | 调度器计划复用 | vLLM 计算的 prompt 位置 |
+| --- | --- | --- | --- |
+| 256 | 256（全命中） | 1–255 | 256 |
+| 257 | 256（部分命中） | 1–256 | 257 |
+| 258 | 256（部分命中） | 1–256 | 257–258 |
+| 512 | 512（全命中） | 1–511 | 512 |
+
+表里仍假设 vLLM 本地 prefix cache 为空，且 LMCache 存着所有完整 chunks。关闭尾块保存后，257 的加载范围依然是 1–256，差别在于 retrieve 的 key 也止于 256，根本不会进入尾块处理。258 则比开启时多算第 257 个 token。整 chunk 长度仍可全命中，保留最后一个 token 的规则照常生效。
 
 ## 4. PR #6759 怎么处理这个尾块？
 

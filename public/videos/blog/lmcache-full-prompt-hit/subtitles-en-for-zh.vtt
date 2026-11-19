@@ -4,10 +4,10 @@ WEBVTT
 You send the exact same prompt twice.
 
 00:00:02.354 --> 00:00:07.491
-On the second request, LMCache finds all two hundred and fifty-seven tokens.
+On the second request, LMCache finds all 257 tokens.
 
 00:00:07.696 --> 00:00:12.320
-But vLLM plans to load only two hundred and fifty-six.
+But vLLM plans to load only 256.
 
 00:00:12.525 --> 00:00:15.202
 Why leave one out?
@@ -48,71 +48,104 @@ The notes don't contain the logits.
 00:01:01.104 --> 00:01:07.096
 To get those, the model can run the last prompt token again, using the earlier KV.
 
-00:01:07.302 --> 00:01:09.675
+00:01:07.302 --> 00:01:09.583
 Now let's repeat a request.
 
-00:01:09.881 --> 00:01:14.407
-The first time, LMCache saves one chunk of two hundred and fifty-six tokens
+00:01:09.788 --> 00:01:14.262
+The first time, LMCache saves one chunk of 256 tokens
 
-00:01:14.407 --> 00:01:17.438
+00:01:14.262 --> 00:01:17.346
 and a one-token tail.
 
-00:01:17.644 --> 00:01:23.820
+00:01:17.552 --> 00:01:23.728
 Then we clear just vLLM's local prefix cache and send the same prompt again.
 
-00:01:24.025 --> 00:01:30.373
-The local cache misses. LMCache still has all two hundred and fifty-seven tokens.
+00:01:23.933 --> 00:01:30.280
+The local cache misses. LMCache still has all 257 tokens.
 
-00:01:30.565 --> 00:01:36.123
-The plan is to load the first two hundred and fifty-six and run the last one in the next forward pass.
+00:01:30.473 --> 00:01:36.031
+The plan is to load the first 256 and run the last one in the next forward pass.
 
-00:01:36.328 --> 00:01:37.965
+00:01:36.236 --> 00:01:37.873
 Here's where the lengths get out of sync.
 
-00:01:38.170 --> 00:01:44.833
+00:01:38.078 --> 00:01:44.741
 The scheduler gives the load enough GPU blocks for one full chunk.
 
-00:01:45.025 --> 00:01:49.030
-But retrieve still looks up objects for the original two hundred and fifty-seven tokens.
+00:01:44.933 --> 00:01:48.938
+But retrieve still looks up objects for the original 257 tokens.
 
-00:01:49.236 --> 00:01:51.544
+00:01:49.144 --> 00:01:51.452
 The full chunk has a destination.
 
-00:01:51.749 --> 00:01:56.846
+00:01:51.657 --> 00:01:56.754
 The tail has none.
 
-00:01:57.038 --> 00:02:03.846
+00:01:56.946 --> 00:02:03.754
 When the tail handler asks for a GPU block, it throws, and the whole retrieval fails.
 
-00:02:04.038 --> 00:02:07.491
+00:02:03.946 --> 00:02:11.412
+Zoom in on the boundary. A chunk holds 256 tokens. A GPU block holds 64.
+
+00:02:11.604 --> 00:02:20.109
+When the prompt is exactly 256 tokens, we reserve the last one. Loading the first 255 still takes four blocks.
+
+00:02:20.302 --> 00:02:30.438
+At 512, the load plan ends at 511. That still takes eight blocks. Neither aligned length has a tail object.
+
+00:02:30.644 --> 00:02:37.175
+At 257, the tail has just one token. That's the one reserved for forward.
+
+00:02:37.381 --> 00:02:44.175
+Add one more token, and the prompt is 258. We reserve the last one, and token 257 still needs its KV loaded.
+
+00:02:44.381 --> 00:02:55.004
+That one extra position requires a fifth block. Only a one-token tail can be stored yet have no destination in this load plan.
+
+00:02:55.196 --> 00:02:57.728
+Now turn off save_unfull_chunk.
+
+00:02:57.920 --> 00:03:07.912
+With the local cache still empty in our example, the 257 and 258 token prompts both hit only the first full chunk. Lookup stops at 256.
+
+00:03:08.104 --> 00:03:17.386
+Both loads use four blocks. One request runs one token from there, and the other runs two.
+
+00:03:17.578 --> 00:03:21.596
+The full chunk is still reused, and retrieve has no tail to handle.
+
+00:03:21.802 --> 00:03:29.359
+An aligned prompt of 256 or 512 can still hit in full, with the last token reserved for forward.
+
+00:03:29.552 --> 00:03:33.004
 The pull request adds a check inside retrieve.
 
-00:02:07.696 --> 00:02:11.617
+00:03:33.209 --> 00:03:37.131
 If the tail object exists and every group has an empty list of destination blocks for it,
 
-00:02:11.617 --> 00:02:15.215
+00:03:37.131 --> 00:03:40.728
 skip the tail and keep the full chunks.
 
-00:02:15.407 --> 00:02:20.215
+00:03:40.920 --> 00:03:45.728
 If some groups have blocks and others don't, the existing check still raises.
 
-00:02:20.407 --> 00:02:24.702
+00:03:45.920 --> 00:03:50.215
 The token count also leaves out the skipped tail.
 
-00:02:24.907 --> 00:02:28.741
+00:03:50.420 --> 00:03:54.320
 So when you see a full hit, ask three questions.
 
-00:02:28.946 --> 00:02:30.254
+00:03:54.525 --> 00:03:55.833
 How much was stored?
 
-00:02:30.459 --> 00:02:32.070
+00:03:56.038 --> 00:03:57.702
 How much are we loading?
 
-00:02:32.275 --> 00:02:33.688
+00:03:57.907 --> 00:03:59.320
 And what still runs?
 
-00:02:33.881 --> 00:02:39.386
-Here it's two hundred and fifty-seven, two hundred and fifty-six, and that very last token.
+00:03:59.512 --> 00:04:05.017
+Here it's 257, 256, and that very last token.
 
-00:02:39.591 --> 00:02:47.168
+00:04:05.223 --> 00:04:12.800
 Once the load succeeds, the forward pass produces the logits and generation can begin.

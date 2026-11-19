@@ -1,3 +1,16 @@
+for (const figure of document.querySelectorAll(".last-token-video")) {
+  const video = figure.querySelector("video");
+  for (const link of figure.querySelectorAll("[data-video-start]")) {
+    link.addEventListener("click", (event) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      video.currentTime = Number(link.dataset.videoStart);
+      video.scrollIntoView({ block: "center" });
+      video.play().catch(() => {});
+    });
+  }
+}
+
 for (const demo of document.querySelectorAll("[data-last-token-demo]")) {
   const controls = demo.querySelector("[data-controls]");
   const buttons = [...demo.querySelectorAll("[data-step]")];
