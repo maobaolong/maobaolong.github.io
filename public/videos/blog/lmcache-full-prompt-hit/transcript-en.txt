@@ -1,0 +1,13 @@
+You send the exact same prompt twice. On the second request, LMCache finds all two hundred and fifty-seven tokens. But vLLM plans to load only two hundred and fifty-six. Why leave one out? Start with how a model generates its first output token.
+
+The model splits your text into tokens, then processes the input. That's prefill. At the last input position, the model produces a score for every candidate in its vocabulary. Those scores are called logits. vLLM uses them to pick the first output token.
+
+The KV cache holds a different piece of the computation. Think of it as notes that each attention layer takes while reading the prompt. At a new position, the layer can look back at those notes. If a new request starts with the same tokens, the model can reuse the notes and skip that earlier work. The notes don't contain the logits. To get those, the model can run the last prompt token again, using the earlier KV.
+
+Now let's repeat a request. The first time, LMCache saves one chunk of two hundred and fifty-six tokens and a one-token tail. Then we clear just vLLM's local prefix cache and send the same prompt again. The local cache misses. LMCache still has all two hundred and fifty-seven tokens. The plan is to load the first two hundred and fifty-six and run the last one in the next forward pass.
+
+Here's where the lengths get out of sync. The scheduler gives the load enough GPU blocks for one full chunk. But retrieve still looks up objects for the original two hundred and fifty-seven tokens. The full chunk has a destination. The tail has none. When the tail handler asks for a GPU block, it throws, and the whole retrieval fails.
+
+The pull request adds a check inside retrieve. If the tail object exists and every group has an empty list of destination blocks for it, skip the tail and keep the full chunks. If some groups have blocks and others don't, the existing check still raises. The token count also leaves out the skipped tail.
+
+So when you see a full hit, ask three questions. How much was stored? How much are we loading? And what still runs? Here it's two hundred and fifty-seven, two hundred and fifty-six, and that very last token. Once the load succeeds, the forward pass produces the logits and generation can begin.

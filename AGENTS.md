@@ -16,6 +16,13 @@
   For generated narration videos, use macOS AVFoundation or `avconvert`; convert
   OpenAI Speech MP3 output to M4A before muxing if AVFoundation cannot discover
   the MP3 audio track.
+  For scripting H.264/AAC output, a temporary Python environment with
+  `imageio-ffmpeg` also works on Apple Silicon. Use
+  `imageio_ffmpeg.get_ffmpeg_exe()` to find its bundled binary. Verify playback
+  and WebVTT cues in local Chrome before deploying the built site.
+- Use Astro preview for MP4 seeking checks. It returns `206 Partial Content`
+  for byte-range requests. macOS system Python's `http.server` returns `200`
+  and can make Chrome reset the playback position when seeking.
 - For Chinese technical narration videos, avoid concatenating many short TTS
   clips. Use one continuous Mandarin neural TTS pass with sentence-boundary
   timestamps, then drive scene timing and subtitles from that timeline. Keep the
